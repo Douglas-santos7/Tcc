@@ -1,0 +1,11 @@
+  :root {
+    /* CORES */
+    --cor-primaria: #cfffb5;
+    --cor-secundaria: #003617;
+
+    /*FONTES*/
+
+    --fonte-principal: "Inter", sans-serif;
+    --fonte-teste: "Pacifico", cursive;
+    
+  }
