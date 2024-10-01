@@ -24,23 +24,36 @@ try {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Neo Finance - Manutenção :c</title>
+        <link rel="stylesheet" href="path_to_your_css_file.css"> <!-- Caminho correto do seu arquivo CSS -->
+
         <style>
+            @import url(../../css/root.css);
+
             body {
+                background-color: var(--background);
+                font-family: var(--fonte-principal);
+                color: var(--cor-secundaria);
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
                 text-align: center;
-                font-size: 2rem;
+                margin: 0;
+                padding: 0;
+            }
+
+            h1 {
+                color: var(--cor-terciaria);
+                font-size: 4rem;
             }
 
             .spinner {
-                width: 60px;
-                height: 60px;
-                border: 10px solid black;
+                width: 100px;
+                height: 100px;
+                border: 20px solid black;
                 border-radius: 50%;
-                border-color: green black black black;
+                border-color: var(--cor--destaque-verde) black black black;
                 animation: spin 2s infinite;
             }
 
@@ -53,12 +66,24 @@ try {
                     transform: rotate(360deg);
                 }
             }
+
+            .messagem {
+                background-color: var(--card);
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
+                font-size: 4rem;
+            }
         </style>
     </head>
 
     <body>
-        <h1>Sistema em manutenção no momento. Por favor, tente novamente mais tarde.</h1>
+        <h1>Neo Finance - Sistema em Manutenção</h1>
         <div class="spinner"></div>
+        <div class="messagem">
+            <p>Nosso sistema está passando por manutenção no momento. Por favor, tente novamente mais tarde.</p>
+        </div>
         <script>
             // Monitora se o navegador volta a ter conexão com a internet
             window.addEventListener('online', () => {
@@ -70,5 +95,5 @@ try {
 
     </html>
 <?php
-    exit(); // Encerra a execução do script após exibir a página de manutenção
+    exit(); 
 }
