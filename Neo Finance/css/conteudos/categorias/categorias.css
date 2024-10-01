@@ -1,0 +1,161 @@
+@import url(../../root.css);
+
+/* =====================================
+   RESET DE MARGEM E PADDING
+   ===================================== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fonte-principal);
+  background-color: var(--background);
+}
+
+/* =====================================
+   HEADER
+   ===================================== */
+.container--header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+.titulo--banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titulo--banner img {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.titulo--banner h1 {
+  font-size: 2rem;
+  color: var(--fonte-cards);
+}
+
+/* =====================================
+   CONTEÚDO PRINCIPAL
+   ===================================== */
+.container--conteudo {
+  display: grid;
+  grid-template-columns: 1fr 8fr;
+  grid-template-rows: 85vh;
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+/* Botão de Adicionar */
+.adicionar--btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-categorias);
+  border-radius: 12px;
+  min-width: 100px;
+}
+
+/* Cards de Categorias */
+.cards--categorias {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-categorias);
+  border-radius: 12px;
+}
+
+/* Card Individual de Categoria */
+.card--categoria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--background--cards);
+  width: auto;
+  min-height: 150px;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 20px;
+}
+
+/* Lado Esquerdo do Card */
+.lado--esquerdo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0px 30px;
+  margin: 0px 30px;
+}
+
+/* Ícone da Categoria */
+.icon--categoria {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+
+.icon--categoria img {
+  width: 60px;
+  height: 60px;
+}
+
+/* Descrição da Categoria */
+.descricao--categoria {
+  font-size: 3rem;
+  background: var(--card);
+  border-radius: 90px;
+  padding: 10px 20px;
+}
+
+/* Lado Direito do Card */
+.lado--direito-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0px 30px;
+  margin: 0px 30px;
+}
+
+/* Ícone de Apagar */
+.icon--apagar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+
+.icon--apagar img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Ícone de Editar */
+.icon--editar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+
+.icon--editar img {
+  width: 40px;
+  height: 40px;
+}
