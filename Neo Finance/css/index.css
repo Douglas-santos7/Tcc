@@ -231,15 +231,9 @@ header .login--btn {
 
 /* Conteúdo 4 */
 .conteudo--4 {
-<<<<<<< HEAD
   position: relative; 
   width: 100%; 
   height: 100%; 
-=======
-  position: relative; /* Adicione isso ao contêiner pai */
-  width: 100%; /* Defina a largura do contêiner pai */
-  height: 100%; /* Defina a altura do contêiner pai */
->>>>>>> 8b5d0403b43218b5dcc6495d5f31bcab3d655aa9
 }
 
 .conteudo--4 video {
@@ -250,11 +244,7 @@ header .login--btn {
   height: 100%;
   object-fit: cover;
   border-radius: 30px;
-<<<<<<< HEAD
   transform: translate(-50%, -50%); 
-=======
-  transform: translate(-50%, -50%); /* Centraliza o vídeo */
->>>>>>> 8b5d0403b43218b5dcc6495d5f31bcab3d655aa9
   overflow: hidden;
   display: flex;
   align-items: center;
