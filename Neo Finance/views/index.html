@@ -48,8 +48,15 @@
         <div class="texto--informativo3">
           <p>Torne tudo mais fácil com seu <span class="destaque--branco"> assistente financeiro</span>.</p>
         </div>
-        <div class="imagem--ilustrativa3">
-          <img src="../assets/img/ilustracao.svg" alt="*animação chat bot com mensagem*" />
+        <div class="animacao--ilustrativa3">
+          <video
+            id="video--background"
+            src="../assets/video/notebook(parado)-neofinance.mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
         </div>
       </section>
 
@@ -58,7 +65,7 @@
           <p>neo finance neo finance neo finance neo finance neo finance</p>
         </div>
         <div class="video--ilustrativo">
-          <video src="./assets/video--teste.mp4" autoplay loop muted playsinline></video>
+          <video id="video--background" src="../assets/video/notebook-neofinance.mp4" autoplay loop muted playsinline></video>
         </div>
       </section>
 
@@ -157,6 +164,8 @@
 
       // Chama a função quando a página é carregada
       window.onload = scrollToTop;
+
+      document.getElementById("video--background").playbackRate = 0.5;
     </script>
   </body>
 </html>
