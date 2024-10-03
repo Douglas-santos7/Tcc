@@ -136,7 +136,7 @@ header .login--btn {
   font-weight: 100;
 }
 
-.imagem--ilustrativa {
+.animacao--ilustrativa {
   margin-top: 150px;
   width: 90%;
   height: 100vh;
@@ -145,7 +145,7 @@ header .login--btn {
   z-index: -1;
 }
 
-.imagem--ilustrativa img {
+.animacao--ilustrativa img {
   width: 110%;
   height: 110%;
 }
@@ -183,7 +183,7 @@ header .login--btn {
   z-index: 1;
 }
 
-.imagem--ilustrativa2 {
+.animacao--ilustrativa2 {
   max-width: 100vh;
   height: 100vh;
   overflow: hidden;
@@ -192,7 +192,7 @@ header .login--btn {
   top: 0;
 }
 
-.imagem--ilustrativa2 img {
+.animacao--ilustrativa2 img {
   max-width: 100vh;
   height: 120vh;
   object-fit: cover;
@@ -215,25 +215,40 @@ header .login--btn {
   text-align: end;
   color: white;
 }
-.imagem--ilustrativa3 img {
-  background: var(--cor--background--animação);
-  width: 600px;
-  height: 600px;
+.animacao--ilustrativa3 {
+  width: 1000px;
+  height: 1000px;
   border-radius: 30px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.animacao--ilustrativa3 video {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* Conteúdo 4 */
 .conteudo--4 {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: relative; 
+  width: 100%; 
+  height: 100%; 
 }
 
 .conteudo--4 video {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 30px;
+  transform: translate(-50%, -50%); 
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .texto--informativo4 {
@@ -277,13 +292,13 @@ header .login--btn {
   align-items: center;
 }
 
-.imagem--ilustrativa5 {
+.animacao--ilustrativa5 {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.imagem--ilustrativa5 img {
+.animacao--ilustrativa5 img {
   max-width: 100%;
   height: auto;
 }
@@ -415,4 +430,8 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+#video--background {
+  border-radius: 15px; /* Define o raio da borda */
+  overflow: hidden; /* Garante que o conteúdo não exceda os limites arredondados */
 }
