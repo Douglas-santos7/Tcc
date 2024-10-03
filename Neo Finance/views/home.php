@@ -8,7 +8,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
   exit();
 }
 ?>
-<!DOCTYPE html>a
+<!DOCTYPE html>
 <html lang="pt-br">
 
 
