@@ -4,7 +4,7 @@ include("../config/database/conexao.php");
 
 // Verifica se o usuário está logado
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-  header("Location: ../../views/login/login.php"); // Redireciona para a página de login
+  header("Location: ./login/login.php"); // Redireciona para a página de login
   exit();
 }
 ?>
@@ -54,7 +54,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <img class="icon--li" src="../assets/icons/home--sidebar/chatbot--icon.svg" />
             <span>ChatBot</span>
           </li>
-          <li class="Item6" data-src="./conteudos/(6) Categorias.html">
+          <li class="Item6" data-src="./conteudos/(6) categorias.php">
             <div class="barra--icon"></div>
             <img class="icon--li" src="../assets/icons/home--sidebar/categorias--icon.svg" />
             <span>Categorias</span>
