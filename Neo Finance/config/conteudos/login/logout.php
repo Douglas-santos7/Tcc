@@ -67,7 +67,7 @@ if (isset($_COOKIE['remember_token'])) {
     <div class="logout-container">
         <h1>Você saiu com sucesso!</h1>
         <p>Obrigado por usar nosso serviço. Volte sempre!</p>
-        <a href="../../views/login/login.php">Voltar ao Login</a>
+        <a href="../../../views/login/login.php">Voltar ao Login</a>
     </div>
 </body>
 
