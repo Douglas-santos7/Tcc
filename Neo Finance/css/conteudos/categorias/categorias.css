@@ -63,6 +63,14 @@ body {
   background: var(--card-categorias);
   border-radius: 12px;
   min-width: 100px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Botão de Adicionar : hover*/
+.adicionar--btn:hover{
+  box-shadow: var(--background--cards);
+  transform: translateY(-5px);
+  cursor: pointer;
 }
 
 /* Cards de Categorias */
@@ -84,6 +92,13 @@ body {
   border-radius: 12px;
   padding: 10px;
   margin: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+.card--categoria:hover{
+  box-shadow: var(--background--cards);
+  transform: translateY(-5px);
+  cursor: pointer;
 }
 
 /* Lado Esquerdo do Card */
@@ -137,6 +152,14 @@ body {
   border-radius: 50%;
   width: 100px;
   height: 100px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ícone de Apagar : hover */
+.icon--apagar:hover{
+  box-shadow: var(--background--cards);
+  transform: translateY(-5px);
+  cursor: pointer;
 }
 
 .icon--apagar img {
@@ -153,9 +176,36 @@ body {
   border-radius: 50%;
   width: 100px;
   height: 100px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ícone de Editar : hover*/
+.icon--editar:hover{
+  box-shadow: var(--background--cards);
+  transform: translateY(-5px);
+  cursor: pointer;
 }
 
 .icon--editar img {
   width: 40px;
   height: 40px;
+}
+/*ATUALIZANDO LISTAGEM*/
+.cards--categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card--categoria {
+  background-color: #f1f1f1;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 150px; /* Ajuste o tamanho conforme necessário */
+}
+
+.card--categoria img {
+  max-width: 100%;
+  height: auto;
 }
