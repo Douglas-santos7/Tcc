@@ -30,18 +30,18 @@ body {
 }
 
 .usuario span:nth-child(1) {
-  width: 50px; 
-  height: 50px; 
-  background-color: white; 
-  color: var(--fonte-cards); 
-  border-radius: 50%; 
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  color: var(--fonte-cards);
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.5rem; 
-  font-weight: bold; 
-  text-align: center; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin-right: 20px;
 }
 
