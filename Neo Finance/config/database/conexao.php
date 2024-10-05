@@ -105,6 +105,12 @@ try {
                 margin-top: 20px;
                 font-size: 4rem;
             }
+
+            @media (max-width: 1280px) {
+                .spinner {
+                    display: none;
+                }
+            }
         </style>
     </head>
 
