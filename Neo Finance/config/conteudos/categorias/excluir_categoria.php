@@ -1,25 +1,31 @@
 <?php
+// Iniciar a sessão
+session_start();
+
 // Incluir a conexão com o banco de dados
 include('../../database/conexao.php');
 
-// Verifica se foi passado o ID da categoria pela URL
-if (!isset($_GET['id'])) {
-    header("Location: ../../../views/conteudos/(6) categorias.php"); // Redireciona para a lista de categorias
+// Verifica se o usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../views/login/login.php");
     exit();
 }
 
-$categoria_id = $_GET['id'];
-$usuario_id = 1; // Trocar para pegar o usuário logado corretamente
+// Pega o ID da categoria a ser excluída
+$id_categoria = $_POST['id_categoria'];
 
-// Excluir a categoria
+// Prepare a consulta para excluir a categoria
 $query = "DELETE FROM categorias WHERE id = ? AND usuario_id = ?";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("ii", $categoria_id, $usuario_id);
+
+// O ID do usuário logado deve ser validado para garantir que ele só possa excluir suas próprias categorias
+$usuario_id = $_SESSION['user_id'];
+$stmt->bind_param("ii", $id_categoria, $usuario_id);
 
 if ($stmt->execute()) {
-    header("Location: ../../../views/conteudos/(6) categorias.php"); // Redireciona para a lista de categorias
-    exit();
+    // Redirecionar de volta para a página de categorias
+    header("Location: ../../../views/conteudos/(6) categorias.php?status=success");
 } else {
-    echo "Erro ao excluir a categoria.";
+    // Redirecionar de volta com um erro
+    header("Location: ../../../views/conteudos/(6) categorias.php?status=error");
 }
-?>

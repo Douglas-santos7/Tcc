@@ -160,6 +160,23 @@ $result = $stmt->get_result();
       cursor: pointer;
       /* Indica que é clicável */
     }
+
+    .mensagem {
+      padding: 10px;
+      margin: 20px 0;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .sucesso {
+      background-color: #dff0d8;
+      color: #3c763d;
+    }
+
+    .erro {
+      background-color: #f2dede;
+      color: #a94442;
+    }
   </style>
 </head>
 
@@ -417,18 +434,20 @@ $result = $stmt->get_result();
   </div>
 
 
-  <!-- Modal de Excluir Categoria -->
+  <!-- Modal de Exclusão -->
   <div id="modalExcluir" class="modal">
     <div class="modal-conteudo">
       <span class="fechar" onclick="fecharModal('modalExcluir')">&times;</span>
-      <h2>Confirmar Exclusão</h2>
+      <h2>Excluir Categoria</h2>
       <p>Você tem certeza de que deseja excluir esta categoria?</p>
       <p><strong id="nomeCategoriaExcluir">Nome da Categoria</strong></p> <!-- Nome da categoria a ser excluída -->
-
-      <div class="botoes-excluir">
-        <button type="button" id="botaoConfirmarExcluir" onclick="confirmarExclusao()">Excluir</button>
-        <button type="button" onclick="fecharModal('modalExcluir')">Cancelar</button>
-      </div>
+      <form id="formExcluir" method="POST" action="../../config/conteudos/categorias/excluir_categoria.php">
+        <input type="hidden" name="id_categoria" id="id_categoria_excluir" required>
+        <div class="botoes-excluir">
+          <button type="button" class="fechar" onclick="fecharModal('modalExcluir')">Cancelar</button>
+          <button type="submit">Excluir</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -461,15 +480,19 @@ $result = $stmt->get_result();
     }
 
     function abrirModalExcluir(nome, id) {
-      document.getElementById('nomeCategoriaExcluir').textContent = nome;
-      document.getElementById('botaoConfirmarExcluir').onclick = function() {
-        window.location.href = `../../config/conteudos/categorias/excluir_categoria.php?id=${id}`;
-      };
+      document.getElementById('nomeCategoriaExcluir').innerText = nome;
+      document.getElementById('id_categoria_excluir').value = id;
       document.getElementById('modalExcluir').style.display = 'block';
     }
 
     function selecionarIcone(icone) {
       document.getElementById('iconeSelecionadoEditar').value = icone; // Define o valor do campo oculto
+    }
+
+    function confirmarExclusao() {
+      var categoriaId = document.getElementById('botaoConfirmarExcluir').getAttribute('data-id'); // Recupera o ID da categoria
+      // Redireciona para a página de exclusão com o ID da categoria
+      window.location.href = '../../config/conteudos/categorias/excluir_categoria.php?id=' + categoriaId;
     }
   </script>
 
