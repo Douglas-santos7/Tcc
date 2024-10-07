@@ -61,3 +61,4 @@ if (isset($input['tipo'], $input['categoria'], $input['nome'], $input['valor'], 
 }
 
 error_log('Entrou na função de salvamento');
+?>

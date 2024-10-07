@@ -12,9 +12,9 @@ $showPopup = false; // Variável para controle do pop-up
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitização dos dados de entrada
     $username = trim($_POST['username']);
-    $email = trim($_POST['email']); 
-    $password = $_POST['password']; 
-    $confirm_pass = $_POST['confirm_password']; 
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm_pass = $_POST['confirm_password'];
 
     // Verificação CSRF
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="signup-form">
                 <div class="title">CADASTRO</div>
                 <p class="cadastro-text">Seja bem-vindo à Neo finance, efetue o cadastro</p>
-                <form method="POST" action="cadastro.php"> 
+                <form method="POST" action="cadastro.php">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="field">
                         <input type="text" id="name" name="username" placeholder=" " required>
@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="message">
                     <?php
-                    if (isset($_SESSION['signup_message'])) { 
+                    if (isset($_SESSION['signup_message'])) {
                         echo '<p style="color: red;">' . $_SESSION['signup_message'] . '</p>';
                         unset($_SESSION['signup_message']);
                     }

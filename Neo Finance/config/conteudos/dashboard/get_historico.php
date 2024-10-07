@@ -31,3 +31,4 @@ while ($row = mysqli_fetch_assoc($resultHistorico)) {
 // Retornar os dados como JSON
 header('Content-Type: application/json');
 echo json_encode($historico);
+?>

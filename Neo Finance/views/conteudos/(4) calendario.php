@@ -19,8 +19,9 @@ if (isset($_POST['adicionarVencimento'])) {
 // Busca os vencimentos do mês selecionado
 $vencimentos = buscarVencimentos($mesSelecionado, $conn);
 
-// Busca as categorias do usuário (substitua 1 pelo ID do usuário logado)
-$categorias = buscarCategorias(1, $conn);
+// Busca as categorias do usuário
+$usuario_id = $_SESSION['user_id']; // Pega o ID do usuário logado
+$categorias = buscarCategorias($usuario_id, $conn);
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +33,7 @@ $categorias = buscarCategorias(1, $conn);
   <title>Neo Finance - Calendário</title>
   <link rel="stylesheet" href="../../css/conteudos/calendario/calendario.css" />
   <style>
-
+    /* Adicione estilos personalizados aqui */
   </style>
 </head>
 
@@ -52,8 +53,6 @@ $categorias = buscarCategorias(1, $conn);
       </header>
     </div>
     <!-- Fim do Header -->
-
-
 
     <!-- Início do Conteúdo Principal -->
     <div class="container--conteudo">
@@ -136,16 +135,17 @@ $categorias = buscarCategorias(1, $conn);
     <!-- Modal para Adicionar Vencimento -->
     <div id="modalAdicionar" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModalAdicionar()">&times;</span>
+        <button id="fechar-modal" onclick="fecharModalAdicionar()">&times;</button>
         <h2>Adicionar Vencimento</h2>
         <form id="formAdicionar" method="POST" onsubmit="return validarFormulario(event)">
           <input type="text" name="descricao" placeholder="Descrição" required />
-          <input type="date" id="data_vencimento" name="data_vencimento" value="<?php echo date('Y-m-d'); ?>" required />
-          <input type="number" name="valor" placeholder="Valor" step="0.01" min="0" required />
+          <input type="date" id="data_vencimento" name="data_vencimento" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required />
+          <input type="text" name="valor" placeholder="Valor" required oninput="formatarValor(this)" />
+
           <select name="categoria" required>
             <option value="" disabled selected>Selecione uma Categoria</option>
             <?php foreach ($categorias as $categoria): ?>
-              <option value="<?php echo $categoria; ?>"><?php echo $categoria; ?></option>
+              <option value="<?php echo $categoria ?>"><?php echo $categoria ?></option>
             <?php endforeach; ?>
           </select>
           <button type="submit" name="adicionarVencimento">Adicionar Vencimento</button>
@@ -156,13 +156,12 @@ $categorias = buscarCategorias(1, $conn);
     <!-- Modal de Confirmação -->
     <div id="modalConfirmacao" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModal()">&times;</span>
+        <span class="fechar--modal-confirmacao" onclick="fecharModal()">&times;</span>
         <h2>Aviso</h2>
         <p>Datas anteriores ao dia de hoje não são válidas, pois se referem a pagamentos que já deveriam ter sido feitos.</p>
         <button id="btn-ok">OK</button>
       </div>
     </div>
-
 
     <script>
       // Função para abrir o modal de adicionar vencimento
@@ -172,7 +171,7 @@ $categorias = buscarCategorias(1, $conn);
 
       // Função para fechar o modal de adicionar vencimento
       function fecharModalAdicionar() {
-        document.getElementById('modalAdicionar').style.display = 'none';
+        document.getElementById("modalAdicionar").style.display = "none";
       }
 
       // Função para validar o formulário
@@ -222,9 +221,27 @@ $categorias = buscarCategorias(1, $conn);
           fecharModal();
         }
       });
+
+      function formatarValor(input) {
+        // Remove todos os caracteres que não sejam dígitos
+        let valor = input.value.replace(/\D/g, '');
+
+        // Formata o valor como moeda
+        if (valor) {
+          // Adiciona os pontos para milhar e vírgula para centavos
+          valor = (parseInt(valor) / 100).toFixed(2); // Converte para float com duas casas decimais
+          valor = valor.replace('.', ','); // Troca o ponto pela vírgula
+
+          // Divide a parte inteira da parte decimal
+          let partes = valor.split(',');
+          partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos à parte inteira
+
+          input.value = partes.join(','); // Junte as partes de volta
+        } else {
+          input.value = ''; // Limpa o campo se estiver vazio
+        }
+      }
     </script>
-
-
 </body>
 
 </html>
