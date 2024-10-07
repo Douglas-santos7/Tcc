@@ -43,3 +43,4 @@ if (isset($input['nome']) && isset($input['icone'])) { // Verifica se os dados n
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Dados incompletos']);
 }
+?>
