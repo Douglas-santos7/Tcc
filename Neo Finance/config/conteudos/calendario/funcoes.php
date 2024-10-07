@@ -1,8 +1,14 @@
 <?php
 function calcularDiasRestantes($dataVencimento)
 {
-    $hoje = new DateTime();
+    // Cria objetos DateTime para hoje e para a data de vencimento
+    $hoje = new DateTime('now');
     $vencimento = new DateTime($dataVencimento);
+
+    // Zera a hora para comparar apenas as datas
+    $hoje->setTime(0, 0, 0);
+    $vencimento->setTime(0, 0, 0);
+
     $interval = $hoje->diff($vencimento);
 
     // Verifica se vence hoje
@@ -19,7 +25,7 @@ function calcularDiasRestantes($dataVencimento)
     }
 
     // Se ainda faltam dias
-    if ($interval->days <= 1) {
+    if ($interval->days == 1) {
         return "Vence amanhã"; // Se falta 1 dia
     }
     return $interval->days . " dias restantes"; // Se ainda faltam mais de 1 dia
