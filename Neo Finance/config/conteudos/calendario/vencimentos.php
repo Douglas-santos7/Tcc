@@ -43,8 +43,8 @@ function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $
               VALUES ('$descricao', '$data_vencimento', '$valor', '$categoria', '$status', $usuario_id)";
 
     if (mysqli_query($conn, $query)) {
-        echo "Vencimento adicionado com sucesso.";
+        return "Vencimento adicionado com sucesso.";
     } else {
-        echo "Erro ao adicionar vencimento: " . mysqli_error($conn);
+        return "Erro ao adicionar vencimento: " . mysqli_error($conn);
     }
 }
