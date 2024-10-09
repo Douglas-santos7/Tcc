@@ -106,6 +106,9 @@ if ($result->num_rows > 0) {
 /* =================================
 Verifica se o formulário foi enviado
 ====================================*/
+/* =================================
+Verifica se o formulário foi enviado
+====================================*/
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $nome = mysqli_real_escape_string($conn, $_POST['nome']);
@@ -113,9 +116,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $categoria = mysqli_real_escape_string($conn, $_POST['categoria']);
   $tipo = mysqli_real_escape_string($conn, $_POST['tipo']);
 
+  // Consultar o ícone da categoria selecionada
+  $queryIcone = "SELECT icone FROM categorias WHERE id = ?";
+  $stmtIcone = mysqli_prepare($conn, $queryIcone);
+  mysqli_stmt_bind_param($stmtIcone, "i", $categoria);
+  mysqli_stmt_execute($stmtIcone);
+  mysqli_stmt_bind_result($stmtIcone, $icone);
+  mysqli_stmt_fetch($stmtIcone);
+  mysqli_stmt_close($stmtIcone);
+
   // Insere os dados na tabela transacoes
-  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id) 
-          VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId)";
+  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone) 
+          VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')"; // Incluindo icone
 
   if (mysqli_query($conn, $sql)) {
     // Redireciona para a mesma página após a inserção
@@ -125,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
   }
 }
+
 
 /* ============ 
    Consultar histórico recente de transações 
