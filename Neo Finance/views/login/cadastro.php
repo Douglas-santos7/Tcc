@@ -233,14 +233,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const password = document.getElementById('signup-pass').value;
             const strengthDisplay = document.getElementById('password-strength');
             let strength = '';
+            let color = '';
+
             if (password.length < 8) {
                 strength = 'Fraca';
+                color = 'red';
             } else if (password.match(/[A-Z]/) && password.match(/[0-9]/) && password.match(/[^\w]/)) {
                 strength = 'Forte';
+                color = 'green';
             } else {
                 strength = 'Média';
+                color = 'orange';
             }
-            strengthDisplay.textContent = `Força da senha: ${strength}`;
+
+            // Atualiza o conteúdo do elemento de força da senha
+            strengthDisplay.innerHTML = `Força da senha: <span style="color: ${color};">${strength}</span>`;
         }
     </script>
 </body>
