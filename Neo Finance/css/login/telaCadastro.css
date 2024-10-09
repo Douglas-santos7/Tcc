@@ -63,7 +63,6 @@ body {
 
 .logo-container {
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .logo-container img {
@@ -82,7 +81,6 @@ body {
   text-align: center;
   font-size: 24px;
   color: #333;
-  margin-bottom: 20px;
   font-family: "Kodchasan", sans-serif; /* Adiciona a fonte Kodchasan */
 }
 
@@ -92,6 +90,14 @@ body {
   position: relative;
   margin-bottom: 20px;
 }
+.forca--senha {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: flex-start;
+  margin: -10px 0px 10px;
+}
+
 
 .field input {
   width: 100%;
@@ -151,8 +157,11 @@ body {
 /* ------------------------------------ */
 /* Botão de registro */
 .login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 50%;
-  margin-left: 70px;
+  margin: auto;
   padding: 10px;
   background-color: #003617;
   color: white;
@@ -160,7 +169,7 @@ body {
   border-radius: 30px;
   cursor: pointer;
   font-size: 16px;
-  margin-bottom: 10px;
+  
 }
 
 /* ------------------------------------ */
@@ -182,7 +191,7 @@ section a:hover {
 /* ------------------------------------ */
 /* Ajustes na seção "Já Registrado?" */
 .bottom {
-  margin-top: 4px;
+  margin-top: 20px;
 }
 
 .bottom div {

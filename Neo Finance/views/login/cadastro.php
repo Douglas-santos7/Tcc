@@ -102,12 +102,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
                     <video src="../../assets/img/carrosel--logjn/Iphon.mp4" loop muted autoplay></video>
                 </div>
-                <div class="carousel-dots">
+                <!-- <div class="carousel-dots">
                     <span class="dot" onclick="currentSlide(1)"></span>
                     <span class="dot" onclick="currentSlide(2)"></span>
                     <span class="dot" onclick="currentSlide(3)"></span>
                     <span class="dot" onclick="currentSlide(4)"></span>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="form-container">
@@ -134,7 +134,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label for="signup-pass">Senha</label>
                         <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('signup-pass', this)"></i>
                         <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="forca--senha">
                         <span id="password-strength"></span> <!-- Exibir força da senha -->
+
                     </div>
                     <div class="field">
                         <input type="password" id="confirm-pass" name="confirm_password" required placeholder=" " autocomplete="off">
@@ -198,6 +201,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+        setInterval(() => {
+            showSlides(slideIndex += 1);
+        }, 10000);
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            const slides = document.querySelectorAll('.carousel-images img, .carousel-images video');
+            const dots = document.querySelectorAll('.dot');
+
+            if (n > slides.length) {
+                slideIndex = 1;
+            }
+            if (n < 1) {
+                slideIndex = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                slide.style.display = (index + 1 === slideIndex) ? 'block' : 'none';
+            });
+
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === slideIndex);
+            });
+        }
+
         function closeThankYouPopup() {
             document.getElementById('thankYouPopup').style.display = 'none';
             window.location.href = './login.php'; // Redirecionar para o login após fechar
@@ -246,7 +279,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 color = 'orange';
             }
 
-            // Atualiza o conteúdo do elemento de força da senha
             strengthDisplay.innerHTML = `Força da senha: <span style="color: ${color};">${strength}</span>`;
         }
     </script>

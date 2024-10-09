@@ -137,12 +137,12 @@
                         <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
                         <video src="../../assets/img/carrosel--logjn/Iphon.mp4" loop muted autoplay></video>
                     </div>
-                    <div class="carousel-dots">
+                    <!-- <div class="carousel-dots">
                         <span class="dot" onclick="currentSlide(1)"></span>
                         <span class="dot" onclick="currentSlide(2)"></span>
                         <span class="dot" onclick="currentSlide(3)"></span>
                         <span class="dot" onclick="currentSlide(4)"></span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
