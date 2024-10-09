@@ -494,13 +494,14 @@ body {
 }
 
 .categoria--historico {
-  display: block;
-  color: #003115;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
 }
 
 .nome--historico {
-  font-size: 1.1rem;
+  display: block;
+  color: #003115;
+  font-size: 1.4rem;
+ 
 }
 
 /* Estilização da segunda parte das informações */

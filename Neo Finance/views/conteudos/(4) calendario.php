@@ -94,6 +94,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
                         <span class="categoria--1"><?php echo calcularDiasRestantes($vencimento['data_vencimento']); ?></span>
                         <span class="categoria--2"><?php echo $vencimento['categoria']; ?></span>
                         <span class="categoria--3"><?php echo $vencimento['status']; ?></span>
+                        <span class="categoria--3"><?php echo $vencimento['status']; ?></span>
                       </div>
                       <div class="descricao--v">
                         <span><?php echo $vencimento['descricao']; ?></span>
