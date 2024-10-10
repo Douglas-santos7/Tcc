@@ -388,8 +388,7 @@ section a:hover {
 
 .thank-you-popup button {
   width: 50%;
-  margin-left: -50px;
-  margin-top: 30px;
+  margin: 30px auto;
   padding: 10px;
   background-color: #003617;
   color: white;
