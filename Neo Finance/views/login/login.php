@@ -2,14 +2,17 @@
 session_start();
 include '../../config/database/conexao.php';
 
+// Verifica se há erro de conexão com o banco de dados
 if ($conn->connect_error) {
     die("Erro de conexão: " . $conn->connect_error);
 }
 
+// Inicializa a contagem de tentativas de login
 if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['login_attempts'] = 0;
 }
 
+// Verifica se o usuário está lembrado (cookie) e não está logado
 if (isset($_COOKIE['remember_token']) && !isset($_SESSION['logged_in'])) {
     $token = $_COOKIE['remember_token'];
     $stmt = $conn->prepare("SELECT * FROM users WHERE remember_token = ?");
@@ -17,6 +20,7 @@ if (isset($_COOKIE['remember_token']) && !isset($_SESSION['logged_in'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Se o token for válido, loga o usuário
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $_SESSION['logged_in'] = true;
@@ -27,6 +31,7 @@ if (isset($_COOKIE['remember_token']) && !isset($_SESSION['logged_in'])) {
     }
 }
 
+// Processa o formulário de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -36,16 +41,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Verifica se o email existe no banco de dados
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $stored_password_hash = $user['password_hash'];
 
+        // Verifica se a senha está correta
         if (password_verify($password, $stored_password_hash)) {
             $_SESSION['logged_in'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['login_attempts'] = 0;
 
+            // Define o cookie de lembrar-me, se selecionado
             if (isset($_POST['remember_me'])) {
                 $token = bin2hex(random_bytes(32));
                 $stmt = $conn->prepare("UPDATE users SET remember_token = ? WHERE id = ?");
@@ -77,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
+// Define o valor do email se estiver armazenado no cookie
 $email_value = isset($_COOKIE['user_email']) ? htmlspecialchars($_COOKIE['user_email']) : '';
 $conn->close();
 ?>
@@ -121,6 +130,7 @@ $conn->close();
 
                 <div class="message-container">
                     <?php
+                    // Exibe mensagens de erro de login
                     if (isset($_SESSION['login_message'])) {
                         echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
                         unset($_SESSION['login_message']);
@@ -196,6 +206,7 @@ $conn->close();
             initialVideo.play();
         }
 
+        // Função para alternar a visibilidade da senha
         function togglePasswordVisibility(inputId, eyeIcon) {
             const inputField = document.getElementById(inputId);
             const isPassword = inputField.type === 'password';

@@ -22,7 +22,7 @@ body {
   display: flex;
   width: 80%;
   max-width: 1200px;
-  max-height: 800px; /* Ajuste a altura máxima */
+  max-height: 800px;
   min-height: 680px;
   background-color: white;
   border-radius: 10px;
@@ -35,13 +35,13 @@ body {
 .image-container {
   flex: 1;
   background-color: #004d40;
-  max-height: 100%; /* Limita a altura */
-  overflow: hidden; /* Esconde o excesso */
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .swiper-container {
   width: 100%;
-  height: 100%; /* Limita a altura do carrossel */
+  height: 100%;
 }
 
 .swiper-slide {
@@ -235,12 +235,13 @@ section a:hover {
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
 .message-container {
-  margin-bottom: 40px; /* Ajuste a margem inferior se necessário */
+  margin-bottom: 40px;
 }
 
 .message {
-  margin-top: 0; /* Remove a margem superior se necessário */
+  margin-top: 0;
 }
 
 /* ------------------------------------ */

@@ -263,8 +263,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             strengthText.innerHTML = `Força da senha: <span style="color: ${color}; font-weight: bold;">${strength}</span>`;
         }
 
-
-
         function closeThankYouPopup() {
             document.getElementById('thankYouPopup').style.display = 'none';
             window.location.href = "login.php"; // Redireciona para a página de login após fechar o pop-up
