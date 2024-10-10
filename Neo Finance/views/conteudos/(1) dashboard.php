@@ -25,7 +25,6 @@ $total = $receitas + $despesas;
 $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura em pixels
 $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura em pixels
 
-
 // Calcular Balanço Total
 $balanco = $receitas - $despesas;
 
@@ -34,12 +33,12 @@ $queryHistorico = "SELECT tipo, nome, valor, data FROM transacoes WHERE usuario_
 $resultHistorico = mysqli_query($conn, $queryHistorico);
 
 // Consultar o próximo vencimento a partir de hoje
-$queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria 
-                     FROM vencimentos 
-                     WHERE usuario_id = $userId 
-                     AND status = 'Pendente' 
-                     AND data_vencimento >= CURDATE() 
-                     ORDER BY data_vencimento ASC 
+$queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria
+                     FROM vencimentos
+                     WHERE usuario_id = $userId
+                     AND status = 'Pendente'
+                     AND data_vencimento >= CURDATE()
+                     ORDER BY data_vencimento ASC
                      LIMIT 1";
 $resultVencimentos = mysqli_query($conn, $queryVencimentos);
 
@@ -81,10 +80,6 @@ function mesEmPortugues($data)
   return $meses[(int) date('m', strtotime($data))];
 }
 
-/* ======================
-  SELECT CATEGORIAS
-=========================*/
-
 // Consultando para selecionar todas as categorias
 $sql = "SELECT id, nome FROM categorias";
 $result = $conn->query($sql);
@@ -103,13 +98,7 @@ if ($result->num_rows > 0) {
   $options .= '<option value="">Nenhuma categoria encontrada</option>';
 }
 
-/* =================================
-Verifica se o formulário foi enviado
-====================================*/
-/* =================================
-Verifica se o formulário foi enviado
-====================================*/
-
+// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $nome = mysqli_real_escape_string($conn, $_POST['nome']);
   $valor = mysqli_real_escape_string($conn, $_POST['valor']);
@@ -126,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   mysqli_stmt_close($stmtIcone);
 
   // Insere os dados na tabela transacoes
-  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone) 
+  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
           VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')"; // Incluindo icone
 
   if (mysqli_query($conn, $sql)) {
@@ -138,17 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   }
 }
 
-
-/* ============ 
-   Consultar histórico recente de transações 
-===============*/
-
+// Consultar histórico recente de transações
 $queryHistorico = "
-    SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone 
+    SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone
     FROM transacoes t
     JOIN categorias c ON t.categoria_id = c.id
     WHERE t.usuario_id = ?
-    ORDER BY t.data DESC 
+    ORDER BY t.data DESC
     LIMIT 5";
 
 // Preparando a consulta
@@ -196,13 +181,7 @@ if (mysqli_num_rows($resultHistorico) > 0) {
 // Fechando a declaração
 mysqli_stmt_close($stmt);
 
-
-
-
-
-/* =============
-Lógica Mensagem saudação
-================*/
+// Lógica Mensagem saudação
 date_default_timezone_set('America/Sao_Paulo');
 
 // Obter a hora atual
@@ -238,7 +217,6 @@ $conn->close();
     <header class="perfil">
       <div class="usuario">
         <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
-
         <h1>Olá, <?php echo $saudacao . ' ' . $_SESSION['username']; ?>!</h1>
       </div>
       <div class="notificacao--usuario">
@@ -282,7 +260,6 @@ $conn->close();
           <div class="botao--adicionar">
             <img id="btn--abrir--popup" src="../../assets/icons/botao--adicionar.svg" alt="Adicionar" />
           </div>
-
         </div>
       </div>
       <!-- Fim Card Balanço Total -->
@@ -296,7 +273,7 @@ $conn->close();
         <!-- Histórico de Transações -->
         <div class="info--historico">
           <ul id="historicoList">
-            <?php echo $historicoItems; // Itens do histórico serão exibidos aqui 
+            <?php echo $historicoItems; // Itens do histórico serão exibidos aqui
             ?>
           </ul>
         </div>
@@ -304,17 +281,14 @@ $conn->close();
       </div>
       <!-- Fim Histórico Recente -->
 
-
-
-
       <!-- Card Receitas x Despesas -->
       <div class="card--receitasXdespesas">
         <!-- Lado Esquerdo do Card -->
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
           <div class="grafico--receitasXdespesas">
-            <div class="grafico--receitas" style="width: <?php echo $proporcaoReceitas; ?>px;"></div>
-            <div class="grafico--despesas" style="width: <?php echo $proporcaoDespesas; ?>px;"></div>
+            <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
+            <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
           </div>
         </div>
         <!-- Informações e Filtro -->
@@ -350,7 +324,6 @@ $conn->close();
         </div>
       </div>
 
-
       <div class="card--vencimentos">
         <div class="header--card-v">
           <div class="titulo--header-v">
@@ -373,8 +346,6 @@ $conn->close();
       </div>
       <!-- Fim Card Próximos Vencimentos -->
 
-
-
       <!-- Card Lembretes -->
       <div class="card--lembretes">
         <div class="header--card-l">
@@ -396,7 +367,6 @@ $conn->close();
     </div>
   </div>
   <!-- Fim Conteúdo -->
-
 
   <div class="popup-container" id="popup-container" style="display: none;">
     <div class="popup">
@@ -485,9 +455,6 @@ $conn->close();
     });
   </script>
 
-
-
-
   <script>
     // Captura o novo botão de abrir popup com o ícone
     const openPopupIcon = document.getElementById('btn--abrir--popup');
@@ -510,6 +477,20 @@ $conn->close();
         popupContainer.style.display = 'none'; // Esconder o popup
       }
     });
+
+    window.onload = function() {
+      // Seleciona os elementos de receitas e despesas
+      var receitas = document.querySelector('.grafico--receitas');
+      var despesas = document.querySelector('.grafico--despesas');
+
+      // Obtém o valor da largura a partir dos atributos de dados
+      var larguraReceitas = receitas.getAttribute('data-largura');
+      var larguraDespesas = despesas.getAttribute('data-largura');
+
+      // Define a largura final, ativando a animação
+      receitas.style.width = larguraReceitas + 'px';
+      despesas.style.width = larguraDespesas + 'px';
+    };
   </script>
 
 </body>

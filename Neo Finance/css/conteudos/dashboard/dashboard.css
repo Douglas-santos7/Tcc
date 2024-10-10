@@ -251,18 +251,30 @@ body {
   margin-bottom: 50px;
 }
 
-.grafico--receitas {
-  max-width: 800px;
+.grafico--receitas,
+.grafico--despesas {
   height: 70px;
-  background: var(--cor-secundaria);
+  width: 0; /* Inicia com largura 0 para permitir a animação */
   border-radius: 20px;
+  transition: width 1s ease-in-out; /* Transição suave para a largura */
+}
+
+.grafico--receitas {
+  background: var(--cor-secundaria);
 }
 
 .grafico--despesas {
-  max-width: 800px;
-  height: 70px;
   background-color: red;
-  border-radius: 20px;
+}
+@keyframes expandirGrafico {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
 }
 
 /* Informações e Filtro */
@@ -501,7 +513,6 @@ body {
   display: block;
   color: #003115;
   font-size: 1.4rem;
- 
 }
 
 /* Estilização da segunda parte das informações */
