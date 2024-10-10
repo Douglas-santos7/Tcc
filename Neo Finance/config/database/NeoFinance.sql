@@ -85,6 +85,7 @@ CREATE TABLE historico_transacoes (
     FOREIGN KEY (categoria_id) REFERENCES categorias (id) ON DELETE CASCADE
 );
 
+-- Criação da tabela de vencimentos
 CREATE TABLE vencimentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,

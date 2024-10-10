@@ -10,7 +10,7 @@ $mesSelecionado = isset($_POST['mes']) ? $_POST['mes'] : date('m');
 if (isset($_POST['adicionarVencimento'])) {
   $descricao = $_POST['descricao'];
   $data_vencimento = $_POST['data_vencimento'];
-  $valor = str_replace('.', '', $_POST['valor']); 
+  $valor = str_replace('.', '', $_POST['valor']);
   $valor = str_replace(',', '.', $valor);
   $categoria = $_POST['categoria'];
   $vencimentoAdicionado = adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $conn);
@@ -20,7 +20,7 @@ if (isset($_POST['adicionarVencimento'])) {
 $vencimentos = buscarVencimentos($mesSelecionado, $conn);
 
 // Busca as categorias do usuário
-$usuario_id = $_SESSION['user_id']; 
+$usuario_id = $_SESSION['user_id'];
 $categorias = buscarCategorias($usuario_id, $conn);
 ?>
 
@@ -178,7 +178,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
         const dataInput = document.getElementById('data_vencimento');
         if (valorInput.value < 0) {
           alert("O valor não pode ser negativo.");
-          return false; 
+          return false;
         }
         const dataSelecionada = new Date(dataInput.value);
         const hoje = new Date();
@@ -186,8 +186,8 @@ $categorias = buscarCategorias($usuario_id, $conn);
         if (dataSelecionada < hoje) {
           document.getElementById('modalConfirmacao').style.display = 'flex';
           return false;
-        } 
-        return true; 
+        }
+        return true;
       }
 
       // Função para formatar o valor do input
@@ -198,7 +198,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
       }
 
       // Adiciona o evento de clique no botão de OK do modal de confirmação
-      document.getElementById("btn-ok").onclick = function () {
+      document.getElementById("btn-ok").onclick = function() {
         document.getElementById('modalConfirmacao').style.display = 'none';
       }
 
