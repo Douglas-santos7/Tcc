@@ -11,6 +11,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 $userId = $_SESSION['user_id']; // ID do usuário logado
 
+/*=================================
+INICIO - FUNÇÕES DO BALANÇO TOTAL
+===================================*/
 // Consultar receitas e despesas
 $queryReceitas = "SELECT SUM(valor) AS totalReceitas FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId";
 $queryDespesas = "SELECT SUM(valor) AS totalDespesas FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId";
@@ -28,10 +31,13 @@ $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura e
 // Calcular Balanço Total
 $balanco = $receitas - $despesas;
 
-// Consultar os 5 últimos lançamentos
-$queryHistorico = "SELECT tipo, nome, valor, data FROM transacoes WHERE usuario_id = $userId ORDER BY data DESC LIMIT 5";
-$resultHistorico = mysqli_query($conn, $queryHistorico);
+/*=================================
+FIM - FUNÇÕES DO BALANÇO TOTAL
+===================================*/
 
+/*=================================
+INICIO - LÓGICA VENCIMENTO
+===================================*/
 // Consultar o próximo vencimento a partir de hoje
 $queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria
                      FROM vencimentos
@@ -60,6 +66,14 @@ if ($vencimento) {
   $categoria = "";
 }
 
+/*=================================
+FIM- LÓGICA CALENDÁRIO
+===================================*/
+
+
+/*=================================
+INICIO - LÓGICA CALENDÁRIO
+===================================*/
 // Função para traduzir o mês para português
 function mesEmPortugues($data)
 {
@@ -79,10 +93,14 @@ function mesEmPortugues($data)
   ];
   return $meses[(int) date('m', strtotime($data))];
 }
+/*=================================
+FIM - LÓGICA CALENDÁRIO
+===================================*/
 
 
-
-// Supondo que você já tenha uma conexão com o banco de dados estabelecida
+/*=================
+INICIO - SELECIONAR CATEGORIAS
+===================*/
 $sql = "SELECT id, nome, icone FROM categorias"; // Seleciona id, nome e icone
 $result = $conn->query($sql);
 
@@ -99,10 +117,9 @@ if ($result->num_rows > 0) {
     // Caso não existam categorias, o array será vazio
     $categorias = null; // Ou pode deixar como [] para manter a consistência
 }
-
-
-// Agora $categorias será sempre um array, mesmo que vazio
-
+/*=================
+FIM - SELECIONAR CATEGORIAS
+===================*/
 
 /*======================
 ENVIO DO FORMULARIOS COM OS DADOS P/ BANCO
@@ -123,10 +140,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   mysqli_stmt_fetch($stmtIcone);
   mysqli_stmt_close($stmtIcone);
 
-  // Insere os dados na tabela transacoes
-  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
-          VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')"; // Incluindo icone
 
+  /*======================
+  INICIO - ENVIO DE DADOS
+  ========================*/
+
+  // Formata o valores 'quebrados' corretamente
+  $valor = str_replace(',', '.', $valor); // Converte a vírgula para ponto
+
+  // Insere os dados na tabela 'transacoes'
+  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
+          VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')";
+
+  //Atualiza a página após inserção
   if (mysqli_query($conn, $sql)) {
     // Redireciona para a mesma página após a inserção
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -135,7 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
   }
 }
+ /*======================
+  FIM - ENVIO DE DADOS
+  ========================*/
 
+
+ /*======================
+  INICIO - CONSULTANDO HISTÓRICO
+  ========================*/
 // Consultar histórico recente de transações
 $queryHistorico = "
     SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone
@@ -190,6 +223,14 @@ if (mysqli_num_rows($resultHistorico) > 0) {
 // Fechando a declaração
 mysqli_stmt_close($stmt);
 
+ /*======================
+  FIM - CONSULTA HISTÓRICO
+  ========================*/
+
+   /*======================
+  INICIO - LOGICA MENSAGEM DE SAUDAÇÃO
+  ========================*/
+
 // Lógica Mensagem saudação
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -204,6 +245,10 @@ if ($hora >= 5 && $hora < 12) {
 } else {
   $saudacao = "Boa noite";
 }
+
+ /*======================
+  FIM - LOGICA MENSAGEM DE SAUDAÇÃO
+  ========================*/
 
 // Fecha a conexão
 $conn->close();
@@ -349,7 +394,6 @@ $conn->close();
               <span><?php echo $descricao; ?></span>
             </div>
           </div>
-          <div class="linha--vertical-v"></div>
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
@@ -388,7 +432,7 @@ $conn->close();
         <div id="suggestions" class="suggestions-box"></div>
 
         <label for="valor">Valor:</label>
-        <input type="number" name="valor" required>
+        <input type="text" id="valor" name="valor" required placeholder="0,00">
 
         <!-- Botão que abrirá o popup -->
         <label for="categoria">Categoria:</label>
@@ -438,6 +482,31 @@ $conn->close();
   </div>
   <!-- FIM POP-UP SELECT DE CATEGORIAS -->
 
+  <script>
+      function formatarMoeda(valor) {
+            valor = valor.replace(/\D/g, ""); // Remove qualquer caractere que não seja número
+            valor = (valor / 100).toFixed(2) + ""; // Divide por 100 para tratar centavos
+            valor = valor.replace(".", ","); // Substitui ponto por vírgula (para separação decimal)
+            valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona os pontos de milhares
+            return valor;
+        }
+
+        // Evento para formatar o valor enquanto o usuário digita
+        document.getElementById('valor').addEventListener('input', function() {
+            let valorAtual = this.value;
+
+            // Para evitar travar o cursor, aplicamos a formatação somente após o foco sair
+            this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
+        });
+
+        // Formatar o valor ao perder o foco (quando o usuário sai do campo)
+        document.getElementById('valor').addEventListener('blur', function() {
+            let valorAtual = this.value;
+            if (valorAtual !== "") {
+                this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
+            }
+        });
+  </script>
 
   <script>
     /*======================
