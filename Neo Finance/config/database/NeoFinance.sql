@@ -40,6 +40,43 @@ CREATE TABLE categorias (
     UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas
 );
 
+
+-- Comando pra deletar categorias já existentes
+DELETE FROM categorias;
+
+-- Inserção de categorias predefinidas para todos os usuários
+INSERT INTO categorias (usuario_id, nome, icone)
+SELECT u.id, tmp.nome, tmp.icone
+FROM users u  
+JOIN (
+    SELECT 'Moradia' AS nome, 'fi-sr-home' AS icone UNION ALL
+    SELECT 'Beleza', 'fi-br-scissors' UNION ALL
+    SELECT 'Telefone', 'fi-br-smartphone' UNION ALL
+    SELECT 'Fatura', 'fi-sr-file-invoice-dollar' UNION ALL
+    SELECT 'Transferência', 'fi-br-money-coin-transfer' UNION ALL
+    SELECT 'Viagem Aérea', 'fi-ss-plane-alt' UNION ALL
+    SELECT 'Viagem de Ônibus', 'fi-ss-bus-alt' UNION ALL
+    SELECT 'Ferramenta', 'fi-ss-wrench-alt' UNION ALL
+    SELECT 'Mecânica', 'fi-ss-car-mechanic' UNION ALL
+    SELECT 'Supermercado', 'fi-sr-shopping-cart' UNION ALL
+    SELECT 'Carteira', 'fi-sr-wallet' UNION ALL
+    SELECT 'Videogame', 'fi-sr-gamepad' UNION ALL
+    SELECT 'Fast Food', 'fi-ss-hotdog' UNION ALL
+    SELECT 'Médico', 'fi-sr-user-md' UNION ALL
+    SELECT 'Animal - Cão', 'fi-sr-dog-leashed' UNION ALL
+    SELECT 'Animal - Brinquedos', 'fi-sr-bone' UNION ALL
+    SELECT 'Animal - Gato', 'fi-sr-cat' UNION ALL
+    SELECT 'Computador', 'fi-sr-devices' UNION ALL
+    SELECT 'Livro', 'fi-ss-book-alt'
+) AS tmp
+WHERE NOT EXISTS (
+    SELECT 1 FROM categorias c WHERE c.usuario_id = u.id AND c.nome = tmp.nome
+);
+
+SELECT *
+FROM categorias;
+
+
 -- Criação da tabela de transações
 CREATE TABLE transacoes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -96,3 +133,5 @@ CREATE TABLE vencimentos (
     status VARCHAR(20),
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
 );
+
+
