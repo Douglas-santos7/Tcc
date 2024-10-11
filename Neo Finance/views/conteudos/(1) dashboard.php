@@ -80,24 +80,31 @@ function mesEmPortugues($data)
   return $meses[(int) date('m', strtotime($data))];
 }
 
-// Consultando para selecionar todas as categorias
-$sql = "SELECT id, nome FROM categorias";
+/*
+CATEGORIAS INPUT SELECT
+Consultando para selecionar todas as categorias
+*/
+$sql = "SELECT id, nome, icone FROM categorias"; // Adiciona 'icone' à consulta
 $result = $conn->query($sql);
 
-// Criando uma variável para armazenar as opções
-$options = "";
+// Criando um array para armazenar as categorias
+$categorias = [];
 
 // Verifica se encontrou resultados
 if ($result->num_rows > 0) {
-  // Itera pelos resultados e gera as opções
+  // Itera pelos resultados e armazena as categorias em um array
   while ($row = $result->fetch_assoc()) {
-    $options .= '<option value="' . $row['id'] . '">' . htmlspecialchars($row['nome']) . '</option>';
+    $categorias[] = $row;
   }
 } else {
   // Caso não existam categorias
-  $options .= '<option value="">Nenhuma categoria encontrada</option>';
+  $categorias = null; // Define como null para evitar o erro
 }
 
+
+/*======================
+ENVIO DO FORMULARIOS COM OS DADOS P/ BANCO
+========================*/
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $nome = mysqli_real_escape_string($conn, $_POST['nome']);
@@ -381,10 +388,12 @@ $conn->close();
         <label for="valor">Valor:</label>
         <input type="number" name="valor" required>
 
+        <!-- Botão que abrirá o popup -->
         <label for="categoria">Categoria:</label>
-        <select name="categoria" required>
-          <?php echo $options; ?>
-        </select>
+        <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
+
+        <!-- Input oculto para armazenar o ID da categoria selecionada -->
+        <input type="hidden" name="categoria" id="categoria-id" required>
 
         <label for="tipo">Tipo:</label>
         <select name="tipo" required>
@@ -396,32 +405,105 @@ $conn->close();
       </form>
     </div>
   </div>
-   <!-- FIM PopUp Adição de Item -->      
+  <!-- FIM PopUp Adição de Item -->
+
+  <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
+  <!-- Popup que será exibido ao clicar no botão -->
+  <div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
+    <div class="popup-categorias-conteudo">
+      <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
+      <h2 class="categoria-titulo">Selecionar uma categoria</h2>
+      <!-- LISTAGEM DAS CATEGORIAS -->
+      <ul id="lista-categorias" class="lista-categorias">
+        <?php
+        foreach ($categorias as $categoria) { // Buscando * de categorias
+          $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
+          //Retornando 
+          echo '<li> 
+            <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
+              <i class="' . $iconeCategoria . ' categoria-icon"></i> <!-- Adiciona o ícone -->
+              ' . htmlspecialchars($categoria['nome']) . '
+            </button>
+          </li>';
+        }
+        ?>
+      </ul>
+    </div>
+  </div>
+  <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
+
 
   <script>
+    /*======================
+    Script | Select categorias
+    ========================*/
+    // Referências aos elementos
+    const btnSelecionarCategoria = document.getElementById('btn-selecionar-categoria');
+    const popupCategorias = document.getElementById('popup-categorias-unico');
+    const btnFecharPopup = document.getElementById('btn-fechar-popup-categorias');
+    const categoriaItems = document.querySelectorAll('.categoria-item-unico');
+    const categoriaInput = document.getElementById('categoria-id');
+
+    // Abrir o popup quando o botão for clicado
+    btnSelecionarCategoria.addEventListener('click', function () {
+      popupCategorias.style.display = 'flex';
+    });
+
+    // Fechar o popup ao clicar no botão de fechar
+    btnFecharPopup.addEventListener('click', function () {
+      popupCategorias.style.display = 'none';
+    });
+
+    // Fechar o popup ao clicar fora do conteúdo
+    window.addEventListener('click', function (event) {
+      if (event.target === popupCategorias) {
+        popupCategorias.style.display = 'none';
+      }
+    });
+
+    // Selecionar uma categoria e fechar o popup
+    categoriaItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        const categoriaId = this.getAttribute('data-id');
+        const categoriaNome = this.innerText;
+
+        // Atualiza o texto do botão e o input escondido
+        btnSelecionarCategoria.innerText = 'Categoria: ' + categoriaNome;
+        categoriaInput.value = categoriaId;
+
+        // Fecha o popup
+        popupCategorias.style.display = 'none';
+      });
+    });
+  </script>
+
+  <script>
+    /*======================
+    Script | Btn PopUp Principal
+    ========================*/
     // Captura o novo botão de abrir popup com o ícone
     const openPopupIcon = document.getElementById('btn--abrir--popup');
     const closePopupBtn = document.getElementById('close-btn');
     const popupContainer = document.getElementById('popup-container');
 
     // Abrir o popup ao clicar no ícone de adicionar
-    openPopupIcon.addEventListener('click', function() {
+    openPopupIcon.addEventListener('click', function () {
       popupContainer.style.display = 'flex'; // Mostrar o popup
     });
 
     // Fechar o popup ao clicar no botão fechar
-    closePopupBtn.addEventListener('click', function() {
+    closePopupBtn.addEventListener('click', function () {
       popupContainer.style.display = 'none'; // Esconder o popup
     });
 
     // Fechar o popup ao clicar fora dele
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', function (event) {
       if (event.target === popupContainer) {
         popupContainer.style.display = 'none'; // Esconder o popup
       }
     });
 
-    window.onload = function() {
+    window.onload = function () {
       // Seleciona os elementos de receitas e despesas
       var receitas = document.querySelector('.grafico--receitas');
       var despesas = document.querySelector('.grafico--despesas');
