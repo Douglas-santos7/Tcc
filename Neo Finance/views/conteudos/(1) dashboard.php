@@ -109,13 +109,13 @@ $categorias = [];
 
 // Verifica se encontrou resultados
 if ($result->num_rows > 0) {
-    // Itera pelos resultados e armazena as categorias em um array
-    while ($row = $result->fetch_assoc()) {
-        $categorias[] = $row;
-    }
+  // Itera pelos resultados e armazena as categorias em um array
+  while ($row = $result->fetch_assoc()) {
+    $categorias[] = $row;
+  }
 } else {
-    // Caso não existam categorias, o array será vazio
-    $categorias = null; // Ou pode deixar como [] para manter a consistência
+  // Caso não existam categorias, o array será vazio
+  $categorias = null; // Ou pode deixar como [] para manter a consistência
 }
 /*=================
 FIM - SELECIONAR CATEGORIAS
@@ -161,14 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
   }
 }
- /*======================
-  FIM - ENVIO DE DADOS
-  ========================*/
+/*======================
+ FIM - ENVIO DE DADOS
+ ========================*/
 
 
- /*======================
-  INICIO - CONSULTANDO HISTÓRICO
-  ========================*/
+/*======================
+ INICIO - CONSULTANDO HISTÓRICO
+ ========================*/
 // Consultar histórico recente de transações
 $queryHistorico = "
     SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone
@@ -223,13 +223,13 @@ if (mysqli_num_rows($resultHistorico) > 0) {
 // Fechando a declaração
 mysqli_stmt_close($stmt);
 
- /*======================
-  FIM - CONSULTA HISTÓRICO
-  ========================*/
+/*======================
+ FIM - CONSULTA HISTÓRICO
+ ========================*/
 
-   /*======================
-  INICIO - LOGICA MENSAGEM DE SAUDAÇÃO
-  ========================*/
+/*======================
+INICIO - LOGICA MENSAGEM DE SAUDAÇÃO
+========================*/
 
 // Lógica Mensagem saudação
 date_default_timezone_set('America/Sao_Paulo');
@@ -246,9 +246,9 @@ if ($hora >= 5 && $hora < 12) {
   $saudacao = "Boa noite";
 }
 
- /*======================
-  FIM - LOGICA MENSAGEM DE SAUDAÇÃO
-  ========================*/
+/*======================
+ FIM - LOGICA MENSAGEM DE SAUDAÇÃO
+ ========================*/
 
 // Fecha a conexão
 $conn->close();
@@ -463,49 +463,50 @@ $conn->close();
       <ul id="lista-categorias" class="lista-categorias">
         <?php
         if (!empty($categorias)) {
-            foreach ($categorias as $categoria) {
-                $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
-                echo '<li> 
+          foreach ($categorias as $categoria) {
+            $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
+            echo '<li> 
                     <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
                         <i class="' . $iconeCategoria . ' categoria-icon"></i>
-                        ' . htmlspecialchars($categoria['nome']) . '
+                        <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
                     </button>
+
                 </li>';
-            }
+          }
         } else {
-            echo '<li>Nenhuma categoria disponível.</li>';
+          echo '<li>Nenhuma categoria disponível.</li>';
         }
         ?>
-    </ul>
+      </ul>
 
     </div>
   </div>
   <!-- FIM POP-UP SELECT DE CATEGORIAS -->
 
   <script>
-      function formatarMoeda(valor) {
-            valor = valor.replace(/\D/g, ""); // Remove qualquer caractere que não seja número
-            valor = (valor / 100).toFixed(2) + ""; // Divide por 100 para tratar centavos
-            valor = valor.replace(".", ","); // Substitui ponto por vírgula (para separação decimal)
-            valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona os pontos de milhares
-            return valor;
-        }
+    function formatarMoeda(valor) {
+      valor = valor.replace(/\D/g, ""); // Remove qualquer caractere que não seja número
+      valor = (valor / 100).toFixed(2) + ""; // Divide por 100 para tratar centavos
+      valor = valor.replace(".", ","); // Substitui ponto por vírgula (para separação decimal)
+      valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona os pontos de milhares
+      return valor;
+    }
 
-        // Evento para formatar o valor enquanto o usuário digita
-        document.getElementById('valor').addEventListener('input', function() {
-            let valorAtual = this.value;
+    // Evento para formatar o valor enquanto o usuário digita
+    document.getElementById('valor').addEventListener('input', function () {
+      let valorAtual = this.value;
 
-            // Para evitar travar o cursor, aplicamos a formatação somente após o foco sair
-            this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
-        });
+      // Para evitar travar o cursor, aplicamos a formatação somente após o foco sair
+      this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
+    });
 
-        // Formatar o valor ao perder o foco (quando o usuário sai do campo)
-        document.getElementById('valor').addEventListener('blur', function() {
-            let valorAtual = this.value;
-            if (valorAtual !== "") {
-                this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
-            }
-        });
+    // Formatar o valor ao perder o foco (quando o usuário sai do campo)
+    document.getElementById('valor').addEventListener('blur', function () {
+      let valorAtual = this.value;
+      if (valorAtual !== "") {
+        this.value = formatarMoeda(valorAtual.replace(/[^0-9]/g, ''));
+      }
+    });
   </script>
 
   <script>
