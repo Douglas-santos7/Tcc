@@ -12,9 +12,9 @@ $showPopup = false; // Variável para controle do pop-up
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitização dos dados de entrada
     $username = trim($_POST['username']);
-    $email = trim($_POST['email']); 
-    $password = $_POST['password']; 
-    $confirm_pass = $_POST['confirm_password']; 
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm_pass = $_POST['confirm_password'];
 
     // Verificação CSRF
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
@@ -88,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
     <link rel="stylesheet" href="../../css/login/telaCadastro.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Kodchasan&display=swap" rel="stylesheet">
 </head>
@@ -95,18 +96,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="main-container">
         <div class="image-container">
-            <div class="carousel">
-                <div class="carousel-images">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/2.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <video src="../../assets/img/carrosel--logjn/Iphon.mp4" loop muted autoplay></video>
-                </div>
-                <div class="carousel-dots">
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                    <span class="dot" onclick="currentSlide(4)"></span>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
+                    <div class="swiper-slide">
+                        <video src="../../assets/img/carrosel--logjn/Iphon.mp4" muted autoplay></video>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="signup-form">
                 <div class="title">CADASTRO</div>
                 <p class="cadastro-text">Seja bem-vindo à Neo finance, efetue o cadastro</p>
-                <form method="POST" action="cadastro.php"> 
+                <form method="POST" action="cadastro.php">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="field">
                         <input type="text" id="name" name="username" placeholder=" " required>
@@ -134,7 +134,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label for="signup-pass">Senha</label>
                         <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('signup-pass', this)"></i>
                         <i class="fa fa-lock"></i>
-                        <span id="password-strength"></span> <!-- Exibir força da senha -->
+                    </div>
+                    <div class="forca--senha">
+                        <span id="password-strength"></span>
                     </div>
                     <div class="field">
                         <input type="password" id="confirm-pass" name="confirm_password" required placeholder=" " autocomplete="off">
@@ -152,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="message">
                     <?php
-                    if (isset($_SESSION['signup_message'])) { 
+                    if (isset($_SESSION['signup_message'])) {
                         echo '<p style="color: red;">' . $_SESSION['signup_message'] . '</p>';
                         unset($_SESSION['signup_message']);
                     }
@@ -182,65 +184,96 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2>Termos e Condições</h2>
             <p>1. Aceitação dos Termos</p>
             <p>Ao acessar e usar o site <strong>Neo finance</strong>, você concorda em cumprir e estar sujeito a estes Termos e Condições. Se você não concordar com estes termos, não deve usar o Serviço.</p>
-
             <p>2. Descrição do Serviço</p>
             <p><strong>Neo finance</strong> oferece um serviço de controle de finanças pessoais e pode incluir outros serviços relacionados.</p>
-
             <p>3. Modificações</p>
             <p>Reservamo-nos o direito de modificar ou interromper o Serviço a qualquer momento, com ou sem aviso prévio.</p>
-
             <p>4. Limitação de Responsabilidade</p>
             <p>Não seremos responsáveis por quaisquer danos decorrentes do uso ou incapacidade de usar o Serviço.</p>
-
-            <p>5. Contato</p>
-            <p>Se você tiver alguma dúvida sobre os Termos, entre em contato conosco pelo e-mail: suporte@neofinance.com.</p>
+            <button onclick="closeModal()">Fechar</button>
         </div>
     </div>
 
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        function closeThankYouPopup() {
-            document.getElementById('thankYouPopup').style.display = 'none';
-            window.location.href = './login.php'; // Redirecionar para o login após fechar
+        // Inicialização do Swiper
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: false,
+            },
+            autoplay: {
+                delay: 5000,
+            },
+            on: {
+                slideChange: function() {
+                    // Pausar todos os vídeos
+                    const videos = document.querySelectorAll('.swiper-slide video');
+                    videos.forEach(video => {
+                        video.pause();
+                        video.currentTime = 0; // Reseta o vídeo
+                    });
+                    // Reproduzir o vídeo do slide ativo, se existir
+                    const activeSlide = this.slides[this.activeIndex].querySelector('video');
+                    if (activeSlide) {
+                        activeSlide.play();
+                    }
+                },
+            },
+        });
+
+        // Inicia a reprodução do vídeo no slide inicial, se houver
+        const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
+        if (initialVideo) {
+            initialVideo.play();
         }
 
-        // Função para abrir o modal de termos
-        document.getElementById('terms-link').onclick = function(event) {
-            event.preventDefault();
-            document.getElementById('termsModal').style.display = 'block';
-        };
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const iconClass = icon.classList.contains('fa-eye') ? 'fa-eye-slash' : 'fa-eye';
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle(iconClass);
+        }
 
-        // Função para fechar o modal
+        function checkPasswordStrength() {
+            const password = document.getElementById('signup-pass').value;
+            const strengthText = document.getElementById('password-strength');
+
+            // Se a senha estiver vazia, esconder a força da senha
+            if (password === '') {
+                strengthText.innerHTML = ''; // Limpa o texto
+                return; // Sai da função
+            }
+
+            let strength = 'Fraca';
+            let color = 'red'; // Cor padrão para "Fraca"
+
+            if (password.length >= 8) {
+                if (/[A-Z]/.test(password) && /[0-9]/.test(password) && /[^\w]/.test(password)) {
+                    strength = 'Forte';
+                    color = 'green'; // Cor para "Forte"
+                } else {
+                    strength = 'Média';
+                    color = 'orange'; // Cor para "Média"
+                }
+            }
+
+            strengthText.innerHTML = `Força da senha: <span style="color: ${color}; font-weight: bold;">${strength}</span>`;
+        }
+
+        function closeThankYouPopup() {
+            document.getElementById('thankYouPopup').style.display = 'none';
+            window.location.href = "login.php"; // Redireciona para a página de login após fechar o pop-up
+        }
+
         function closeModal() {
             document.getElementById('termsModal').style.display = 'none';
         }
 
-        // Função para alternar a visibilidade da senha
-        function togglePasswordVisibility(id, element) {
-            const input = document.getElementById(id);
-            if (input.type === 'password') {
-                input.type = 'text';
-                element.classList.remove('fa-eye');
-                element.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                element.classList.remove('fa-eye-slash');
-                element.classList.add('fa-eye');
-            }
-        }
-
-        // Função para verificar a força da senha
-        function checkPasswordStrength() {
-            const password = document.getElementById('signup-pass').value;
-            const strengthDisplay = document.getElementById('password-strength');
-            let strength = '';
-            if (password.length < 8) {
-                strength = 'Fraca';
-            } else if (password.match(/[A-Z]/) && password.match(/[0-9]/) && password.match(/[^\w]/)) {
-                strength = 'Forte';
-            } else {
-                strength = 'Média';
-            }
-            strengthDisplay.textContent = `Força da senha: ${strength}`;
+        document.getElementById('terms-link').onclick = function() {
+            document.getElementById('termsModal').style.display = 'block';
         }
     </script>
 </body>

@@ -10,17 +10,18 @@ $mesSelecionado = isset($_POST['mes']) ? $_POST['mes'] : date('m');
 if (isset($_POST['adicionarVencimento'])) {
   $descricao = $_POST['descricao'];
   $data_vencimento = $_POST['data_vencimento'];
-  $valor = $_POST['valor'];
+  $valor = str_replace('.', '', $_POST['valor']);
+  $valor = str_replace(',', '.', $valor);
   $categoria = $_POST['categoria'];
-
-  adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $conn);
+  $vencimentoAdicionado = adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $conn);
 }
 
 // Busca os vencimentos do mês selecionado
 $vencimentos = buscarVencimentos($mesSelecionado, $conn);
 
-// Busca as categorias do usuário (substitua 1 pelo ID do usuário logado)
-$categorias = buscarCategorias(1, $conn);
+// Busca as categorias do usuário
+$usuario_id = $_SESSION['user_id'];
+$categorias = buscarCategorias($usuario_id, $conn);
 ?>
 
 <!DOCTYPE html>
@@ -31,15 +32,10 @@ $categorias = buscarCategorias(1, $conn);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neo Finance - Calendário</title>
   <link rel="stylesheet" href="../../css/conteudos/calendario/calendario.css" />
-  <style>
-
-  </style>
 </head>
 
 <body>
-  <!-- Início da estrutura principal da página -->
   <div class="containter">
-    <!-- Início do Header -->
     <div class="container--header">
       <header class="banner">
         <div class="titulo--banner">
@@ -51,22 +47,15 @@ $categorias = buscarCategorias(1, $conn);
         </div>
       </header>
     </div>
-    <!-- Fim do Header -->
 
-
-
-    <!-- Início do Conteúdo Principal -->
     <div class="container--conteudo">
-      <!-- Botão de Adicionar -->
       <div class="adicionar--btn">
         <img src="../../assets/icons/add--icon.svg" alt="adicionar--btn" onclick="abrirModalAdicionar()" />
       </div>
 
-      <!-- Início dos Cards de Vencimentos -->
       <div class="cards--vencimentos">
         <div class="header--card-vencimentos">
           <span class="titulo--card">Próximas a pagar</span>
-          <!-- Filtro por Mês -->
           <div class="filtro--mes">
             <form method="POST">
               <select name="mes">
@@ -105,14 +94,13 @@ $categorias = buscarCategorias(1, $conn);
                         <span class="categoria--1"><?php echo calcularDiasRestantes($vencimento['data_vencimento']); ?></span>
                         <span class="categoria--2"><?php echo $vencimento['categoria']; ?></span>
                         <span class="categoria--3"><?php echo $vencimento['status']; ?></span>
+                        <span class="categoria--3"><?php echo $vencimento['status']; ?></span>
                       </div>
-
                       <div class="descricao--v">
                         <span><?php echo $vencimento['descricao']; ?></span>
                       </div>
                     </div>
                   </div>
-
                   <div class="lado--direito--card">
                     <div class="data--X--valor-v">
                       <div class="data--completa-v">
@@ -129,23 +117,20 @@ $categorias = buscarCategorias(1, $conn);
           </div>
         </div>
       </div>
-      <!-- Fim dos Cards de Vencimentos -->
     </div>
-    <!-- Fim do Conteúdo Principal -->
 
-    <!-- Modal para Adicionar Vencimento -->
     <div id="modalAdicionar" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModalAdicionar()">&times;</span>
+        <button id="fechar-modal" onclick="fecharModalAdicionar()">&times;</button>
         <h2>Adicionar Vencimento</h2>
         <form id="formAdicionar" method="POST" onsubmit="return validarFormulario(event)">
           <input type="text" name="descricao" placeholder="Descrição" required />
-          <input type="date" id="data_vencimento" name="data_vencimento" value="<?php echo date('Y-m-d'); ?>" required />
-          <input type="number" name="valor" placeholder="Valor" step="0.01" min="0" required />
+          <input type="date" id="data_vencimento" name="data_vencimento" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required />
+          <input type="text" name="valor" placeholder="Valor" required oninput="formatarValor(this)" />
           <select name="categoria" required>
             <option value="" disabled selected>Selecione uma Categoria</option>
             <?php foreach ($categorias as $categoria): ?>
-              <option value="<?php echo $categoria; ?>"><?php echo $categoria; ?></option>
+              <option value="<?php echo $categoria ?>"><?php echo $categoria ?></option>
             <?php endforeach; ?>
           </select>
           <button type="submit" name="adicionarVencimento">Adicionar Vencimento</button>
@@ -153,16 +138,23 @@ $categorias = buscarCategorias(1, $conn);
       </div>
     </div>
 
-    <!-- Modal de Confirmação -->
     <div id="modalConfirmacao" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModal()">&times;</span>
+        <span class="fechar--modal-confirmacao" onclick="fecharModal()">&times;</span>
         <h2>Aviso</h2>
         <p>Datas anteriores ao dia de hoje não são válidas, pois se referem a pagamentos que já deveriam ter sido feitos.</p>
         <button id="btn-ok">OK</button>
       </div>
     </div>
 
+    <div id="modalSucesso" class="modal">
+      <div class="modal-content">
+        <span class="fechar--modal" onclick="fecharModalSucesso()">&times;</span>
+        <h2>Sucesso!</h2>
+        <p>Vencimento adicionado com sucesso.</p>
+        <button id="btn-ok" onclick="fecharModalSucesso()">OK</button>
+      </div>
+    </div>
 
     <script>
       // Função para abrir o modal de adicionar vencimento
@@ -172,59 +164,50 @@ $categorias = buscarCategorias(1, $conn);
 
       // Função para fechar o modal de adicionar vencimento
       function fecharModalAdicionar() {
-        document.getElementById('modalAdicionar').style.display = 'none';
+        document.getElementById("modalAdicionar").style.display = "none";
       }
 
-      // Função para validar o formulário
+      // Função para fechar o modal de sucesso
+      function fecharModalSucesso() {
+        document.getElementById('modalSucesso').style.display = 'none';
+      }
+
+      // Função para validar o formulário antes do envio
       function validarFormulario(event) {
         const valorInput = document.querySelector('input[name="valor"]');
         const dataInput = document.getElementById('data_vencimento');
-
-        // Validação do valor
         if (valorInput.value < 0) {
           alert("O valor não pode ser negativo.");
-          return false; // Impede o envio do formulário
+          return false;
         }
-
-        // Validação da data
         const dataSelecionada = new Date(dataInput.value);
         const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0); // Zera horas para comparação
-
+        hoje.setHours(0, 0, 0, 0); // Zera as horas da data de hoje
         if (dataSelecionada < hoje) {
-          event.preventDefault(); // Impede o envio do formulário
-          abrirModal(); // Abre o modal de confirmação
-          return false; // Impede o envio do formulário
+          document.getElementById('modalConfirmacao').style.display = 'flex';
+          return false;
         }
-
-        return true; // Permite o envio do formulário
+        return true;
       }
 
-      // Função para abrir o modal de confirmação
-      function abrirModal() {
-        document.getElementById('modalConfirmacao').style.display = 'flex';
+      // Função para formatar o valor do input
+      function formatarValor(input) {
+        let valor = input.value.replace(/\D/g, '');
+        valor = (valor / 100).toFixed(2).replace('.', ',');
+        input.value = valor;
       }
 
-      // Função para fechar o modal
-      function fecharModal() {
+      // Adiciona o evento de clique no botão de OK do modal de confirmação
+      document.getElementById("btn-ok").onclick = function() {
         document.getElementById('modalConfirmacao').style.display = 'none';
       }
 
-      // Confirmar ação no modal
-      document.getElementById('btn-ok').onclick = function() {
-        document.getElementById('formAdicionar').submit(); // Envia o formulário
-        fecharModal(); // Fecha o modal de confirmação
-      };
-
-      // Fecha o modal ao clicar no 'x'
-      document.querySelectorAll('.close').forEach(item => {
-        item.onclick = function() {
-          fecharModal();
-        }
-      });
+      // Exibe o modal de sucesso se o vencimento for adicionado
+      <?php if (isset($vencimentoAdicionado) && $vencimentoAdicionado): ?>
+        document.getElementById('modalSucesso').style.display = 'flex';
+      <?php endif; ?>
     </script>
-
-
+  </div>
 </body>
 
 </html>

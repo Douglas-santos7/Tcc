@@ -23,7 +23,7 @@ body {
   width: 80%;
   max-width: 1200px;
   max-height: 800px;
-  min-height: 620px;
+  min-height: 680px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -35,21 +35,31 @@ body {
 .image-container {
   flex: 1;
   background-color: #004d40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  max-height: 100%;
+  overflow: hidden;
 }
 
-.image-container img {
-  max-width: 100%;
-  max-height: 100%;
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img,
+.image-container video {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
 /* ------------------------------------ */
 /* Formulário de Login */
 .form-container {
-  font-family: "Kodchasan";
   flex: 1;
   padding: 40px;
   display: flex;
@@ -68,7 +78,7 @@ body {
   text-align: center;
   font-size: 24px;
   color: #333;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 /* ------------------------------------ */
@@ -106,7 +116,7 @@ body {
 }
 
 .cadastro-text {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   margin-top: -10px;
   text-align: center;
 }
@@ -208,56 +218,6 @@ section a:hover {
 }
 
 /* ------------------------------------ */
-/* Carrossel */
-.carousel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.carousel-images {
-  display: flex;
-  transition: transform 0.5s ease;
-  height: 100%;
-}
-
-.carousel-images img,
-.carousel-images video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: none;
-}
-
-.carousel-images img:first-child,
-.carousel-images video:first-child {
-  display: block;
-}
-
-.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-}
-
-.dot {
-  height: 15px;
-  width: 15px;
-  margin: 0 5px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.dot.active {
-  background-color: #717171;
-}
-
-/* ------------------------------------ */
 /* Mensagens de Erro */
 .messages {
   margin: 10px 0;
@@ -275,13 +235,25 @@ section a:hover {
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
 .message-container {
-  margin-bottom: 40px; /* Ajuste a margem inferior se necessário */
+  margin-bottom: 40px;
+}
+
+
+.message-container {
+  margin: 20px 0; /* Espaço acima e abaixo da mensagem */
 }
 
 .message {
-  margin-top: 0; /* Remove a margem superior se necessário */
-  /* Outros estilos que você já definiu */
+  padding: 10px 15px; /* Espaço interno */
+  border-radius: 5px; /* Bordas arredondadas */
+  font-size: 16px; /* Tamanho da fonte */
+  color: #fff; /* Cor do texto */
+}
+
+.error {
+  background-color: #e74c3c; /* Cor de fundo vermelha */
 }
 
 /* ------------------------------------ */

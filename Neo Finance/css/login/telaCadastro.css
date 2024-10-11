@@ -1,8 +1,6 @@
 /* Importação da fonte Kodchasan */
 @import url("https://fonts.googleapis.com/css2?family=Kodchasan:wght@400&display=swap");
 
-/* ------------------------------------ */
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -10,9 +8,9 @@
 }
 
 /* ------------------------------------ */
-/* Estilos do body */
+/* Estilos Globais */
 body {
-  font-family: "Kodchasan", sans-serif; /* Adiciona a fonte Kodchasan */
+  font-family: "Kodchasan";
   background-color: #f4f4f4;
   display: flex;
   justify-content: center;
@@ -21,13 +19,13 @@ body {
 }
 
 /* ------------------------------------ */
-/* Container principal */
+/* Container Principal */
 .main-container {
   display: flex;
   width: 80%;
   max-width: 1200px;
-  max-height: 620px; /* Aumentado para 800px */
-  min-height: 600px;
+  max-height: 800px;
+  min-height: 680px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -35,18 +33,29 @@ body {
 }
 
 /* ------------------------------------ */
-/* Layout da imagem */
+/* Layout da Imagem */
 .image-container {
   flex: 1;
   background-color: #004d40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  max-height: 100%;
+  overflow: hidden;
 }
 
-.image-container img {
-  max-width: 100%;
-  max-height: 100%;
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img,
+.image-container video {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -63,7 +72,6 @@ body {
 
 .logo-container {
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .logo-container img {
@@ -82,8 +90,7 @@ body {
   text-align: center;
   font-size: 24px;
   color: #333;
-  margin-bottom: 20px;
-  font-family: "Kodchasan", sans-serif; /* Adiciona a fonte Kodchasan */
+  font-family: "Kodchasan", sans-serif;
 }
 
 /* ------------------------------------ */
@@ -91,6 +98,14 @@ body {
 .field {
   position: relative;
   margin-bottom: 20px;
+}
+
+.forca--senha {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: flex-start;
+  margin: -10px 0px 15px;
 }
 
 .field input {
@@ -119,6 +134,7 @@ body {
   font-size: 12px;
   color: #333;
 }
+
 .cadastro-text {
   margin-bottom: 20px;
   margin-top: -30px;
@@ -151,8 +167,11 @@ body {
 /* ------------------------------------ */
 /* Botão de registro */
 .login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 50%;
-  margin-left: 70px;
+  margin: auto;
   padding: 10px;
   background-color: #003617;
   color: white;
@@ -160,7 +179,6 @@ body {
   border-radius: 30px;
   cursor: pointer;
   font-size: 16px;
-  margin-bottom: 10px;
 }
 
 /* ------------------------------------ */
@@ -182,7 +200,7 @@ section a:hover {
 /* ------------------------------------ */
 /* Ajustes na seção "Já Registrado?" */
 .bottom {
-  margin-top: 4px;
+  margin-top: 20px;
 }
 
 .bottom div {
@@ -197,23 +215,6 @@ section a:hover {
 
 .bottom a:hover {
   color: #218838;
-}
-
-/* ------------------------------------ */
-/* Responsividade */
-@media (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .image-container {
-    display: none;
-  }
-
-  .form-container {
-    width: 100%;
-  }
 }
 
 /* ------------------------------------ */
@@ -340,6 +341,7 @@ section a:hover {
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
 .success {
   color: green;
   font-weight: bold;
@@ -386,8 +388,7 @@ section a:hover {
 
 .thank-you-popup button {
   width: 50%;
-  margin-left: -50px;
-  margin-top: 30px;
+  margin: 30px auto;
   padding: 10px;
   background-color: #003617;
   color: white;
@@ -397,3 +398,20 @@ section a:hover {
   font-size: 16px;
   margin-bottom: 10px;
 }
+/* ------------------------------------ */
+/* Responsividade */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .image-container {
+    display: none;
+  }
+
+  .form-container {
+    width: 100%;
+  }
+}
+/* ------------------------------------ */

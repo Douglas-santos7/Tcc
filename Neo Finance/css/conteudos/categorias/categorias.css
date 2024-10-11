@@ -121,9 +121,12 @@ body {
   height: 100px;
 }
 
-.icon--categoria img {
-  width: 60px;
-  height: 60px;
+.icon--categoria i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 3.5rem;
 }
 
 /* Descrição da Categoria */

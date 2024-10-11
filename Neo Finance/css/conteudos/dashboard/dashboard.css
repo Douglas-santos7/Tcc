@@ -30,18 +30,18 @@ body {
 }
 
 .usuario span:nth-child(1) {
-  width: 50px; /* Tamanho do círculo */
-  height: 50px; /* Tamanho do círculo */
-  background-color: white; /* Cor de fundo (exemplo: azul do Google) */
-  color: var(--fonte-cards); /* Cor do texto */
-  border-radius: 50%; /* Círculo */
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  color: var(--fonte-cards);
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.5rem; /* Tamanho da fonte */
-  font-weight: bold; /* Negrito para a inicial */
-  text-align: center; /* Centraliza o texto */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidade */
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin-right: 20px;
 }
 
@@ -251,18 +251,30 @@ body {
   margin-bottom: 50px;
 }
 
-.grafico--receitas {
-  min-width: 800px;
+.grafico--receitas,
+.grafico--despesas {
   height: 70px;
-  background: var(--cor-secundaria);
+  width: 0; /* Inicia com largura 0 para permitir a animação */
   border-radius: 20px;
+  transition: width 1s ease-in-out; /* Transição suave para a largura */
+}
+
+.grafico--receitas {
+  background: var(--cor-secundaria);
 }
 
 .grafico--despesas {
-  max-width: 800px;
-  height: 70px;
   background-color: red;
-  border-radius: 20px;
+}
+@keyframes expandirGrafico {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
 }
 
 /* Informações e Filtro */
@@ -494,13 +506,13 @@ body {
 }
 
 .categoria--historico {
-  display: block;
-  color: #003115;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
 }
 
 .nome--historico {
-  font-size: 1.1rem;
+  display: block;
+  color: #003115;
+  font-size: 1.4rem;
 }
 
 /* Estilização da segunda parte das informações */
