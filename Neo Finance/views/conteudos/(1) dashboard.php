@@ -25,7 +25,6 @@ $total = $receitas + $despesas;
 $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura em pixels
 $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura em pixels
 
-
 // Calcular Balanço Total
 $balanco = $receitas - $despesas;
 
@@ -34,12 +33,12 @@ $queryHistorico = "SELECT tipo, nome, valor, data FROM transacoes WHERE usuario_
 $resultHistorico = mysqli_query($conn, $queryHistorico);
 
 // Consultar o próximo vencimento a partir de hoje
-$queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria 
-                     FROM vencimentos 
-                     WHERE usuario_id = $userId 
-                     AND status = 'Pendente' 
-                     AND data_vencimento >= CURDATE() 
-                     ORDER BY data_vencimento ASC 
+$queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria
+                     FROM vencimentos
+                     WHERE usuario_id = $userId
+                     AND status = 'Pendente'
+                     AND data_vencimento >= CURDATE()
+                     ORDER BY data_vencimento ASC
                      LIMIT 1";
 $resultVencimentos = mysqli_query($conn, $queryVencimentos);
 
@@ -78,12 +77,128 @@ function mesEmPortugues($data)
     11 => 'Novembro',
     12 => 'Dezembro'
   ];
-  return $meses[(int)date('m', strtotime($data))];
+  return $meses[(int) date('m', strtotime($data))];
 }
 
+// Consultando para selecionar todas as categorias
+$sql = "SELECT id, nome FROM categorias";
+$result = $conn->query($sql);
+
+// Criando uma variável para armazenar as opções
+$options = "";
+
+// Verifica se encontrou resultados
+if ($result->num_rows > 0) {
+  // Itera pelos resultados e gera as opções
+  while ($row = $result->fetch_assoc()) {
+    $options .= '<option value="' . $row['id'] . '">' . htmlspecialchars($row['nome']) . '</option>';
+  }
+} else {
+  // Caso não existam categorias
+  $options .= '<option value="">Nenhuma categoria encontrada</option>';
+}
+
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $nome = mysqli_real_escape_string($conn, $_POST['nome']);
+  $valor = mysqli_real_escape_string($conn, $_POST['valor']);
+  $categoria = mysqli_real_escape_string($conn, $_POST['categoria']);
+  $tipo = mysqli_real_escape_string($conn, $_POST['tipo']);
+
+  // Consultar o ícone da categoria selecionada
+  $queryIcone = "SELECT icone FROM categorias WHERE id = ?";
+  $stmtIcone = mysqli_prepare($conn, $queryIcone);
+  mysqli_stmt_bind_param($stmtIcone, "i", $categoria);
+  mysqli_stmt_execute($stmtIcone);
+  mysqli_stmt_bind_result($stmtIcone, $icone);
+  mysqli_stmt_fetch($stmtIcone);
+  mysqli_stmt_close($stmtIcone);
+
+  // Insere os dados na tabela transacoes
+  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
+          VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')"; // Incluindo icone
+
+  if (mysqli_query($conn, $sql)) {
+    // Redireciona para a mesma página após a inserção
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit(); // Saia para garantir que o script pare aqui
+  } else {
+    echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
+  }
+}
+
+// Consultar histórico recente de transações
+$queryHistorico = "
+    SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone
+    FROM transacoes t
+    JOIN categorias c ON t.categoria_id = c.id
+    WHERE t.usuario_id = ?
+    ORDER BY t.data DESC
+    LIMIT 5";
+
+// Preparando a consulta
+$stmt = mysqli_prepare($conn, $queryHistorico);
+
+// Ligando o parâmetro
+mysqli_stmt_bind_param($stmt, "i", $userId);
+
+// Executando a consulta
+mysqli_stmt_execute($stmt);
+
+// Obtendo o resultado
+$resultHistorico = mysqli_stmt_get_result($stmt);
+
+// Inicializar uma variável para armazenar os itens do histórico
+$historicoItems = ""; // Inicializar a variável para armazenar o HTML do histórico
+
+if (mysqli_num_rows($resultHistorico) > 0) {
+  while ($row = mysqli_fetch_assoc($resultHistorico)) {
+    // Use a string de ícone armazenada na tabela como classe
+    $tipoIcon = htmlspecialchars($row['icone']); // Pega a string do ícone
+
+    $historicoItems .= '<li>
+            <div class="parte--um-info">
+                <div class="img--categoria">
+                    <i class="' . $tipoIcon . '"></i> <!-- Aqui adiciona o ícone como classe -->
+                </div>
+                <div class="info--detalhada">
+                    <span class="nome--historico">' . htmlspecialchars($row['transacao_nome']) . '</span> <!-- Exibe o nome -->
+                    <span class="categoria--historico">' . htmlspecialchars($row['categoria_nome']) . '</span> <!-- Exibe o nome da categoria -->
+                </div>
+            </div>
+            <div class="parte--dois-info">
+                <span class="data--historico">' . date('d/m/Y', strtotime($row['data'])) . '</span> <!-- Exibe a data -->
+                <span class="valor--historico" style="color: ' . ($row['tipo'] === 'receita' ? 'green' : 'red') . ';">
+                    R$ ' . number_format($row['valor'], 2, ',', '.') . ' <!-- Exibe o valor -->
+                </span>
+            </div>
+        </li>';
+  }
+} else {
+  $historicoItems .= '<li>Nenhuma transação recente encontrada.</li>';
+}
+
+// Fechando a declaração
+mysqli_stmt_close($stmt);
+
+// Lógica Mensagem saudação
+date_default_timezone_set('America/Sao_Paulo');
+
+// Obter a hora atual
+$hora = date("H");
+
+// Definir a saudação com base na hora
+if ($hora >= 5 && $hora < 12) {
+  $saudacao = "Bom dia";
+} elseif ($hora >= 12 && $hora < 18) {
+  $saudacao = "Boa tarde";
+} else {
+  $saudacao = "Boa noite";
+}
+
+// Fecha a conexão
+$conn->close();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -102,8 +217,7 @@ function mesEmPortugues($data)
     <header class="perfil">
       <div class="usuario">
         <span><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
-
-        <h1>Hello, <?php echo $_SESSION['username']; ?>!</h1>
+        <h1>Olá, <?php echo $saudacao . ' ' . $_SESSION['username']; ?>!</h1>
       </div>
       <div class="notificacao--usuario">
         <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
@@ -121,21 +235,6 @@ function mesEmPortugues($data)
         <div class="lado--esquerdo-bt">
           <span>Balanço Total</span>
           <h1 id="balanco--valor--total">R$ <?php echo number_format($balanco, 2, ',', '.'); ?></h1>
-          <!-- Botões do balanço total -->
-          <!-- <div class="botoes">
-         <button class="botao">
-           <img src="./assets/botao--adicionar.svg" alt="Adicionar Metas" />
-           <span>Metas</span>
-         </button>
-         <button class="botao">
-           <img src="./assets/botao--adicionar.svg" alt="Adicionar Metas" />
-           <span>Metas</span>
-         </button>
-         <button class="botao">
-           <img src="./assets/botao--adicionar.svg" alt="Adicionar Metas" />
-           <span>Metas</span>
-         </button>
-       </div> -->
         </div>
         <!-- Fim Lado Esquerdo do Card -->
 
@@ -159,9 +258,7 @@ function mesEmPortugues($data)
           </div>
           <!-- Botão Adicionar -->
           <div class="botao--adicionar">
-
             <img id="btn--abrir--popup" src="../../assets/icons/botao--adicionar.svg" alt="Adicionar" />
-
           </div>
         </div>
       </div>
@@ -171,21 +268,18 @@ function mesEmPortugues($data)
       <div class="card--historico-recente">
         <div class="header--card-hr">
           <span>Histórico Recente</span>
-          <button>Ver tudo</button>
+          <button onclick="window.location.href='./(3) historico.html';">Ver tudo</button>
         </div>
         <!-- Histórico de Transações -->
         <div class="info--historico">
           <ul id="historicoList">
-            <!-- Itens do histórico serão adicionados aqui -->
+            <?php echo $historicoItems; // Itens do histórico serão exibidos aqui
+            ?>
           </ul>
         </div>
-        <div class="seta--pra--baixo">
-
-        </div>
+        <div class="seta--pra--baixo"></div>
       </div>
       <!-- Fim Histórico Recente -->
-
-
 
       <!-- Card Receitas x Despesas -->
       <div class="card--receitasXdespesas">
@@ -193,8 +287,8 @@ function mesEmPortugues($data)
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
           <div class="grafico--receitasXdespesas">
-            <div class="grafico--receitas" style="width: <?php echo $proporcaoReceitas; ?>px;"></div>
-            <div class="grafico--despesas" style="width: <?php echo $proporcaoDespesas; ?>px;"></div>
+            <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
+            <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
           </div>
         </div>
         <!-- Informações e Filtro -->
@@ -230,7 +324,6 @@ function mesEmPortugues($data)
         </div>
       </div>
 
-
       <div class="card--vencimentos">
         <div class="header--card-v">
           <div class="titulo--header-v">
@@ -243,8 +336,8 @@ function mesEmPortugues($data)
           <div class="info--descricao">
             <span class="data--vencimento"><?php echo date('d', strtotime($data_vencimento)); ?></span>
             <div class="descricao--vencimento">
+              <span>A pagar</span>
               <span><?php echo $descricao; ?></span>
-              <span><?php echo $categoria; ?></span>
             </div>
           </div>
           <div class="linha--vertical-v"></div>
@@ -252,9 +345,6 @@ function mesEmPortugues($data)
         </div>
       </div>
       <!-- Fim Card Próximos Vencimentos -->
-
-
-
 
       <!-- Card Lembretes -->
       <div class="card--lembretes">
@@ -278,113 +368,74 @@ function mesEmPortugues($data)
   </div>
   <!-- Fim Conteúdo -->
 
+  <!-- Início PopUp Adição de Item -->
+  <div class="popup-container" id="popup-container" style="display: none;">
+    <div class="popup">
+      <div class="close-btn" id="close-btn">&times;</div>
+      <h2>Adicionar Item</h2>
+      <form method="POST" action="">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" id="nome" required autocomplete="off">
+        <div id="suggestions" class="suggestions-box"></div>
 
+        <label for="valor">Valor:</label>
+        <input type="number" name="valor" required>
 
-  <!-- ##### POPUP DE ADIÇÃO DE RECEITA/DESPESA ##### -->
-  <div id="id--popup" class="popup--box">
-    <div class="popup--conteudo">
-      <span class="fecha--btn" id="id--fecha--btn">&times;</span>
-      <h2>Adicionar Receita/Despesa</h2>
-      <div class="form--grupo--tipo">
-        <div class="form--item--tipo">
-          <label for="label--tipo">Tipo</label>
-          <select name="tipo" id="id--tipo">
-            <option value="Receita">Receita</option>
-            <option value="Despesa">Despesa</option>
-          </select>
-        </div>
-        <div class="form-item--categoria">
-          <label for="label--categoria">Categoria</label>
-          <div class="grupo--input">
-            <input type="text" placeholder="Digite a nova categoria" id="id--categoria">
-            <button id="add--tipo--categoria" type="button">+</button>
-          </div>
-        </div>
-        <div class="form--item--categoria--select">
-          <label for="label--select--categoria">Categorias</label>
-          <select id="categoria--select">
-            <!-- As opções serão adicionadas dinamicamente aqui -->
-          </select>
-        </div>
-      </div>
-      <div class="form--grupo--nome">
-        <div class="form--item--nome">
-          <label for="label--nome">Nome</label>
-          <input type="text" placeholder="Nome" id="id--nome">
-        </div>
-        <div class="form-item--valor">
-          <label for="label--valor">Valor</label>
-          <input type="number" placeholder="Valor" id="id--valor" step="0.01">
-        </div>
-      </div>
-      <div class="form-item--icone">
-        <label for="label--icone">Categoria:</label>
-        <button id="abrir--selecao--icones" type="button">Selecione Categoria</button>
-        <!-- Exibe o ícone selecionado -->
-        <div id="selecao--icone--container" data-icon="">
-          <!-- Ícone selecionado será exibido aqui -->
-        </div>
-      </div>
+        <label for="categoria">Categoria:</label>
+        <select name="categoria" required>
+          <?php echo $options; ?>
+        </select>
 
-      <div class="botao--componente">
-        <button id="btn--enviar" onclick="subValores()">Enviar</button>
-      </div>
+        <label for="tipo">Tipo:</label>
+        <select name="tipo" required>
+          <option value="receita">Receita</option>
+          <option value="despesa">Despesa</option>
+        </select>
+
+        <button type="submit">Adicionar</button>
+      </form>
     </div>
   </div>
+   <!-- FIM PopUp Adição de Item -->      
 
-  <!-- ##### POPUP DE SELEÇÃO DE ICONES ##### -->
-  <div id="id--selecao--icones" class="selecao--icones--popup" style="display: none;">
-    <div class="icon--popup--conteudo">
-      <span class="icon-fecha-btn" id="id--fecha--icone">&times;</span>
-      <h3>Selecione uma Categoria</h3>
-      <div class="icone--grade">
-        <!-- ##### ICONES ##### -->
-        <div class="icon" data-icon="fi-br-scissors">
-          <h2>Beleza</h2><i class="fi fi-br-scissors"></i>
-        </div>
-        <div class="icon" data-icon="fi-br-scissors">
-          <h2>Moradia</h2><i class="fi fi-sr-home"></i>
-        </div>
-        <div class="icon" data-icon="fi-br-scissors">
-          <h2>Telefone</h2><i class="fi fi-br-smartphone"></i>
-        </div>
-        <div class="icon" data-icon="fi-br-scissors">
-          <h2>Telefone</h2><i class="fi fi-br-smartphone"></i>
-        </div>
+  <script>
+    // Captura o novo botão de abrir popup com o ícone
+    const openPopupIcon = document.getElementById('btn--abrir--popup');
+    const closePopupBtn = document.getElementById('close-btn');
+    const popupContainer = document.getElementById('popup-container');
 
+    // Abrir o popup ao clicar no ícone de adicionar
+    openPopupIcon.addEventListener('click', function() {
+      popupContainer.style.display = 'flex'; // Mostrar o popup
+    });
 
-        <div class="icon" data-icon="fi-sr-home"><i class="fi fi-sr-home"></i></div>
-        <div class="icon" data-icon="fi-br-smartphone"><i class="fi fi-br-smartphone"></i></div>
-        <div class="icon" data-icon="fi-sr-file-invoice-dollar"><i class="fi fi-sr-file-invoice-dollar"></i></div>
-        <div class="icon" data-icon="fi-br-money-coin-transfer"><i class="fi fi-br-money-coin-transfer"></i></div>
-        <div class="icon" data-icon="fi-ss-plane-alt"><i class="fi fi-ss-plane-alt"></i></div>
-        <div class="icon" data-icon="fi-ss-bus-alt"><i class="fi fi-ss-bus-alt"></i></div>
-        <div class="icon" data-icon="fi-ss-wrench-alt"><i class="fi fi-ss-wrench-alt"></i></div>
-        <div class="icon" data-icon="fi-ss-car-mechanic"><i class="fi fi-ss-car-mechanic"></i></div>
-        <div class="icon" data-icon="fi-sr-shopping-cart"><i class="fi fi-sr-shopping-cart"></i></div>
-        <div class="icon" data-icon="fi-sr-wallet"><i class="fi fi-sr-wallet"></i></div>
-        <div class="icon" data-icon="fi-sr-gamepad"><i class="fi fi-sr-gamepad"></i></div>
-        <div class="icon" data-icon="fi-ss-hotdog"><i class="fi fi-ss-hotdog"></i></div>
-        <div class="icon" data-icon="fi-sr-user-md"><i class="fi fi-sr-user-md"></i></div>
-        <div class="icon" data-icon="fi-sr-dog-leashed"><i class="fi fi-sr-dog-leashed"></i></div>
-        <div class="icon" data-icon="fi-sr-bone"><i class="fi fi-sr-bone"></i></div>
-        <div class="icon" data-icon="fi-sr-cat"><i class="fi fi-sr-cat"></i></div>
-        <div class="icon" data-icon="fi-sr-devices"><i class="fi fi-sr-devices"></i></div>
-        <div class="icon" data-icon="fi-ss-book-alt"><i class="fi fi-ss-book-alt"></i></div>
-        <div class="icon" data-icon="fi-sc-headphones"><i class="fi fi-sc-headphones"></i></div>
-        <div class="icon" data-icon="fi-sc-music-alt"><i class="fi fi-sc-music-alt"></i></div>
-        <div class="icon" data-icon="fi-sc-speaker"><i class="fi fi-sc-speaker"></i></div>
-        <div class="icon" data-icon="fi-sc-microphone-alt"><i class="fi fi-sc-microphone-alt"></i></div>
-      </div>
-    </div>
-  </div>
+    // Fechar o popup ao clicar no botão fechar
+    closePopupBtn.addEventListener('click', function() {
+      popupContainer.style.display = 'none'; // Esconder o popup
+    });
 
+    // Fechar o popup ao clicar fora dele
+    window.addEventListener('click', function(event) {
+      if (event.target === popupContainer) {
+        popupContainer.style.display = 'none'; // Esconder o popup
+      }
+    });
 
-  <!-- Script Linkado -->
-  <script src="../../js/conteudos/dashboard/addCategorias.js"></script>
-  <script src="../../js/conteudos/dashboard/envioBtnAdd.js"></script>
-  <script src="../../js/conteudos/dashboard/historicoUpdate.js"></script>
-  <script src="../../js/conteudos/dashboard/openPopUp.js"></script>
+    window.onload = function() {
+      // Seleciona os elementos de receitas e despesas
+      var receitas = document.querySelector('.grafico--receitas');
+      var despesas = document.querySelector('.grafico--despesas');
+
+      // Obtém o valor da largura a partir dos atributos de dados
+      var larguraReceitas = receitas.getAttribute('data-largura');
+      var larguraDespesas = despesas.getAttribute('data-largura');
+
+      // Define a largura final, ativando a animação
+      receitas.style.width = larguraReceitas + 'px';
+      despesas.style.width = larguraDespesas + 'px';
+    };
+  </script>
+
 </body>
 
 </html>
