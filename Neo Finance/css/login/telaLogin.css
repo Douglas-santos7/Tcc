@@ -78,7 +78,7 @@ body {
   text-align: center;
   font-size: 24px;
   color: #333;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 /* ------------------------------------ */
@@ -116,7 +116,7 @@ body {
 }
 
 .cadastro-text {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   margin-top: -10px;
   text-align: center;
 }
@@ -240,8 +240,20 @@ section a:hover {
   margin-bottom: 40px;
 }
 
+
+.message-container {
+  margin: 20px 0; /* Espaço acima e abaixo da mensagem */
+}
+
 .message {
-  margin-top: 0;
+  padding: 10px 15px; /* Espaço interno */
+  border-radius: 5px; /* Bordas arredondadas */
+  font-size: 16px; /* Tamanho da fonte */
+  color: #fff; /* Cor do texto */
+}
+
+.error {
+  background-color: #e74c3c; /* Cor de fundo vermelha */
 }
 
 /* ------------------------------------ */

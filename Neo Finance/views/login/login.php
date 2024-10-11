@@ -33,27 +33,25 @@ if (isset($_COOKIE['remember_token']) && !isset($_SESSION['logged_in'])) {
 
 // Processa o formulário de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
+    $login_input = $_POST['login']; // Nome de usuário ou e-mail
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
+    $stmt->bind_param("ss", $login_input, $login_input);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Verifica se o email existe no banco de dados
+    // Verifica se o e-mail ou nome de usuário existe no banco de dados
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         $stored_password_hash = $user['password_hash'];
 
-        // Verifica se a senha está correta
         if (password_verify($password, $stored_password_hash)) {
             $_SESSION['logged_in'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['login_attempts'] = 0;
 
-            // Define o cookie de lembrar-me, se selecionado
             if (isset($_POST['remember_me'])) {
                 $token = bin2hex(random_bytes(32));
                 $stmt = $conn->prepare("UPDATE users SET remember_token = ? WHERE id = ?");
@@ -69,15 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $_SESSION['login_attempts']++;
             if ($_SESSION['login_attempts'] >= 3) {
-                $_SESSION['reset_message'] = 'Você errou a senha 3 vezes. Redefina sua senha.';
+                $_SESSION['reset_message'] = 'Você ultrapassou o número de tentativas de login.';
                 header("Location: ../../views/login/esqueci_senha.php", true, 302);
                 exit();
             } else {
-                $_SESSION['login_message'] = 'Senha incorreta! Tentativa ' . $_SESSION['login_attempts'] . ' de 3.';
+                $_SESSION['login_message'] = 'E-mail, nome de usuário ou senha incorretos. Tente novamente.';
             }
         }
     } else {
-        $_SESSION['login_message'] = 'Email não encontrado!';
+        $_SESSION['login_message'] = 'E-mail ou nome de usuário não cadastrado. Tente novamente.';
     }
 
     $stmt->close();
@@ -85,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
-// Define o valor do email se estiver armazenado no cookie
 $email_value = isset($_COOKIE['user_email']) ? htmlspecialchars($_COOKIE['user_email']) : '';
 $conn->close();
 ?>
@@ -126,17 +123,16 @@ $conn->close();
                     <img src="../../assets/img/neofinance--logo.svg" alt="Logo">
                 </div>
                 <div class="title">LOGIN</div>
-                <p class="cadastro-text">Seja bem-vindo a Neo finance, Efetue o Login</p>
+                <p class="cadastro-text">Seja bem-vindo à Neo Finance, efetue o login</p>
 
                 <div class="message-container">
                     <?php
-                    // Exibe mensagens de erro de login
                     if (isset($_SESSION['login_message'])) {
                         echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
                         unset($_SESSION['login_message']);
                     }
                     if (isset($_SESSION['reset_message'])) {
-                        echo '<div class="messages error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
                         unset($_SESSION['reset_message']);
                     }
                     ?>
@@ -144,9 +140,9 @@ $conn->close();
 
                 <form action="login.php" method="POST">
                     <div class="field">
-                        <input type="email" name="email" id="email-address" placeholder=" " required autocomplete="on" aria-label="Email" value="<?php echo $email_value; ?>">
-                        <label for="email-address">Email</label>
-                        <i class="fa fa-envelope"></i>
+                        <input type="text" name="login" id="login-input" placeholder=" " required autocomplete="on" aria-label="Usuário ou Email" value="<?php echo $email_value; ?>">
+                        <label for="login-input">Usuário ou Email</label>
+                        <i class="fa fa-user"></i>
                     </div>
 
                     <div class="field">
@@ -173,7 +169,6 @@ $conn->close();
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        // Inicialização do Swiper
         const swiper = new Swiper('.swiper-container', {
             loop: true,
             pagination: {
@@ -185,13 +180,11 @@ $conn->close();
             },
             on: {
                 slideChange: function() {
-                    // Pausar todos os vídeos
                     const videos = document.querySelectorAll('.swiper-slide video');
                     videos.forEach(video => {
                         video.pause();
                         video.currentTime = 0; // Reseta o vídeo
                     });
-                    // Reproduzir o vídeo do slide ativo, se existir
                     const activeSlide = this.slides[this.activeIndex].querySelector('video');
                     if (activeSlide) {
                         activeSlide.play();
@@ -200,13 +193,11 @@ $conn->close();
             },
         });
 
-        // Inicia a reprodução do vídeo no slide inicial, se houver
         const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
         if (initialVideo) {
             initialVideo.play();
         }
 
-        // Função para alternar a visibilidade da senha
         function togglePasswordVisibility(inputId, eyeIcon) {
             const inputField = document.getElementById(inputId);
             const isPassword = inputField.type === 'password';
