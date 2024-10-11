@@ -199,6 +199,7 @@ body {
   height: 150px;
   border-radius: 20px;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .botao--adicionar img {
