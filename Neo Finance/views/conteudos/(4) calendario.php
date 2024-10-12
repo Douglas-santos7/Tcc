@@ -126,7 +126,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
         <form id="formAdicionar" method="POST" onsubmit="return validarFormulario(event)">
           <input type="text" name="descricao" placeholder="Descrição" required />
           <input type="date" id="data_vencimento" name="data_vencimento" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required />
-          <input type="text" name="valor" placeholder="Valor" required oninput="formatarValor(this)" />
+          <input type="text" name="valor" placeholder="Valor" required oninput="formatarValor(this)" maxlength="10" />
           <select name="categoria" required>
             <option value="" disabled selected>Selecione uma Categoria</option>
             <?php foreach ($categorias as $categoria): ?>
@@ -192,8 +192,20 @@ $categorias = buscarCategorias($usuario_id, $conn);
 
       // Função para formatar o valor do input
       function formatarValor(input) {
-        let valor = input.value.replace(/\D/g, '');
-        valor = (valor / 100).toFixed(2).replace('.', ',');
+        let valor = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        valor = (valor / 100).toFixed(2); // Converte para um número com duas casas decimais
+
+        // Separa a parte inteira da parte decimal
+        let partes = valor.split('.');
+        let inteiro = partes[0];
+        let decimal = partes[1];
+
+        // Adiciona pontos como separadores de milhar
+        inteiro = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        // Combina a parte inteira com a parte decimal
+        valor = inteiro + ',' + decimal;
+
         input.value = valor;
       }
 

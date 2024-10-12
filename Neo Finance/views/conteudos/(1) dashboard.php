@@ -147,24 +147,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   ========================*/
 
   // Formata o valor recebido
-$valor = str_replace('.', '', $valor); // Remove pontos que representam milhar
-$valor = str_replace(',', '.', $valor); // Converte a vírgula para ponto
+  $valor = str_replace('.', '', $valor); // Remove pontos que representam milhar
+  $valor = str_replace(',', '.', $valor); // Converte a vírgula para ponto
 
-// Agora $valor deve estar no formato correto para o MySQL (e.g., 1500.00)
+  // Agora $valor deve estar no formato correto para o MySQL (e.g., 1500.00)
 
-// Insere os dados na tabela 'transacoes'
-$sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
+  // Insere os dados na tabela 'transacoes'
+  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
         VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')";
 
-// Atualiza a página após inserção
-if (mysqli_query($conn, $sql)) {
+  // Atualiza a página após inserção
+  if (mysqli_query($conn, $sql)) {
     // Redireciona para a mesma página após a inserção
     header("Location: " . $_SERVER['PHP_SELF']);
     exit(); // Saia para garantir que o script pare aqui
-} else {
+  } else {
     echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
-}
-
+  }
 }
 /*======================
  FIM - ENVIO DE DADOS
@@ -352,14 +351,14 @@ $conn->close();
         </div>
         <!-- Informações e Filtro -->
         <div class="infoXfiltro">
-   
-        <div class="select--filtro">
-          <select name="periodo" id="Filtro--mes">
-            <option value="mensal">Mensal</option>
-            <option value="semanal">Semanal</option>
-            <option value="diario">Diário</option>
-          </select>
-        </div>
+
+          <div class="select--filtro">
+            <select name="periodo" id="Filtro--mes">
+              <option value="mensal">Mensal</option>
+              <option value="semanal">Semanal</option>
+              <option value="diario">Diário</option>
+            </select>
+          </div>
 
 
           <div class="receitas--filtro">
@@ -461,126 +460,102 @@ $conn->close();
   </div>
   <!-- FIM PopUp Adição de Item -->
 
- <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
-<div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
-  <div class="popup-categorias-conteudo">
-    <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
-    <h2 class="categoria-titulo">Selecionar uma categoria</h2>
-    
-    <!-- Botão de filtragem -->
-    <button id="botao-filtro-categorias" class="btn-filtro-categorias">
-      A-Z
-    </button>
-    
-    <!-- LISTAGEM DAS CATEGORIAS -->
-    <ul id="lista-categorias" class="lista-categorias">
-      <?php
-      if (!empty($categorias)) {
-        foreach ($categorias as $categoria) {
-          $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
-          echo '<li> 
+  <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
+  <div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
+    <div class="popup-categorias-conteudo">
+      <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
+      <h2 class="categoria-titulo">Selecionar uma categoria</h2>
+
+      <!-- Botão de filtragem -->
+      <button id="botao-filtro-categorias" class="btn-filtro-categorias">
+        A-Z
+      </button>
+
+      <!-- LISTAGEM DAS CATEGORIAS -->
+      <ul id="lista-categorias" class="lista-categorias">
+        <?php
+        if (!empty($categorias)) {
+          foreach ($categorias as $categoria) {
+            $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
+            echo '<li> 
                   <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
                       <i class="' . $iconeCategoria . ' categoria-icon"></i>
                       <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
                   </button>
                 </li>';
+          }
+        } else {
+          echo '<li>Nenhuma categoria disponível.</li>';
         }
-      } else {
-        echo '<li>Nenhuma categoria disponível.</li>';
-      }
-      ?>
-    </ul>
+        ?>
+      </ul>
+    </div>
   </div>
-</div>
-<!-- FIM POP-UP SELECT DE CATEGORIAS -->
+  <!-- FIM POP-UP SELECT DE CATEGORIAS -->
 
 
 
-<script>
+  <script>
     let ordemAtual = 'A-Z'; // Estado inicial
 
-document.getElementById('botao-filtro-categorias').addEventListener('click', function() {
-    const listaCategorias = document.getElementById('lista-categorias');
-    const itens = Array.from(listaCategorias.querySelectorAll('.categoria-item-unico'));
+    document.getElementById('botao-filtro-categorias').addEventListener('click', function() {
+      const listaCategorias = document.getElementById('lista-categorias');
+      const itens = Array.from(listaCategorias.querySelectorAll('.categoria-item-unico'));
 
-    // Alternar o texto do botão
-    if (ordemAtual === 'A-Z') {
+      // Alternar o texto do botão
+      if (ordemAtual === 'A-Z') {
         ordemAtual = 'Mais usadas';
         this.textContent = 'Mais usadas';
         //  ordenar as categorias com base nas mais usadas.
         itens.sort((a, b) => {
-            return Math.random() - 0.5; // Aqui, deve ser a lógica para ordenar as mais usadas
+          return Math.random() - 0.5; // Aqui, deve ser a lógica para ordenar as mais usadas
         });
-    } else {
+      } else {
         ordemAtual = 'A-Z';
         this.textContent = 'A-Z';
         // Ordenar as categorias em ordem alfabética
         itens.sort((a, b) => {
-            const nomeA = a.querySelector('.categoria-nome').textContent.toLowerCase();
-            const nomeB = b.querySelector('.categoria-nome').textContent.toLowerCase();
-            return nomeA.localeCompare(nomeB);
+          const nomeA = a.querySelector('.categoria-nome').textContent.toLowerCase();
+          const nomeB = b.querySelector('.categoria-nome').textContent.toLowerCase();
+          return nomeA.localeCompare(nomeB);
         });
-    }
+      }
 
-    // Atualizar a lista de categorias no DOM
-    listaCategorias.innerHTML = ''; // Limpar a lista
-    itens.forEach(item => listaCategorias.appendChild(item)); // Adicionar novamente na nova ordem
-});
-
-</script>
+      // Atualizar a lista de categorias no DOM
+      listaCategorias.innerHTML = ''; // Limpar a lista
+      itens.forEach(item => listaCategorias.appendChild(item)); // Adicionar novamente na nova ordem
+    });
+  </script>
 
 
   <script>
- function formatarMoeda(valor) {
-    // Remove qualquer caractere que não seja número ou vírgula
-    valor = valor.replace(/[^0-9,]/g, "");
+    function formatarMoeda(valor) {
+      // Remove todos os caracteres que não são dígitos
+      valor = valor.replace(/\D/g, "");
 
-    // Se houver uma vírgula, separa a parte inteira da parte decimal
-    const partes = valor.split(',');
-    let inteiro = partes[0].replace(/\./g, ""); // Remove os pontos da parte inteira
-    let decimal = partes[1] ? partes[1].slice(0, 2) : ''; // Limita a parte decimal a 2 dígitos
+      // Limita o valor a 8 dígitos antes da vírgula (999.999,99)
+      if (valor.length > 8) {
+        valor = valor.slice(0, 8); // Limita a 8 caracteres (6 dígitos inteiros + 2 decimais)
+      }
 
-    // Converte a parte inteira em formato monetário
-    inteiro = inteiro.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona os pontos de milhar
+      // Formata para moeda
+      let valorFormatado = (valor / 100).toFixed(2) // Converte para decimal e fixa em 2 casas decimais
+        .replace(".", ",") // Substitui o ponto decimal pela vírgula
+        .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona pontos para os milhares
 
-    // Se a parte decimal estiver presente, adiciona-a
-    return inteiro + (decimal ? ',' + decimal : '') || '0,00';
-}
-
-// Evento para capturar o valor enquanto o usuário digita
-document.getElementById('valor').addEventListener('input', function () {
-    let valorAtual = this.value;
-    
-    // Remove a formatação temporariamente para permitir digitação livre
-    let valorNumerico = valorAtual.replace(/[^0-9,]/g, '');
-
-    // Limita a parte decimal a 2 dígitos
-    const partes = valorNumerico.split(',');
-    if (partes[1] && partes[1].length > 2) {
-        partes[1] = partes[1].slice(0, 2);
+      return valorFormatado;
     }
 
-    this.value = formatarMoeda(partes.join(',')); // Atualiza o campo com o valor formatado
-});
+    // Evento de digitação
+    document.getElementById('valor').addEventListener('input', function() {
+      let valorAtual = this.value;
 
-// Formatar o valor ao perder o foco (quando o usuário sai do campo)
-document.getElementById('valor').addEventListener('blur', function () {
-    let valorAtual = this.value;
-    if (valorAtual !== "") {
-        this.value = formatarMoeda(valorAtual);
-    }
-});
-
-// Formatar o valor ao focar (para mostrar o valor formatado)
-document.getElementById('valor').addEventListener('focus', function () {
-    let valorAtual = this.value;
-    if (valorAtual !== "") {
-        this.value = valorAtual.replace(/\./g, "").replace(",", "."); // Remove a formatação ao focar
-    }
-});
-
-
+      // Remove formatação e formata novamente
+      this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
+    });
   </script>
+
+
 
   <script>
     /*======================
@@ -594,25 +569,25 @@ document.getElementById('valor').addEventListener('focus', function () {
     const categoriaInput = document.getElementById('categoria-id');
 
     // Abrir o popup quando o botão for clicado
-    btnSelecionarCategoria.addEventListener('click', function () {
+    btnSelecionarCategoria.addEventListener('click', function() {
       popupCategorias.style.display = 'flex';
     });
 
     // Fechar o popup ao clicar no botão de fechar
-    btnFecharPopup.addEventListener('click', function () {
+    btnFecharPopup.addEventListener('click', function() {
       popupCategorias.style.display = 'none';
     });
 
     // Fechar o popup ao clicar fora do conteúdo
-    window.addEventListener('click', function (event) {
+    window.addEventListener('click', function(event) {
       if (event.target === popupCategorias) {
         popupCategorias.style.display = 'none';
       }
     });
 
     // Selecionar uma categoria e fechar o popup
-    categoriaItems.forEach(function (item) {
-      item.addEventListener('click', function () {
+    categoriaItems.forEach(function(item) {
+      item.addEventListener('click', function() {
         const categoriaId = this.getAttribute('data-id');
         const categoriaNome = this.innerText;
 
@@ -636,23 +611,23 @@ document.getElementById('valor').addEventListener('focus', function () {
     const popupContainer = document.getElementById('popup-container');
 
     // Abrir o popup ao clicar no ícone de adicionar
-    openPopupIcon.addEventListener('click', function () {
+    openPopupIcon.addEventListener('click', function() {
       popupContainer.style.display = 'flex'; // Mostrar o popup
     });
 
     // Fechar o popup ao clicar no botão fechar
-    closePopupBtn.addEventListener('click', function () {
+    closePopupBtn.addEventListener('click', function() {
       popupContainer.style.display = 'none'; // Esconder o popup
     });
 
     // Fechar o popup ao clicar fora dele
-    window.addEventListener('click', function (event) {
+    window.addEventListener('click', function(event) {
       if (event.target === popupContainer) {
         popupContainer.style.display = 'none'; // Esconder o popup
       }
     });
 
-    window.onload = function () {
+    window.onload = function() {
       // Seleciona os elementos de receitas e despesas
       var receitas = document.querySelector('.grafico--receitas');
       var despesas = document.querySelector('.grafico--despesas');
