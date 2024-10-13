@@ -1,258 +1,43 @@
 <?php
-session_start();
 include("../../config/database/conexao.php");
+include("../../config/conteudos/login/verifica_login.php");
+include("../../config/conteudos/dashboard/funcoes_balanco.php");
+include("../../config/conteudos/dashboard/logica_vencimentos.php");
+include("../../config/conteudos/dashboard/logica_calendario.php");
+include("../../config/conteudos/dashboard/seleciona_categorias.php");
+include("../../config/conteudos/dashboard/envio_dados.php");
+include("../../config/conteudos/dashboard/consulta_historico.php");
+include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
-
-// Verifica se o usuário está logado
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-  header("Location: ../../views/login/login.php"); // Redireciona para a página de login
-  exit();
-}
 
 $userId = $_SESSION['user_id']; // ID do usuário logado
 
-/*=================================
-INICIO - FUNÇÕES DO BALANÇO TOTAL
-===================================*/
-// Consultar receitas e despesas
-$queryReceitas = "SELECT SUM(valor) AS totalReceitas FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId";
-$queryDespesas = "SELECT SUM(valor) AS totalDespesas FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId";
+// Obter dados do balanço
+$balancoData = calcularBalanco($conn, $userId);
+$receitas = $balancoData['receitas'];
+$despesas = $balancoData['despesas'];
+$balanco = $balancoData['balanco'];
+$proporcaoReceitas = $balancoData['proporcaoReceitas'];
+$proporcaoDespesas = $balancoData['proporcaoDespesas'];
 
-$resultReceitas = mysqli_query($conn, $queryReceitas);
-$resultDespesas = mysqli_query($conn, $queryDespesas);
+// Obter próximo vencimento
+$vencimentoData = obterProximoVencimento($conn, $userId);
+$descricao = $vencimentoData['descricao'];
+$data_vencimento = $vencimentoData['data_vencimento'];
+$valor = $vencimentoData['valor'];
+$categoria = $vencimentoData['categoria'];
 
-// Extrair valores
-$receitas = mysqli_fetch_assoc($resultReceitas)['totalReceitas'] ?? 0;
-$despesas = mysqli_fetch_assoc($resultDespesas)['totalDespesas'] ?? 0;
-$total = $receitas + $despesas;
-$proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura em pixels
-$proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura em pixels
+// Obter categorias
+$categorias = obterCategorias($conn);
 
-// Calcular Balanço Total
-$balanco = $receitas - $despesas;
+// Enviar dados do formulário
+enviarDados($conn, $userId);
 
-/*=================================
-FIM - FUNÇÕES DO BALANÇO TOTAL
-===================================*/
+// Consultar histórico
+$historicoItems = consultarHistorico($conn, $userId);
 
-
-/*=================================
-INICIO - LÓGICA VENCIMENTO
-===================================*/
-// Consultar o próximo vencimento a partir de hoje
-$queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria
-                     FROM vencimentos
-                     WHERE usuario_id = $userId
-                     AND status = 'Pendente'
-                     AND data_vencimento >= CURDATE()
-                     ORDER BY data_vencimento ASC
-                     LIMIT 1";
-$resultVencimentos = mysqli_query($conn, $queryVencimentos);
-
-// Extrair o próximo vencimento
-$vencimento = mysqli_fetch_assoc($resultVencimentos);
-
-// Verifica se existe um vencimento
-if ($vencimento) {
-  // Se existir, armazene as informações
-  $descricao = $vencimento['descricao'];
-  $data_vencimento = $vencimento['data_vencimento'];
-  $valor = $vencimento['valor'];
-  $categoria = $vencimento['categoria'];
-} else {
-  // Caso não exista, defina valores padrão
-  $descricao = "Sem vencimentos pendentes";
-  $data_vencimento = "";
-  $valor = 0;
-  $categoria = "";
-}
-
-/*=================================
-FIM- LÓGICA CALENDÁRIO
-===================================*/
-
-
-/*=================================
-INICIO - LÓGICA CALENDÁRIO
-===================================*/
-// Função para traduzir o mês para português
-function mesEmPortugues($data)
-{
-  $meses = [
-    1 => 'Janeiro',
-    2 => 'Fevereiro',
-    3 => 'Março',
-    4 => 'Abril',
-    5 => 'Maio',
-    6 => 'Junho',
-    7 => 'Julho',
-    8 => 'Agosto',
-    9 => 'Setembro',
-    10 => 'Outubro',
-    11 => 'Novembro',
-    12 => 'Dezembro'
-  ];
-  return $meses[(int) date('m', strtotime($data))];
-}
-/*=================================
-FIM - LÓGICA CALENDÁRIO
-===================================*/
-
-
-/*=================
-INICIO - SELECIONAR CATEGORIAS
-===================*/
-$sql = "SELECT id, nome, icone FROM categorias"; // Seleciona id, nome e icone
-$result = $conn->query($sql);
-
-// Criando um array para armazenar as categorias
-$categorias = [];
-
-// Verifica se encontrou resultados
-if ($result->num_rows > 0) {
-  // Itera pelos resultados e armazena as categorias em um array
-  while ($row = $result->fetch_assoc()) {
-    $categorias[] = $row;
-  }
-} else {
-  // Caso não existam categorias, o array será vazio
-  $categorias = null; // Ou pode deixar como [] para manter a consistência
-}
-/*=================
-FIM - SELECIONAR CATEGORIAS
-===================*/
-
-/*======================
-ENVIO DO FORMULARIOS COM OS DADOS P/ BANCO
-========================*/
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $nome = mysqli_real_escape_string($conn, $_POST['nome']);
-  $valor = mysqli_real_escape_string($conn, $_POST['valor']);
-  $categoria = mysqli_real_escape_string($conn, $_POST['categoria']);
-  $tipo = mysqli_real_escape_string($conn, $_POST['tipo']);
-
-  // Consultar o ícone da categoria selecionada
-  $queryIcone = "SELECT icone FROM categorias WHERE id = ?";
-  $stmtIcone = mysqli_prepare($conn, $queryIcone);
-  mysqli_stmt_bind_param($stmtIcone, "i", $categoria);
-  mysqli_stmt_execute($stmtIcone);
-  mysqli_stmt_bind_result($stmtIcone, $icone);
-  mysqli_stmt_fetch($stmtIcone);
-  mysqli_stmt_close($stmtIcone);
-
-
-  /*======================
-  INICIO - ENVIO DE DADOS
-  ========================*/
-
-  // Formata o valor recebido
-  $valor = str_replace('.', '', $valor); // Remove pontos que representam milhar
-  $valor = str_replace(',', '.', $valor); // Converte a vírgula para ponto
-
-  // Agora $valor deve estar no formato correto para o MySQL (e.g., 1500.00)
-
-  // Insere os dados na tabela 'transacoes'
-  $sql = "INSERT INTO transacoes (nome, valor, categoria_id, tipo, usuario_id, icone)
-        VALUES ('$nome', '$valor', '$categoria', '$tipo', $userId, '$icone')";
-
-  // Atualiza a página após inserção
-  if (mysqli_query($conn, $sql)) {
-    // Redireciona para a mesma página após a inserção
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit(); // Saia para garantir que o script pare aqui
-  } else {
-    echo "<script>alert('Erro ao salvar: " . mysqli_error($conn) . "');</script>";
-  }
-}
-/*======================
- FIM - ENVIO DE DADOS
- ========================*/
-
-
-/*======================
- INICIO - CONSULTANDO HISTÓRICO
- ========================*/
-// Consultar histórico recente de transações
-$queryHistorico = "
-    SELECT t.nome AS transacao_nome, t.valor, t.tipo, t.data, c.id AS categoria_id, c.nome AS categoria_nome, t.icone
-    FROM transacoes t
-    JOIN categorias c ON t.categoria_id = c.id
-    WHERE t.usuario_id = ?
-    ORDER BY t.data DESC
-    LIMIT 5";
-
-// Preparando a consulta
-$stmt = mysqli_prepare($conn, $queryHistorico);
-
-// Ligando o parâmetro
-mysqli_stmt_bind_param($stmt, "i", $userId);
-
-// Executando a consulta
-mysqli_stmt_execute($stmt);
-
-// Obtendo o resultado
-$resultHistorico = mysqli_stmt_get_result($stmt);
-
-// Inicializar uma variável para armazenar os itens do histórico
-$historicoItems = ""; // Inicializar a variável para armazenar o HTML do histórico
-
-if (mysqli_num_rows($resultHistorico) > 0) {
-  while ($row = mysqli_fetch_assoc($resultHistorico)) {
-    // Use a string de ícone armazenada na tabela como classe
-    $tipoIcon = htmlspecialchars($row['icone']); // Pega a string do ícone
-
-    $historicoItems .= '<li>
-            <div class="parte--um-info">
-                <div class="img--categoria">
-                    <i class="' . $tipoIcon . '"></i> <!-- Aqui adiciona o ícone como classe -->
-                </div>
-                <div class="info--detalhada">
-                    <span class="nome--historico">' . htmlspecialchars($row['transacao_nome']) . '</span> <!-- Exibe o nome -->
-                    <span class="categoria--historico">' . htmlspecialchars($row['categoria_nome']) . '</span> <!-- Exibe o nome da categoria -->
-                </div>
-            </div>
-            <div class="parte--dois-info">
-                <span class="data--historico">' . date('d/m/Y', strtotime($row['data'])) . '</span> <!-- Exibe a data -->
-                <span class="valor--historico" style="color: ' . ($row['tipo'] === 'receita' ? 'green' : 'red') . ';">
-                    R$ ' . number_format($row['valor'], 2, ',', '.') . ' <!-- Exibe o valor -->
-                </span>
-            </div>
-        </li>';
-  }
-} else {
-  $historicoItems .= '<li>Nenhuma transação recente encontrada.</li>';
-}
-
-// Fechando a declaração
-mysqli_stmt_close($stmt);
-
-/*======================
- FIM - CONSULTA HISTÓRICO
- ========================*/
-
-/*======================
-INICIO - LOGICA MENSAGEM DE SAUDAÇÃO
-========================*/
-
-// Lógica Mensagem saudação
-date_default_timezone_set('America/Sao_Paulo');
-
-// Obter a hora atual
-$hora = date("H");
-
-// Definir a saudação com base na hora
-if ($hora >= 5 && $hora < 12) {
-  $saudacao = "Bom dia";
-} elseif ($hora >= 12 && $hora < 18) {
-  $saudacao = "Boa tarde";
-} else {
-  $saudacao = "Boa noite";
-}
-
-/*======================
- FIM - LOGICA MENSAGEM DE SAUDAÇÃO
- ========================*/
+// Obter saudação
+$saudacao = obterSaudacao();
 
 // Fecha a conexão
 $conn->close();
@@ -359,7 +144,6 @@ $conn->close();
               <option value="diario">Diário</option>
             </select>
           </div>
-
 
           <div class="receitas--filtro">
             <div class="icon--verde"></div>
@@ -477,7 +261,7 @@ $conn->close();
         if (!empty($categorias)) {
           foreach ($categorias as $categoria) {
             $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
-            echo '<li> 
+            echo '<li>
                   <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
                       <i class="' . $iconeCategoria . ' categoria-icon"></i>
                       <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
@@ -493,154 +277,9 @@ $conn->close();
   </div>
   <!-- FIM POP-UP SELECT DE CATEGORIAS -->
 
-
-
-  <script>
-    let ordemAtual = 'A-Z'; // Estado inicial
-
-    document.getElementById('botao-filtro-categorias').addEventListener('click', function() {
-      const listaCategorias = document.getElementById('lista-categorias');
-      const itens = Array.from(listaCategorias.querySelectorAll('.categoria-item-unico'));
-
-      // Alternar o texto do botão
-      if (ordemAtual === 'A-Z') {
-        ordemAtual = 'Mais usadas';
-        this.textContent = 'Mais usadas';
-        //  ordenar as categorias com base nas mais usadas.
-        itens.sort((a, b) => {
-          return Math.random() - 0.5; // Aqui, deve ser a lógica para ordenar as mais usadas
-        });
-      } else {
-        ordemAtual = 'A-Z';
-        this.textContent = 'A-Z';
-        // Ordenar as categorias em ordem alfabética
-        itens.sort((a, b) => {
-          const nomeA = a.querySelector('.categoria-nome').textContent.toLowerCase();
-          const nomeB = b.querySelector('.categoria-nome').textContent.toLowerCase();
-          return nomeA.localeCompare(nomeB);
-        });
-      }
-
-      // Atualizar a lista de categorias no DOM
-      listaCategorias.innerHTML = ''; // Limpar a lista
-      itens.forEach(item => listaCategorias.appendChild(item)); // Adicionar novamente na nova ordem
-    });
-  </script>
-
-
-  <script>
-    function formatarMoeda(valor) {
-      // Remove todos os caracteres que não são dígitos
-      valor = valor.replace(/\D/g, "");
-
-      // Limita o valor a 8 dígitos antes da vírgula (999.999,99)
-      if (valor.length > 8) {
-        valor = valor.slice(0, 8); // Limita a 8 caracteres (6 dígitos inteiros + 2 decimais)
-      }
-
-      // Formata para moeda
-      let valorFormatado = (valor / 100).toFixed(2) // Converte para decimal e fixa em 2 casas decimais
-        .replace(".", ",") // Substitui o ponto decimal pela vírgula
-        .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona pontos para os milhares
-
-      return valorFormatado;
-    }
-
-    // Evento de digitação
-    document.getElementById('valor').addEventListener('input', function() {
-      let valorAtual = this.value;
-
-      // Remove formatação e formata novamente
-      this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
-    });
-  </script>
-
-
-
-  <script>
-    /*======================
-    Script | Select categorias
-    ========================*/
-    // Referências aos elementos
-    const btnSelecionarCategoria = document.getElementById('btn-selecionar-categoria');
-    const popupCategorias = document.getElementById('popup-categorias-unico');
-    const btnFecharPopup = document.getElementById('btn-fechar-popup-categorias');
-    const categoriaItems = document.querySelectorAll('.categoria-item-unico');
-    const categoriaInput = document.getElementById('categoria-id');
-
-    // Abrir o popup quando o botão for clicado
-    btnSelecionarCategoria.addEventListener('click', function() {
-      popupCategorias.style.display = 'flex';
-    });
-
-    // Fechar o popup ao clicar no botão de fechar
-    btnFecharPopup.addEventListener('click', function() {
-      popupCategorias.style.display = 'none';
-    });
-
-    // Fechar o popup ao clicar fora do conteúdo
-    window.addEventListener('click', function(event) {
-      if (event.target === popupCategorias) {
-        popupCategorias.style.display = 'none';
-      }
-    });
-
-    // Selecionar uma categoria e fechar o popup
-    categoriaItems.forEach(function(item) {
-      item.addEventListener('click', function() {
-        const categoriaId = this.getAttribute('data-id');
-        const categoriaNome = this.innerText;
-
-        // Atualiza o texto do botão e o input escondido
-        btnSelecionarCategoria.innerText = 'Categoria: ' + categoriaNome;
-        categoriaInput.value = categoriaId;
-
-        // Fecha o popup
-        popupCategorias.style.display = 'none';
-      });
-    });
-  </script>
-
-  <script>
-    /*======================
-    Script | Btn PopUp Principal
-    ========================*/
-    // Captura o novo botão de abrir popup com o ícone
-    const openPopupIcon = document.getElementById('btn--abrir--popup');
-    const closePopupBtn = document.getElementById('close-btn');
-    const popupContainer = document.getElementById('popup-container');
-
-    // Abrir o popup ao clicar no ícone de adicionar
-    openPopupIcon.addEventListener('click', function() {
-      popupContainer.style.display = 'flex'; // Mostrar o popup
-    });
-
-    // Fechar o popup ao clicar no botão fechar
-    closePopupBtn.addEventListener('click', function() {
-      popupContainer.style.display = 'none'; // Esconder o popup
-    });
-
-    // Fechar o popup ao clicar fora dele
-    window.addEventListener('click', function(event) {
-      if (event.target === popupContainer) {
-        popupContainer.style.display = 'none'; // Esconder o popup
-      }
-    });
-
-    window.onload = function() {
-      // Seleciona os elementos de receitas e despesas
-      var receitas = document.querySelector('.grafico--receitas');
-      var despesas = document.querySelector('.grafico--despesas');
-
-      // Obtém o valor da largura a partir dos atributos de dados
-      var larguraReceitas = receitas.getAttribute('data-largura');
-      var larguraDespesas = despesas.getAttribute('data-largura');
-
-      // Define a largura final, ativando a animação
-      receitas.style.width = larguraReceitas + 'px';
-      despesas.style.width = larguraDespesas + 'px';
-    };
-  </script>
+  <script src="../../js/conteudos/dashboard/popup.js"></script>
+  <script src="../../js/conteudos/dashboard/categorias.js"></script>
+  <script src="../../js/conteudos/dashboard/formataMoeda.js"></script>
 
 </body>
 
