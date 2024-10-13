@@ -8,7 +8,7 @@ CREATE TABLE users (
     username VARCHAR(255) NOT NULL,
     email VARCHAR(191) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    remember_token VARCHAR(64), -- Coluna remember_token adicionada
+    remember_token VARCHAR(64),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -33,9 +33,9 @@ CREATE TABLE password_resets (
 -- Criação da tabela de categorias vinculada ao usuário
 CREATE TABLE categorias (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL, -- Relacionamento com a tabela de usuários
+    usuario_id INT NOT NULL,
     nome VARCHAR(191) NOT NULL,
-    icone VARCHAR(255) NOT NULL, -- Armazena a classe do ícone
+    icone VARCHAR(255) NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE,
     UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas
 );
@@ -150,7 +150,7 @@ CREATE TABLE vencimentos (
     descricao VARCHAR(255),
     data_vencimento DATE,
     valor DECIMAL(10, 2),
-    tipo_transacao ENUM('Receita', 'Despesa') NOT NULL, -- Adicionada a coluna tipo_transacao
+    tipo_transacao ENUM('Receita', 'Despesa') NOT NULL,
     categoria VARCHAR(50),
     status VARCHAR(20),
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
