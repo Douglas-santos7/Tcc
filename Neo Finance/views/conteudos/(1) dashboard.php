@@ -326,7 +326,7 @@ $conn->close();
       <div class="card--historico-recente">
         <div class="header--card-hr">
           <span>Histórico Recente</span>
-          <button onclick="window.location.href='./(3) historico.php';">Ver tudo</button>
+          <button id="ver-tudo-btn">Ver tudo</button>
         </div>
         <!-- Histórico de Transações -->
         <div class="info--historico">
