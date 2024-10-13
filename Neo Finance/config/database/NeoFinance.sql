@@ -1,3 +1,4 @@
+-- Criação do banco de dados
 CREATE DATABASE finance;
 
 USE finance;
@@ -40,10 +41,10 @@ CREATE TABLE categorias (
     UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas
 );
 
--- Comando pra deletar categorias já existentes
+-- Comando para deletar categorias já existentes (caso queira limpar antes da inserção)
 DELETE FROM categorias;
 
--- Inserção de categorias predefinidas para todos os usuários
+-- Inserção de categorias predefinidas para todos os usuários existentes
 INSERT INTO
     categorias (usuario_id, nome, icone)
 SELECT u.id, tmp.nome, tmp.icone
@@ -96,6 +97,7 @@ WHERE
             AND c.nome = tmp.nome
     );
 
+-- Verifica as categorias inseridas
 SELECT * FROM categorias;
 
 -- Criação da tabela de transações
@@ -155,3 +157,37 @@ CREATE TABLE vencimentos (
     status VARCHAR(20),
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
 );
+
+-- Criação do Trigger para inserir categorias predefinidas para novos usuários
+DELIMITER / /
+
+CREATE TRIGGER after_user_insert
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+    INSERT INTO categorias (usuario_id, nome, icone)
+    VALUES 
+        (NEW.id, 'Moradia', 'fi-sr-home'),
+        (NEW.id, 'Beleza', 'fi-br-scissors'),
+        (NEW.id, 'Telefone', 'fi-br-smartphone'),
+        (NEW.id, 'Fatura', 'fi-sr-file-invoice-dollar'),
+        (NEW.id, 'Transferência', 'fi-br-money-coin-transfer'),
+        (NEW.id, 'Viagem Aérea', 'fi-ss-plane-alt'),
+        (NEW.id, 'Viagem de Ônibus', 'fi-ss-bus-alt'),
+        (NEW.id, 'Ferramenta', 'fi-ss-wrench-alt'),
+        (NEW.id, 'Mecânica', 'fi-ss-car-mechanic'),
+        (NEW.id, 'Supermercado', 'fi-sr-shopping-cart'),
+        (NEW.id, 'Carteira', 'fi-sr-wallet'),
+        (NEW.id, 'Videogame', 'fi-sr-gamepad'),
+        (NEW.id, 'Fast Food', 'fi-ss-hotdog'),
+        (NEW.id, 'Médico', 'fi-sr-user-md'),
+        (NEW.id, 'Animal - Cão', 'fi-sr-dog-leashed'),
+        (NEW.id, 'Animal - Brinquedos', 'fi-sr-bone'),
+        (NEW.id, 'Animal - Gato', 'fi-sr-cat'),
+        (NEW.id, 'Computador', 'fi-sr-devices'),
+        (NEW.id, 'Livro', 'fi-ss-book-alt');
+END;
+
+/ /
+
+DELIMITER;
