@@ -776,6 +776,9 @@ html,
 body {
   overflow: auto; /* Permite rolagem */
 }
+#bloquear-selecao {
+  user-select: none;
+}
 
 @media screen and (max-width: 1300px) {
   .cards {
