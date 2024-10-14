@@ -205,14 +205,14 @@ body {
 .botao--adicionar img {
   width: 130px;
   height: auto;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suavização da transformação */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Animação de hover */
 .botao--adicionar img:hover {
-  transform: scale(1.1); /* Leve aumento no tamanho */
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); /* Sombra suave */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suavização da transformação */
+  transform: scale(1.1);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Card Receitas X Despesas */
@@ -255,9 +255,9 @@ body {
 .grafico--receitas,
 .grafico--despesas {
   height: 70px;
-  width: 0; /* Inicia com largura 0 para permitir a animação */
+  width: 0;
   border-radius: 20px;
-  transition: width 1s ease-in-out; /* Transição suave para a largura */
+  transition: width 1s ease-in-out;
 }
 
 .grafico--receitas {
@@ -267,6 +267,7 @@ body {
 .grafico--despesas {
   background-color: red;
 }
+
 @keyframes expandirGrafico {
   0% {
     width: 0;
@@ -295,7 +296,7 @@ body {
 .select--filtro {
   position: relative;
   display: inline-block;
-  width: 200px; /* Largura do select */
+  width: 200px;
   margin-top: 10px;
 }
 
@@ -428,7 +429,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Linha abaixo do cabeçalho */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 8px;
   margin-bottom: 8px;
 }
@@ -436,12 +437,12 @@ body {
 .header--card-hr span {
   font-size: 1.2em;
   font-weight: bold;
-  color: #003617; /* Cor escura para o texto */
+  color: #003617;
 }
 
 .header--card-hr button {
-  background-color: #00e060; /* Cor de fundo do botão */
-  color: #fff; /* Cor do texto do botão */
+  background-color: #00e060;
+  color: #fff;
   border: none;
   border-radius: 4px;
   padding: 6px 12px;
@@ -450,7 +451,7 @@ body {
 }
 
 .header--card-hr button:hover {
-  background-color: #00b552; /* Cor do botão ao passar o mouse */
+  background-color: #00b552;
 }
 
 /* Estilização da lista de histórico */
@@ -459,21 +460,21 @@ body {
   padding: 0;
   margin: 0;
   max-height: 420px;
-  overflow: auto; /* mantém a rolagem */
-  scrollbar-width: none; /* para Firefox */
+  overflow: auto;
+  scrollbar-width: none;
 }
 
 .info--historico ul::-webkit-scrollbar {
-  display: none; /* para Chrome, Safari e Edge */
+  display: none;
 }
 
 /* Estilização de cada item da lista */
 .info--historico li {
-  background-color: #fff; /* Fundo branco para cada item */
-  border-radius: 6px; /* Bordas arredondadas para os itens */
+  background-color: #fff;
+  border-radius: 6px;
   padding: 12px;
   margin-bottom: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve para os itens */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -491,7 +492,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 54, 23, 0.1); /* Fundo leve para o ícone */
+  background-color: rgba(0, 54, 23, 0.1);
   border-radius: 50%;
   margin-right: 12px;
 }
@@ -682,6 +683,24 @@ body {
   text-align: center;
 }
 
+.categoria--receita {
+  background: rgb(39, 39, 161);
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 8px;
+  padding: 0px 20px;
+  text-align: center;
+}
+
+.categoria--despesa {
+  background: #ce170a;
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 8px;
+  padding: 0px 20px;
+  text-align: center;
+}
+
 /* Informações do Card */
 .info--lembrete {
   display: flex;
@@ -733,32 +752,32 @@ body {
 
 /* Estilo para a checkbox */
 .status--info input[type="checkbox"] {
-  appearance: none; /* Remove a aparência padrão da checkbox */
-  width: 50px; /* Largura da checkbox */
-  height: 50px; /* Altura da checkbox */
-  background-color: var(--cor-secundaria); /* Cor de fundo verde */
-  border-radius: 10px; /* Border radius */
-  cursor: pointer; /* Cursor ao passar sobre a checkbox */
-  position: relative; /* Necessário para posicionar o pseudo-elemento */
+  appearance: none;
+  width: 50px;
+  height: 50px;
+  background-color: var(--cor-secundaria);
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
 }
 
 /* Estilo para a checkbox quando marcada */
 .status--info input[type="checkbox"]:checked::before {
-  content: "✓"; /* Símbolo de verificação */
-  position: absolute; /* Posiciona o elemento de forma absoluta */
-  top: 50%; /* Centraliza verticalmente */
-  left: 50%; /* Centraliza horizontalmente */
-  font-size: 2rem; /* Tamanho do símbolo de verificação */
-  color: #fff; /* Cor do símbolo de verificação */
-  transform: translate(-50%, -50%); /* Centraliza o símbolo de verificação */
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 2rem;
+  color: #fff;
+  transform: translate(-50%, -50%);
 }
 
 /* Opcional: estilo quando a checkbox está desativada */
 .status--info input[type="checkbox"]:disabled {
-  cursor: not-allowed; /* Cursor indicando que não é clicável */
-  opacity: 0.6; /* Torna a checkbox visualmente desativada */
-  background-color: #ccc; /* Cor de fundo quando desativada */
-  border: 2px solid #aaa; /* Borda quando desativada */
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #ccc;
+  border: 2px solid #aaa;
 }
 
 /* Ocultar a barra de rolagem em navegadores WebKit */
@@ -768,13 +787,17 @@ body {
 
 /* Ocultar a barra de rolagem e garantir rolagem em navegadores não WebKit */
 .container--dashboard {
-  overflow: auto; /* Permite rolagem */
+  overflow: auto;
 }
 
 /* Para navegadores que não suportam ::-webkit-scrollbar e não têm overflow: hidden */
 html,
 body {
-  overflow: auto; /* Permite rolagem */
+  overflow: auto;
+}
+
+#bloquear-selecao {
+  user-select: none;
 }
 
 @media screen and (max-width: 1300px) {
@@ -782,3 +805,4 @@ body {
     grid-template-columns: 1fr;
   }
 }
+

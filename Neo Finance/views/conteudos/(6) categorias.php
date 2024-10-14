@@ -200,41 +200,45 @@ $result = $stmt->get_result();
     </div>
 
     <!-- Início dos Cards de Categorias -->
-    <div class="cards--categorias">
-      <?php while ($row = $result->fetch_assoc()): ?>
-        <!-- Card Individual de Categoria -->
-        <div class="card--categoria">
-          <!-- Lado Esquerdo do Card -->
-          <div class="lado--esquerdo-card">
-            <div class="icon--categoria">
-              <!-- Exibir o ícone da categoria -->
-              <i class="<?php echo htmlspecialchars($row['icone']); ?>"></i>
-            </div>
-            <div class="descricao--categoria">
-              <span><?php echo htmlspecialchars($row['nome']); ?></span>
-            </div>
-          </div>
-          <!-- Fim do Lado Esquerdo do Card -->
 
-          <!-- Lado Direito do Card -->
-          <div class="lado--direito-card">
-            <div class="icon--apagar">
-              <!-- Botão de apagar categoria -->
-              <img src="../../assets/icons/lixeira--icon.svg" alt="icon--excluir" onclick="abrirModalExcluir('<?php echo htmlspecialchars($row['nome']); ?>', '<?php echo $row['id']; ?>')">
+    <div class="cards--categorias">
+      <div class="scroll--categorias">
+        <?php while ($row = $result->fetch_assoc()): ?>
+          <!-- Card Individual de Categoria -->
+          <div class="card--categoria">
+            <!-- Lado Esquerdo do Card -->
+            <div class="lado--esquerdo-card">
+              <div class="icon--categoria">
+                <!-- Exibir o ícone da categoria -->
+                <i class="<?php echo htmlspecialchars($row['icone']); ?>"></i>
+              </div>
+              <div class="descricao--categoria">
+                <span><?php echo htmlspecialchars($row['nome']); ?></span>
+              </div>
             </div>
-            <div class="icon--editar">
-              <!-- Botão de editar categoria -->
-              <img src="../../assets/icons/lapis--icon.svg" alt="icon--editar" onclick='abrirModalEditar(<?php echo json_encode($row); ?>)'>
+            <!-- Fim do Lado Esquerdo do Card -->
+
+            <!-- Lado Direito do Card -->
+            <div class="lado--direito-card">
+              <div class="icon--apagar">
+                <!-- Botão de apagar categoria -->
+                <img src="../../assets/icons/lixeira--icon.svg" alt="icon--excluir" onclick="abrirModalExcluir('<?php echo htmlspecialchars($row['nome']); ?>', '<?php echo $row['id']; ?>')">
+              </div>
+              <div class="icon--editar">
+                <!-- Botão de editar categoria -->
+                <img src="../../assets/icons/lapis--icon.svg" alt="icon--editar" onclick='abrirModalEditar(<?php echo json_encode($row); ?>)'>
+              </div>
             </div>
+            <!-- Fim do Lado Direito do Card -->
           </div>
-          <!-- Fim do Lado Direito do Card -->
-        </div>
-        <!-- Fim do Card Individual de Categoria -->
-      <?php endwhile; ?>
+          <!-- Fim do Card Individual de Categoria -->
+        <?php endwhile; ?>
+      </div>
+      <!-- Fim dos Cards de Categorias -->
     </div>
-    <!-- Fim dos Cards de Categorias -->
+    <!-- Fim do Conteúdo Principal -->
   </div>
-  <!-- Fim do Conteúdo Principal -->
+
 
   <!-- Modal de Adicionar Categoria -->
   <div id="modalAdicionar" class="modal">

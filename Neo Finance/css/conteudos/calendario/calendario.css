@@ -187,7 +187,8 @@ body {
 
 .categoria--1,
 .categoria--2,
-.categoria--3 {
+.categoria--3,
+.categoria--4 {
   background: var(--cor--destaque-verde);
   border-radius: 12px;
   padding: 5px 20px;
@@ -195,6 +196,25 @@ body {
   font-weight: bold;
   white-space: nowrap;
   color: var(--fonte-cards);
+}
+.categoria--receita {
+  background: rgb(39, 39, 161);
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: white;
+}
+
+.categoria--despesa {
+  background: #ce170a;
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: white;
 }
 
 .descricao--v {
