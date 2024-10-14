@@ -74,14 +74,10 @@ $conn->close();
     <div class="cards">
       <!-- Card Balanço Total -->
       <div class="card--balanco">
-        <!-- Lado Esquerdo do Card -->
         <div class="lado--esquerdo-bt">
           <span>Balanço Total</span>
           <h1 id="balanco--valor--total">R$ <?php echo number_format($balanco, 2, ',', '.'); ?></h1>
         </div>
-        <!-- Fim Lado Esquerdo do Card -->
-
-        <!-- Lado Direito do Card -->
         <div class="lado--direito-geral-bt">
           <div class="lado--direito-bt">
             <div class="parte--cima-bt">
@@ -99,13 +95,11 @@ $conn->close();
               <img src="../../assets/icons/icon--gastos.svg" alt="icon--gastos" />
             </div>
           </div>
-          <!-- Botão Adicionar -->
           <div class="botao--adicionar">
             <img id="btn--abrir--popup" src="../../assets/icons/botao--adicionar.svg" alt="Adicionar" />
           </div>
         </div>
       </div>
-      <!-- Fim Card Balanço Total -->
 
       <!-- Card Histórico Recente -->
       <div class="card--historico-recente">
@@ -113,20 +107,16 @@ $conn->close();
           <span>Histórico Recente</span>
           <button id="ver-tudo-btn">Ver tudo</button>
         </div>
-        <!-- Histórico de Transações -->
         <div class="info--historico">
           <ul id="historicoList">
-            <?php echo $historicoItems; // Itens do histórico serão exibidos aqui
-            ?>
+            <?php echo $historicoItems; ?>
           </ul>
         </div>
         <div class="seta--pra--baixo"></div>
       </div>
-      <!-- Fim Histórico Recente -->
 
       <!-- Card Receitas x Despesas -->
       <div class="card--receitasXdespesas">
-        <!-- Lado Esquerdo do Card -->
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
           <div class="grafico--receitasXdespesas">
@@ -134,9 +124,7 @@ $conn->close();
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
           </div>
         </div>
-        <!-- Informações e Filtro -->
         <div class="infoXfiltro">
-
           <div class="select--filtro">
             <select name="periodo" id="Filtro--mes">
               <option value="mensal">Mensal</option>
@@ -144,7 +132,6 @@ $conn->close();
               <option value="diario">Diário</option>
             </select>
           </div>
-
           <div class="receitas--filtro">
             <div class="icon--verde"></div>
             <div class="info--valores">
@@ -188,17 +175,15 @@ $conn->close();
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
-      <!-- Fim Card Próximos Vencimentos -->
 
-      <!-- Card Lembretes -->
       <div class="card--lembretes">
         <div class="header--card-l">
           <span class="titulo">Lembretes</span>
           <?php if (isset($vencimentoData['tipo_transacao'])): ?>
-  <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
-    <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); // Protege contra XSS ?>
-  </span>
-<?php endif; ?>
+            <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
+              <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); ?>
+            </span>
+          <?php endif; ?>
         </div>
         <div class="info--lembrete">
           <div class="detalhes--info">
@@ -211,10 +196,8 @@ $conn->close();
           </div>
         </div>
       </div>
-      <!-- Fim Card Lembretes -->
     </div>
   </div>
-  <!-- Fim Conteúdo -->
 
   <!-- Início PopUp Adição de Item -->
   <div class="popup-container" id="popup-container" style="display: none;">
@@ -229,11 +212,9 @@ $conn->close();
         <label for="valor">Valor:</label>
         <input type="text" id="valor" name="valor" required placeholder="0,00">
 
-        <!-- Botão que abrirá o popup -->
         <label for="categoria">Categoria:</label>
         <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
-        <!-- Input oculto para armazenar o ID da categoria selecionada -->
         <input type="hidden" name="categoria" id="categoria-id" required>
 
         <label for="tipo">Tipo:</label>
@@ -246,7 +227,6 @@ $conn->close();
       </form>
     </div>
   </div>
-  <!-- FIM PopUp Adição de Item -->
 
   <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
   <div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
@@ -254,12 +234,10 @@ $conn->close();
       <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
       <h2 class="categoria-titulo">Selecionar uma categoria</h2>
 
-      <!-- Botão de filtragem -->
       <button id="botao-filtro-categorias" class="btn-filtro-categorias">
         A-Z
       </button>
 
-      <!-- LISTAGEM DAS CATEGORIAS -->
       <ul id="lista-categorias" class="lista-categorias">
         <?php
         if (!empty($categorias)) {
@@ -279,12 +257,10 @@ $conn->close();
       </ul>
     </div>
   </div>
-  <!-- FIM POP-UP SELECT DE CATEGORIAS -->
 
   <script src="../../js/conteudos/dashboard/popup.js"></script>
   <script src="../../js/conteudos/dashboard/categorias.js"></script>
   <script src="../../js/conteudos/dashboard/formataMoeda.js"></script>
-
 </body>
 
 </html>
