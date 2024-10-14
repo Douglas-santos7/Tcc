@@ -26,8 +26,7 @@ $saldo_inicial_adicionado = $row['saldo_inicial_adicionado'] > 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Capturar o valor inserido pelo usuário e adicionar como saldo inicial
-    $saldo_inicial = isset($_POST['saldo_inicial']) ? $_POST['saldo_inicial'] :git checkout CV
- 0.00;
+    $saldo_inicial = isset($_POST['saldo_inicial']) ? $_POST['saldo_inicial'] : 0.00;
 
     // Inserir a transação de saldo inicial na tabela de transações
     $query = "INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor) VALUES (?, 'Receita', 0, 'Saldo Inicial', ?)";
