@@ -1,0 +1,385 @@
+@import url(../../root.css);
+
+/* =====================================
+   RESET DE MARGEM E PADDING
+   ===================================== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fonte-principal);
+  background-color: var(--background);
+}
+
+/* =====================================
+   HEADER
+   ===================================== */
+.container--header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+.titulo--banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titulo--banner img {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.titulo--banner h1 {
+  font-size: 2rem;
+  color: var(--fonte-cards);
+}
+
+.notificacao--usuario img {
+  width: 30px;
+  height: auto;
+}
+
+/* =====================================
+   CONTEÚDO PRINCIPAL
+   ===================================== */
+.container--conteudo {
+  display: grid;
+  grid-template-columns: 1fr 8fr;
+  grid-template-rows: 85vh;
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+.adicionar--btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background--cards);
+  border-radius: 12px;
+  min-width: 100px;
+}
+
+/* =====================================
+   CARDS DE VENCIMENTOS
+   ===================================== */
+.cards--vencimentos {
+  display: flex;
+  flex-direction: column;
+  background: var(--background--cards);
+  border-radius: 12px;
+}
+
+.header--card-vencimentos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+}
+
+.header--card-vencimentos span:nth-child(1) {
+  font-size: 2.5rem;
+}
+.header--card-vencimentos span:nth-child(2) {
+  font-size: 2.5rem;
+  background: var(--cor-secundaria);
+  color: white;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+.conteudo--card-vencimentos {
+  display: flexbox;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  margin: 10px 20px;
+}
+
+/* =====================================
+   SCROLL CARD
+   ===================================== */
+.scroll-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* =====================================
+   CARD
+   ===================================== */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  width: auto;
+  min-height: 160px;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.lado--esquerdo--card,
+.lado--direito--card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =====================================
+   DATA DE VENCIMENTO
+   ===================================== */
+.data--vencimento {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background--icon);
+  border-radius: 50%;
+  color: white;
+}
+
+.data--vencimento span {
+  font-size: 3.5rem;
+  font-weight: bold;
+}
+
+/* =====================================
+   LINHA VERTICAL DO CARD
+   ===================================== */
+.linha--vertical--card {
+  width: 3px;
+  height: 100px;
+  background: black;
+  margin: 0px 10px;
+  border-radius: 12px;
+}
+
+/* =====================================
+   DESCRIÇÃO COMPLETA DO VENCIMENTO
+   ===================================== */
+.descricao--completa-v {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0px 20px;
+}
+
+.tags--descricao {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0px 10px;
+}
+
+.categoria--1,
+.categoria--2,
+.categoria--3,
+.categoria--4 {
+  background: var(--cor--destaque-verde);
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--fonte-cards);
+}
+.categoria--receita {
+  background: rgb(39, 39, 161);
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: white;
+}
+
+.categoria--despesa {
+  background: #ce170a;
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: white;
+}
+
+.descricao--v {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.descricao--v span {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: var(--fonte-cards);
+}
+
+/* =====================================
+   DATA COMPLETA E VALOR
+   ===================================== */
+.data--X--valor-v {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.data--completa-v {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.valor--v {
+  font-size: 3.5rem;
+  font-weight: bolder;
+  max-width: 800px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Estilos para o Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close {
+  float: right;
+  font-size: 28px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #d9534f;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal input,
+.modal select {
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border 0.3s;
+}
+
+.modal input:focus,
+.modal select:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.modal button {
+  padding: 12px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.modal button:hover {
+  background-color: #4cae4f;
+  transform: translateY(-2px);
+}
+
+.filtro--mes {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filtro--mes select {
+  padding: 10px;
+  font-size: 1.5rem;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.filtro--mes select:focus {
+  border-color: #4caf50;
+}
+
+.filtro--mes button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.filtro--mes button:hover {
+  background-color: #4cae4f;
+  transform: translateY(-2px); /* Levanta o botão ao passar o mouse */
+}
+
+/* =====================================
+   OCULTAR BARRA DE ROOLAGEM
+   ===================================== */
+.conteudo--card-vencimentos::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Oculta o fundo da scrollbar */
+}
+
+.conteudo--card-vencimentos {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
