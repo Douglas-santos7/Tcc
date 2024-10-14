@@ -194,12 +194,16 @@ $conn->close();
       <div class="card--lembretes">
         <div class="header--card-l">
           <span class="titulo">Lembretes</span>
-          <span class="descricao--lembrete">Moradia</span>
+          <?php if (isset($vencimentoData['tipo_transacao'])): ?>
+  <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
+    <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); // Protege contra XSS ?>
+  </span>
+<?php endif; ?>
         </div>
         <div class="info--lembrete">
           <div class="detalhes--info">
-            <span class="descricao--info">Pagar aluguel</span>
-            <span class="valor--lembrete">$ 350,00</span>
+            <span class="descricao--info"><?php echo $descricao; ?></span>
+            <span class="valor--lembrete">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
           </div>
           <div class="status--info">
             <span>Em aberto</span>

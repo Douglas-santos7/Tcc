@@ -681,6 +681,23 @@ body {
   padding: 0px 20px;
   text-align: center;
 }
+.categoria--receita {
+  background: rgb(39, 39, 161);
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 8px;
+  padding: 0px 20px;
+  text-align: center;
+}
+
+.categoria--despesa {
+  background: #ce170a;
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 8px;
+  padding: 0px 20px;
+  text-align: center;
+}
 
 /* Informações do Card */
 .info--lembrete {
