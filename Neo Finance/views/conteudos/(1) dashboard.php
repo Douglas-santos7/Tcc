@@ -30,8 +30,10 @@ $categoria = $vencimentoData['categoria'];
 // Obter categorias
 $categorias = obterCategorias($conn);
 
-// Enviar dados do formulário
-enviarDados($conn, $userId);
+// Verificar se o formulário de adição de item foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_POST['valor']) && isset($_POST['categoria']) && isset($_POST['tipo'])) {
+    enviarDados($conn, $userId);
+}
 
 // Consultar histórico
 $historicoItems = consultarHistorico($conn, $userId);
@@ -42,6 +44,7 @@ $saudacao = obterSaudacao();
 // Fecha a conexão
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -194,6 +197,10 @@ $conn->close();
             <span>Em aberto</span>
             <input type="checkbox" name="status--checkbox" />
           </div>
+          <form method="POST" action="">
+            <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
+            <button type="submit" name="confirmar_pagamento">Confirmar Pagamento</button>
+          </form>
         </div>
       </div>
     </div>

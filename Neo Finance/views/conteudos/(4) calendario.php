@@ -129,7 +129,9 @@ $categorias = buscarCategorias($usuario_id, $conn);
                         <span>R$ <?php echo number_format($vencimento['valor'], 2, ',', '.'); ?></span>
                       </div>
                     </div>
-                    <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">Confirmar Pagamento</button>
+                    <?php if ($vencimento['status'] !== 'Pago'): ?>
+                      <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">Confirmar Pagamento</button>
+                    <?php endif; ?>
                   </div>
                 </div>
               <?php endforeach; ?>

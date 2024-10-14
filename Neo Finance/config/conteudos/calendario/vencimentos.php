@@ -12,8 +12,8 @@ function buscarVencimentos($mesSelecionado, $conn)
     $query = "SELECT v.id, v.descricao, v.data_vencimento, v.valor, v.categoria, v.status, v.tipo_transacao, c.id AS categoria_id, c.icone
               FROM vencimentos v
               JOIN categorias c ON v.categoria = c.nome
-              WHERE MONTH(v.data_vencimento) = ? AND v.status = 'Pendente' AND v.usuario_id = ?
-              ORDER BY v.data_vencimento ASC";
+              WHERE MONTH(v.data_vencimento) = ?  AND v.usuario_id = ?
+              ORDER BY status DESC";
 
     // Usa prepared statements
     if ($stmt = mysqli_prepare($conn, $query)) {
@@ -102,22 +102,19 @@ function confirmarPagamento($vencimento_id, $conn)
 
     if ($vencimento) {
         // Insere a transação na tabela de transações
-        $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $usuario_id = $vencimento['usuario_id'];
         $tipo_transacao = $vencimento['tipo_transacao'];
         $categoria_id = $vencimento['categoria_id'];
         $nome = $vencimento['descricao'];
-        $valor = $vencimento['valor'];
+        $valor = $vencimento['valor']; // Valor decimal
         $data = $vencimento['data_vencimento'];
         $criado_em = date('Y-m-d H:i:s');
         $icone = $vencimento['icone'];
 
-        $stmt->bind_param("isssssss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
-        $stmt->execute();
-
-        // Remove o vencimento da tabela de vencimentos
-        $stmt = $conn->prepare("DELETE FROM vencimentos WHERE id = ?");
-        $stmt->bind_param("i", $vencimento_id);
+        // O tipo do parâmetro 'valor' deve ser 'd' (decimal), não 's' (string)
+        $stmt->bind_param("isssdsss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
         $stmt->execute();
 
         return true;
@@ -125,6 +122,7 @@ function confirmarPagamento($vencimento_id, $conn)
         return false;
     }
 }
+
 
 
 // Verifica se o formulário de confirmação de pagamento foi submetido
@@ -139,4 +137,3 @@ if (isset($_POST['confirmarPagamento'])) {
         echo "<script>alert('Erro ao confirmar o pagamento.');</script>";
     }
 }
-?>
