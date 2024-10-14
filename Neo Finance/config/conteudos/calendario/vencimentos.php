@@ -1,5 +1,4 @@
 <?php
-// Arquivo: vencimentos.php
 session_start();
 include('../../config/database/conexao.php');
 include('funcoes.php');
@@ -10,9 +9,11 @@ function buscarVencimentos($mesSelecionado, $conn)
     $usuario_id = $_SESSION['user_id']; // Pega o ID do usuário logado
 
     // Prepara a consulta
-    $query = "SELECT descricao, data_vencimento, valor, categoria, status, tipo_transacao FROM vencimentos 
-              WHERE MONTH(data_vencimento) = ? AND status = 'Pendente' AND usuario_id = ? 
-              ORDER BY data_vencimento ASC";
+    $query = "SELECT v.id, v.descricao, v.data_vencimento, v.valor, v.categoria, v.status, v.tipo_transacao, c.id AS categoria_id, c.icone
+              FROM vencimentos v
+              JOIN categorias c ON v.categoria = c.nome
+              WHERE MONTH(v.data_vencimento) = ? AND v.status = 'Pendente' AND v.usuario_id = ?
+              ORDER BY v.data_vencimento ASC";
 
     // Usa prepared statements
     if ($stmt = mysqli_prepare($conn, $query)) {
@@ -30,10 +31,13 @@ function buscarVencimentos($mesSelecionado, $conn)
             while ($row = mysqli_fetch_assoc($result)) {
                 $diasRestantes = calcularDiasRestantes($row['data_vencimento']);
                 $vencimentos[] = [
+                    'id' => $row['id'],
                     'descricao' => $row['descricao'],
                     'data_vencimento' => $row['data_vencimento'],
                     'valor' => $row['valor'],
                     'categoria' => $row['categoria'],
+                    'categoria_id' => $row['categoria_id'],
+                    'icone' => $row['icone'],
                     'status' => $row['status'],
                     'tipo_transacao' => $row['tipo_transacao'], // Inclui o tipo de transação
                     'dias_restantes' => $diasRestantes
@@ -52,7 +56,6 @@ function buscarVencimentos($mesSelecionado, $conn)
     return $vencimentos;
 }
 
-
 // Função para adicionar um novo vencimento
 function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $tipo_transacao, $conn)
 {
@@ -62,13 +65,78 @@ function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $
     }
 
     // Monta a query SQL de inserção, agora incluindo o tipo de transação
-    $query = "INSERT INTO vencimentos (descricao, data_vencimento, valor, categoria, status, usuario_id, tipo_transacao) 
-              VALUES ('$descricao', '$data_vencimento', '$valor', '$categoria', 'Pendente', 1, '$tipo_transacao')";
+    $query = "INSERT INTO vencimentos (descricao, data_vencimento, valor, categoria, status, usuario_id, tipo_transacao)
+              VALUES (?, ?, ?, ?, 'Pendente', ?, ?)";
 
-    // Executa a query usando a conexão
-    if (mysqli_query($conn, $query)) {
-        echo "Vencimento adicionado com sucesso!";
+    // Usa prepared statements
+    if ($stmt = mysqli_prepare($conn, $query)) {
+        // Liga os parâmetros
+        mysqli_stmt_bind_param($stmt, 'ssdsss', $descricao, $data_vencimento, $valor, $categoria, $_SESSION['user_id'], $tipo_transacao);
+
+        // Executa a consulta
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Vencimento adicionado com sucesso!";
+        } else {
+            echo "Erro: " . mysqli_error($conn);
+        }
+
+        // Fecha a declaração
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Erro: " . mysqli_error($conn);
+        echo "Erro ao preparar a consulta: " . mysqli_error($conn);
     }
 }
+
+// Função para confirmar o pagamento de um vencimento
+function confirmarPagamento($vencimento_id, $conn)
+{
+    // Busca os detalhes do vencimento
+    $stmt = $conn->prepare("SELECT v.*, c.id AS categoria_id, c.icone
+                            FROM vencimentos v
+                            JOIN categorias c ON v.categoria = c.nome
+                            WHERE v.id = ?");
+    $stmt->bind_param("i", $vencimento_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $vencimento = $result->fetch_assoc();
+
+    if ($vencimento) {
+        // Insere a transação na tabela de transações
+        $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $usuario_id = $vencimento['usuario_id'];
+        $tipo_transacao = $vencimento['tipo_transacao'];
+        $categoria_id = $vencimento['categoria_id'];
+        $nome = $vencimento['descricao'];
+        $valor = $vencimento['valor'];
+        $data = $vencimento['data_vencimento'];
+        $criado_em = date('Y-m-d H:i:s');
+        $icone = $vencimento['icone'];
+
+        $stmt->bind_param("isssssss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
+        $stmt->execute();
+
+        // Remove o vencimento da tabela de vencimentos
+        $stmt = $conn->prepare("DELETE FROM vencimentos WHERE id = ?");
+        $stmt->bind_param("i", $vencimento_id);
+        $stmt->execute();
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+// Verifica se o formulário de confirmação de pagamento foi submetido
+if (isset($_POST['confirmarPagamento'])) {
+    $vencimento_id = $_POST['vencimento_id'];
+
+    // Chama a função para confirmar o pagamento
+    if (confirmarPagamento($vencimento_id, $conn)) {
+        // Exibe o modal de sucesso
+        echo "<script>document.getElementById('modalSucesso').style.display = 'flex';</script>";
+    } else {
+        echo "<script>alert('Erro ao confirmar o pagamento.');</script>";
+    }
+}
+?>

@@ -25,6 +25,7 @@ if (isset($_POST['adicionarVencimento'])) {
   }
 }
 
+
 // Busca os vencimentos do mês selecionado
 $vencimentos = buscarVencimentos($mesSelecionado, $conn);
 
@@ -128,6 +129,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
                         <span>R$ <?php echo number_format($vencimento['valor'], 2, ',', '.'); ?></span>
                       </div>
                     </div>
+                    <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">Confirmar Pagamento</button>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -189,6 +191,17 @@ $categorias = buscarCategorias($usuario_id, $conn);
             <h2>Sucesso!</h2>
             <p>Vencimento adicionado com sucesso.</p>
             <button id="btn-ok" onclick="fecharModalSucesso()">OK</button>
+          </div>
+        </div>
+        <div id="modalConfirmarPagamento" class="modal">
+          <div class="modal-content">
+            <span class="fechar--modal" onclick="fecharModalConfirmarPagamento()">&times;</span>
+            <h2>Confirmar Pagamento</h2>
+            <p>Você tem certeza que deseja confirmar o pagamento deste vencimento?</p>
+            <form id="formConfirmarPagamento" method="POST" onsubmit="return confirmarPagamento(event)">
+              <input type="hidden" id="vencimento_id" name="vencimento_id" value="">
+              <button type="submit" name="confirmarPagamento">Confirmar</button>
+            </form>
           </div>
         </div>
 
@@ -254,6 +267,20 @@ $categorias = buscarCategorias($usuario_id, $conn);
           <?php if (isset($vencimentoAdicionado) && $vencimentoAdicionado): ?>
             document.getElementById('modalSucesso').style.display = 'flex';
           <?php endif; ?>
+
+          function abrirModalConfirmarPagamento(vencimentoId) {
+            document.getElementById('vencimento_id').value = vencimentoId;
+            document.getElementById('modalConfirmarPagamento').style.display = 'flex';
+          }
+
+          function fecharModalConfirmarPagamento() {
+            document.getElementById('modalConfirmarPagamento').style.display = 'none';
+          }
+
+          function confirmarPagamento(event) {
+            event.preventDefault();
+            document.getElementById('formConfirmarPagamento').submit();
+          }
         </script>
       </div>
 </body>

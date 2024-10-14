@@ -4,9 +4,9 @@ include("../../config/database/conexao.php");
 function obterProximoVencimento($conn, $userId)
 {
   // Consulta para obter o próximo vencimento pendente
-  $queryVencimentos = "SELECT descricao, data_vencimento, valor, categoria, status, tipo_transacao
+  $queryVencimentos = "SELECT id, descricao, data_vencimento, valor, categoria, status, tipo_transacao
                        FROM vencimentos
-                       WHERE usuario_id = ? 
+                       WHERE usuario_id = ?
                        AND status = 'Pendente'
                        AND data_vencimento >= CURDATE()
                        ORDER BY data_vencimento ASC
@@ -21,6 +21,7 @@ function obterProximoVencimento($conn, $userId)
   // Verifica se existe um vencimento
   if ($vencimento = $resultVencimentos->fetch_assoc()) {
     // Se existir, armazene as informações
+    $id = $vencimento['id'];
     $descricao = $vencimento['descricao'];
     $data_vencimento = $vencimento['data_vencimento'];
     $valor = $vencimento['valor'];
@@ -29,6 +30,7 @@ function obterProximoVencimento($conn, $userId)
     $tipo_transacao = $vencimento['tipo_transacao'];
   } else {
     // Caso não exista, defina valores padrão
+    $id = null;
     $descricao = "Sem vencimentos pendentes";
     $data_vencimento = "";
     $valor = 0;
@@ -39,6 +41,7 @@ function obterProximoVencimento($conn, $userId)
 
   // Retorna um array com os dados
   return [
+    'id' => $id,
     'descricao' => $descricao,
     'data_vencimento' => $data_vencimento,
     'valor' => $valor,
