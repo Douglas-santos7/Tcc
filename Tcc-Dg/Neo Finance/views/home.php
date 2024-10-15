@@ -34,7 +34,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <span>Home</span>
           </li>
           <div class="espacamentoLi"></div>
-          <li class="Item2" data-src="./conteudos/(2) teste.html" data-title="Gráficos">
+          <li class="Item2" data-src="./conteudos/(2) graficos.php" data-title="Gráficos">
             <div class="barra--icon"></div>
             <img class="icon--li" src="../assets/icons/home--sidebar/graficos--icon.svg" />
             <span>Gráficos</span>
