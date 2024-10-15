@@ -7,38 +7,58 @@ include('../../database/conexao.php');
 
 // Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
-    // Se o usuário não estiver logado, redireciona para a página de login
     header("Location: ../../../views/login/login.php");
     exit();
 }
 
-$usuario_id = $_SESSION['user_id']; // Pega o ID do usuário logado da sessão
+$usuario_id = $_SESSION['user_id'];
 
-// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
     $icone = $_POST['icone'];
 
-    // Verifica se o nome da categoria já existe para o usuário logado
-    $query = "SELECT * FROM categorias WHERE usuario_id = ? AND nome = ?";
+    // Verifica se o nome da categoria já existe e não está excluída
+    $query = "SELECT * FROM categorias WHERE usuario_id = ? AND nome = ? AND excluida = FALSE";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("is", $usuario_id, $nome);
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Se a categoria já existe e não está excluída, exibe erro
     if ($result->num_rows > 0) {
         $erro = "Já existe uma categoria com esse nome.";
     } else {
-        // Inserir a nova categoria
-        $query = "INSERT INTO categorias (usuario_id, nome, icone) VALUES (?, ?, ?)";
+        // Verifica se existe uma categoria excluída com o mesmo nome
+        $query = "SELECT id FROM categorias WHERE usuario_id = ? AND nome = ? AND excluida = TRUE";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("iss", $usuario_id, $nome, $icone);
+        $stmt->bind_param("is", $usuario_id, $nome);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($stmt->execute()) {
-            header("Location: ../../../views/conteudos/(6) categorias.php"); // Redireciona de volta para a página de categorias
-            exit();
+        if ($result->num_rows > 0) {
+            // Reativa a categoria que foi excluída
+            $row = $result->fetch_assoc();
+            $query = "UPDATE categorias SET excluida = FALSE, icone = ? WHERE id = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("si", $icone, $row['id']);
+            if ($stmt->execute()) {
+                header("Location: ../../../views/conteudos/(6) categorias.php");
+                exit();
+            } else {
+                $erro = "Erro ao reativar a categoria.";
+            }
         } else {
-            $erro = "Erro ao adicionar a categoria.";
+            // Inserir a nova categoria
+            $query = "INSERT INTO categorias (usuario_id, nome, icone, excluida) VALUES (?, ?, ?, FALSE)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("iss", $usuario_id, $nome, $icone);
+
+            if ($stmt->execute()) {
+                header("Location: ../../../views/conteudos/(6) categorias.php");
+                exit();
+            } else {
+                $erro = "Erro ao adicionar a categoria.";
+            }
         }
     }
 }

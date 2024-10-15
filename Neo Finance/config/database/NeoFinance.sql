@@ -37,8 +37,9 @@ CREATE TABLE categorias (
     usuario_id INT NOT NULL,
     nome VARCHAR(191) NOT NULL,
     icone VARCHAR(255) NOT NULL,
+    excluida BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE,
-    UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas
+    UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas apenas se não estiver excluída
 );
 
 -- Comando para deletar categorias já existentes (caso queira limpar antes da inserção)

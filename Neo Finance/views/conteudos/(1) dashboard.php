@@ -166,7 +166,16 @@ $conn->close();
             <img src="../../assets/icons/icon--calendario.svg" alt="icon--calendario" />
             <span class="dias--restantes"><?php echo calcularDiasRestantes($data_vencimento); ?></span>
           </div>
-          <span class="mes--vencimento"><?php echo mesEmPortugues($data_vencimento); ?></span>
+          <span class="mes--vencimento">
+            <?php
+            // Verifica se não há vencimentos pendentes
+            if ($valor == 0 && $descricao == 'Sem vencimentos pendentes') {
+              echo mesEmPortugues(date('Y-m-d')); // Mostra o mês atual
+            } else {
+              echo mesEmPortugues($data_vencimento); // Mostra o mês da data de vencimento
+            }
+            ?>
+          </span>
         </div>
         <div class="info--vencimentos">
           <div class="info--descricao">
@@ -179,6 +188,7 @@ $conn->close();
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
+             
 
       <!-- Card Lembretes -->
       <div class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">

@@ -7,7 +7,7 @@ include('../../config/database/conexao.php');
 function buscarCategorias($usuarioId, $conn)
 {
     // Prepara a consulta para evitar SQL Injection
-    $query = "SELECT nome FROM categorias WHERE usuario_id = ?";
+    $query = "SELECT nome FROM categorias WHERE usuario_id = ? AND excluida =  false";
     $stmt = mysqli_prepare($conn, $query);
 
     // Bind the parameter

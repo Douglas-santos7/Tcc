@@ -14,8 +14,8 @@ if (!isset($_SESSION['user_id'])) {
 // Pega o ID da categoria a ser excluída
 $id_categoria = $_POST['id_categoria'];
 
-// Prepare a consulta para excluir a categoria
-$query = "DELETE FROM categorias WHERE id = ? AND usuario_id = ?";
+// Prepare a consulta para marcar a categoria como excluída
+$query = "UPDATE categorias SET excluida = TRUE WHERE id = ? AND usuario_id = ?";
 $stmt = $conn->prepare($query);
 
 // O ID do usuário logado deve ser validado para garantir que ele só possa excluir suas próprias categorias
@@ -29,3 +29,7 @@ if ($stmt->execute()) {
     // Redirecionar de volta com um erro
     header("Location: ../../../views/conteudos/(6) categorias.php?status=error");
 }
+
+// Fechar declaração
+$stmt->close();
+$conn->close();
