@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+@import url(../../css/root.css);
+
+  /* Estilos Gerais */
+body {
+  font-family: var(--fonte-principal);
+  background-color: #cfffb5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+/* Menu Lateral */
+.menu-lateral {
+  background-color: #003617;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 22px;
+  top: 20px;
+  
+  height: 90%;
+  width: 100px;
+}
+
+.btn-adicionar {
+  background-color: #00e060;
+  width: 80px;
+  height: 80px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-adicionar:hover {
+  background-color: #00c850;
+}
+
+/* Container dos Cards */
+.container-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 1fr)); /* Aumenta o tamanho mínimo das colunas */
+  gap: 30px; /* Espaçamento entre os cards */
+  flex-grow: 1;
+  padding: 0 20px;
+  margin-left: 120px; /* Espaço extra para o menu lateral */
+}
+
+
+/* Estilos dos Cards de Metas */
+.card-meta {
+  background-color: #f1eeff;
+  border-radius: 15px;
+  padding: 30px; /* Aumenta o padding para mais espaçamento interno */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 350px; /* Aumenta a altura mínima dos cards */
+  width: 90%; /* Permite que o card ocupe a largura completa da coluna */
+  margin-bottom: 20px; /* Espaçamento extra entre os cards na vertical */
+}
+
+.titulo-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Aumenta o espaçamento entre o título e o conteúdo */
+  font-size: 24px; /* Aumenta o tamanho da fonte dos títulos */
+}
+
+.titulo-card img {
+  width: 32px; /* Aumenta o tamanho do ícone */
+  height: 32px;
+}
+
+.progresso-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Aumenta o espaçamento abaixo da barra de progresso */
+  font-size: 18px; /* Aumenta o tamanho da fonte dos textos de progresso */
+}
+
+.barra-progresso {
+  background-color: #d9d9d9;
+  width: 200px; /* Aumenta a largura da barra de progresso */
+  height: 12px; /* Aumenta a altura da barra de progresso */
+  border-radius: 6px;
+  margin: 0 20px; /* Aumenta o espaçamento lateral da barra de progresso */
+}
+
+.barra-progresso-preenchida {
+  background-color: #00e060;
+  height: 12px; /* Aumenta a altura da barra preenchida */
+  border-radius: 6px;
+}
+
+.botoes-meta {
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-depositar, .btn-historico, .btn-resgatar {
+  background-color: #003617;
+  color: #fff;
+  border: none;
+  padding: 12px 18px; /* Aumenta o padding dos botões */
+  border-radius: 10px; /* Aumenta o arredondamento dos botões */
+  font-size: 16px; /* Aumenta o tamanho da fonte dos botões */
+  cursor: pointer;
+}
+
+.btn-depositar:hover, .btn-historico:hover, .btn-resgatar:hover {
+  background-color: #00e060;
+}
+
+
+</style>
+<body>
+
+  <div class="container">
+    <!-- Menu Lateral -->
+    <div class="menu-lateral">
+      <div class="adicionar--btn">
+        <img src="../../assets/icons/add--icon.svg" alt="add--btn" onclick="abrirModalAdicionar()">
+      </div>
+    </div>
+
+    <!-- Cards de Metas -->
+    <div class="container-cards">
+
+      <!-- Card 1 -->
+      <div class="card-meta">
+        <div class="titulo-card">
+          <span>Headset</span>
+          <div for="icon2"><i class="fi fi-sr-home"></i></div>
+          <div class="icone-lixeira"><i class="fi fi-sr-trash"></i></div> 
+        </div>
+        <div class="progresso-meta">
+          <span>R$ 50,00</span>
+          <div class="barra-progresso">
+            <div class="barra-progresso-preenchida" style="width: 16.67%;"></div>
+          </div>
+          <span>de R$ 300,00</span>
+        </div>
+        <div class="botoes-meta">
+          <button class="btn-depositar"><div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar</button>
+          <button class="btn-resgatar"><div for="icon2"><i class="fi fi-sr-home"></i></div>Resgatar</button>
+          <button class="btn-historico"><div for="icon2"><i class="fi fi-sr-home"></i></div>Histórico</button>
+        </div>
+      </div>
+
+
+      <!-- Card 1 -->
+      <div class="card-meta">
+        <div class="titulo-card">
+          <span>Headset</span>
+          <div for="icon2"><i class="fi fi-sr-home"></i></div>
+          <div class="icone-lixeira"><i class="fi fi-sr-trash"></i></div> 
+        </div>
+        <div class="progresso-meta">
+          <span>R$ 50,00</span>
+          <div class="barra-progresso">
+            <div class="barra-progresso-preenchida" style="width: 16.67%;"></div>
+          </div>
+          <span>de R$ 300,00</span>
+        </div>
+        <div class="botoes-meta">
+          <button class="btn-depositar"><div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar</button>
+          <button class="btn-resgatar"><div for="icon2"><i class="fi fi-sr-home"></i></div>Resgatar</button>
+          <button class="btn-historico"><div for="icon2"><i class="fi fi-sr-home"></i></div>Histórico</button>
+        </div>
+      </div>
+
+
+      <!-- Card 1 -->
+      <div class="card-meta">
+        <div class="titulo-card">
+          <span>Headset</span>
+          <div for="icon2"><i class="fi fi-sr-home"></i></div>
+          <div class="icone-lixeira"><i class="fi fi-sr-trash"></i></div> 
+        </div>
+        <div class="progresso-meta">
+          <span>R$ 50,00</span>
+          <div class="barra-progresso">
+            <div class="barra-progresso-preenchida" style="width: 16.67%;"></div>
+          </div>
+          <span>de R$ 300,00</span>
+        </div>
+        <div class="botoes-meta">
+          <button class="btn-depositar"><div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar</button>
+          <button class="btn-resgatar"><div for="icon2"><i class="fi fi-sr-home"></i></div>Resgatar</button>
+          <button class="btn-historico"><div for="icon2"><i class="fi fi-sr-home"></i></div>Histórico</button>
+        </div>
+      </div>
+
+      <!-- Card 1 -->
+      <div class="card-meta">
+        <div class="titulo-card">
+          <span>Headset</span>
+          <div for="icon2"><i class="fi fi-sr-home"></i></div>
+          <div class="icone-lixeira"><i class="fi fi-sr-trash"></i></div> 
+        </div>
+        <div class="progresso-meta">
+          <span>R$ 50,00</span>
+          <div class="barra-progresso">
+            <div class="barra-progresso-preenchida" style="width: 16.67%;"></div>
+          </div>
+          <span>de R$ 300,00</span>
+        </div>
+        <div class="botoes-meta">
+          <button class="btn-depositar"><div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar</button>
+          <button class="btn-resgatar"><div for="icon2"><i class="fi fi-sr-home"></i></div>Resgatar</button>
+          <button class="btn-historico"><div for="icon2"><i class="fi fi-sr-home"></i></div>Histórico</button>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Botão de Avançar -->
+    <div class="btn-avancar">
+      >
+    </div>
+  </div>
+
+</body>
+</html>

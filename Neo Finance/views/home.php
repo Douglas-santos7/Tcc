@@ -59,7 +59,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <img class="icon--li" src="../assets/icons/home--sidebar/categorias--icon.svg" />
             <span>Categorias</span>
           </li>
-          <li class="Item7" data-src="./conteudos/(7) teste.html" data-title="Metas">
+          <li class="Item7" data-src="./conteudos/(7) metas.html" data-title="Metas">
             <div class="barra--icon"></div>
             <img class="icon--li" src="../assets/icons/home--sidebar/metas--icon.svg" />
             <span>Metas</span>
