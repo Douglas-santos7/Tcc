@@ -167,7 +167,7 @@ AFTER INSERT ON users
 FOR EACH ROW
 BEGIN
     INSERT INTO categorias (usuario_id, nome, icone)
-    VALUES 
+    VALUES
         (NEW.id, 'Moradia', 'fi-sr-home'),
         (NEW.id, 'Beleza', 'fi-br-scissors'),
         (NEW.id, 'Telefone', 'fi-br-smartphone'),
