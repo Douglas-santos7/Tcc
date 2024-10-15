@@ -23,7 +23,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 <body>
   <div class="container">
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-content">
+      <div class="sidebar-content" id="bloquear-selecao">
         <div class="logo--sidebar" id="logo--sidebar">
           <img src="../assets/img/neofinance--logo.svg" />
         </div>
