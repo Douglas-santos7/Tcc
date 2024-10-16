@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 $usuario_id = $_SESSION['user_id']; // Pega o ID do usuário logado da sessão
 
 // Buscar todas as categorias do usuário logado
-$query = "SELECT * FROM categorias WHERE usuario_id = ?";
+$query = "SELECT * FROM categorias WHERE usuario_id = ? AND excluida =  false";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $usuario_id);
 $stmt->execute();

@@ -1,8 +1,10 @@
 <?php
 include("../../config/database/conexao.php");
 
-function obterCategorias($conn) {
-  $sql = "SELECT id, nome, icone FROM categorias"; // Seleciona id, nome e icone
+function obterCategorias($conn)
+{
+  // Seleciona id, nome e icone onde excluida é false
+  $sql = "SELECT id, nome, icone FROM categorias WHERE excluida = FALSE";
   $result = $conn->query($sql);
 
   // Criando um array para armazenar as categorias
@@ -16,9 +18,8 @@ function obterCategorias($conn) {
     }
   } else {
     // Caso não existam categorias, o array será vazio
-    $categorias = null; // Ou pode deixar como [] para manter a consistência
+    $categorias = []; // Mantendo a consistência como um array vazio
   }
 
   return $categorias;
 }
-?>

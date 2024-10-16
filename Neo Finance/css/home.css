@@ -176,3 +176,7 @@ body {
     margin: 80px 0;
   }
 }
+
+#bloquear-selecao {
+  user-select: none;
+}

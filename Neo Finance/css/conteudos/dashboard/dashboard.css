@@ -806,3 +806,69 @@ body {
   }
 }
 
+/* ################################################ */
+/* Parte dedicada aos cards vencimentos e lembretes */
+/* ################################################ */
+
+.sem-vencimento-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.sem-vencimento-info {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.sem-vencimento-info .descricao--info {
+  color: #00796b;
+  font-weight: bold;
+  font-size: 2rem;
+  opacity: 1;
+  transform: scale(0.8);
+  text-align: center;
+}
+
+.fade-in {
+  animation: fadeInScale 1s ease-in-out forwards;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.sem-vencimento-info .valor--lembrete {
+  display: none;
+}
+
+.card--vencimentos-sem-vencimento .data--vencimento,
+.card--vencimentos-sem-vencimento .valor--vencimento,
+.card--vencimentos-sem-vencimento .titulo--header-v,
+.card--vencimentos-sem-vencimento .descricao--vencimento span:nth-child(1) {
+  display: none;
+}
+.card--vencimentos-sem-vencimento .mes--vencimento {
+  width: 100%;
+  justify-content: end;
+}
+/* ################################################ */
+/* Parte dedicada aos cards vencimentos e lembretes */
+/* ################################################ */

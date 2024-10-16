@@ -10,25 +10,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo semitransparente */
-  z-index: 9999; /* Garante que estará acima de outros elementos */
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
 }
 
 /* Estilo para o popup de boas-vindas */
 .popup-bem-vindo {
-  background-color: var(--verde--vidro); /* Fundo translúcido com efeito de vidro */
-  padding: 40px; /* Padding para espaçamento interno */
+  background-color: var(--verde--vidro);
+  padding: 40px;
   border-radius: 12px;
-  width: 600px; /* Largura do popup */
-  max-width: 90%; /* Máximo de 90% da largura da tela */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra */
+  width: 900px;
+  max-width: 95%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   font-family: var(--fonte-principal);
-  backdrop-filter: blur(10px); /* Efeito de desfoque no fundo */
-  border: 2px solid var(--cor--destaque-verde); /* Borda verde */
+  border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  position: relative;
-  max-height: 90vh; /* Altura máxima */
-  overflow-y: auto; /* Rolagem se o conteúdo for muito alto */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 9999;
 }
 
 
@@ -36,45 +39,45 @@
 .popup-bem-vindo h2 {
   color: var(--cor--destaque-verde);
   margin-bottom: 20px;
-  font-size: 24px; /* Tamanho da fonte */
-  text-align: center; /* Centralizar texto */
-  font-weight: 600; /* Peso da fonte */
+  font-size: 24px;
+  text-align: center;
+  font-weight: 600;
 }
 
 /* Estilo para os parágrafos dentro do popup */
 .popup-bem-vindo p {
-  color: var(--fonte-branco-50);
-  margin-bottom: 15px; /* Espaçamento inferior */
-  text-align: center; /* Centralizar texto */
+  color: white;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 /* Estilo para os rótulos dentro do popup */
 .popup-bem-vindo label {
-  color: var(--fonte-branco-50);
+  color: white;
   display: block;
   margin-top: 15px;
   font-size: 15px;
-  font-weight: 500; /* Peso da fonte */
+  font-weight: 500;
 }
 
 /* Estilo para os inputs dentro do popup */
-.popup-bem-vindo input[type="number"] {
-  width: 100%; /* Largura total */
-  padding: 12px 20px; /* Espaçamento interno */
-  margin-top: 5px; /* Margem superior */
-  background-color: var(--verde--vidro); /* Fundo do input */
-  color: var(--fonte-branco-100); /* Cor do texto */
-  border: none; /* Sem borda */
-  border-radius: 4px; /* Bordas arredondadas */
-  box-sizing: border-box; /* Inclui padding na largura */
-  transition: all 0.3s ease; /* Transição suave */
+.popup-bem-vindo input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 5px;
+  background-color: var(--verde--vidro);
+  color: var(--fonte-branco-100);
+  border: none;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 /* Foco no input */
 .popup-bem-vindo input[type="number"]:focus {
-  outline: none; /* Remove contorno */
-  background-color: var(--cor--destaque-verde); /* Cor de fundo ao focar */
-  border: 2px solid var(--cor--destaque-verde); /* Borda verde ao focar */
+  outline: none;
+  background-color: var(--cor--destaque-verde);
+  border: 2px solid var(--cor--destaque-verde);
 }
 
 /* Estilo para o botão de envio dentro do popup */
@@ -83,36 +86,36 @@
   color: var(--fonte-branco-100);
   border: none;
   padding: 12px 25px;
-  margin-top: 25px; /* Espaçamento superior */
-  width: 100%; /* Largura total */
-  border-radius: 6px; /* Bordas arredondadas */
-  cursor: pointer; /* Cursor de ponteiro */
-  font-size: 18px; /* Tamanho da fonte */
-  font-weight: 600; /* Peso da fonte */
-  transition: background-color 0.3s ease, transform 0.2s; /* Transição suave */
+  margin-top: 25px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s;
 }
 
 /* Hover no botão dentro do popup */
 .popup-bem-vindo button:hover {
-  background-color: var(--hover); /* Cor ao passar o mouse */
-  transform: scale(1.05); /* Leve efeito de aumento */
+  background-color: var(--hover);
+  transform: scale(1.05);
 }
 
 /* Close button estilizado para o popup */
-.close-btn-bem-vindo {
+.close-btn-primeiroLogin {
   position: absolute;
   top: 12px;
   right: 12px;
-  font-size: 24px; /* Tamanho do ícone de fechar */
-  color: var(--fonte-branco-100); /* Cor do ícone */
-  cursor: pointer; /* Cursor de ponteiro */
+  font-size: 24px;
+  color: var(--fonte-branco-100);
+  cursor: pointer;
   padding: 0;
-  background: none; /* Sem fundo */
-  border: none; /* Sem borda */
-  transition: color 0.3s ease; /* Transição de cor */
+  background: none;
+  border: none;
+  transition: color 0.3s ease;
 }
 
 /* Hover no botão de fechar */
-.close-btn-bem-vindo:hover {
-  color: var(--cor--destaque-verde); /* Cor ao passar o mouse */
+.close-btn-primeiroLogin:hover {
+  color: var(--cor--destaque-verde);
 }

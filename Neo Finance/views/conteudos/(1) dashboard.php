@@ -1,8 +1,11 @@
 <?php
-include '../../config/conteudos/dashboard/primeiro_login.php';
+// Inclui os arquivos necessários para a conexão com o banco de dados e outras funcionalidades
 include("../../config/database/conexao.php");
 include("../../config/conteudos/login/verifica_login.php");
-include("../../config/conteudos/dashboard/funcoes_balanco.php");
+
+
+
+include("../../config/conteudos/dashboard/primeiro_login.php");
 include("../../config/conteudos/dashboard/logica_vencimentos.php");
 include("../../config/conteudos/dashboard/logica_calendario.php");
 include("../../config/conteudos/dashboard/seleciona_categorias.php");
@@ -11,7 +14,13 @@ include("../../config/conteudos/dashboard/consulta_historico.php");
 include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
 
-$userId = $_SESSION['user_id']; // ID do usuário logado
+include("../../config/conteudos/dashboard/init.php"); // Inclui init.php
+
+// Calcular o balanço total
+$saldo_inicial = obterSaldoInicial($conn, $userId);
+$balanco = calcularBalanco($conn, $userId, $saldo_inicial);
+
+
 
 // Obter dados do balanço
 $balancoData = calcularBalanco($conn, $userId);
@@ -31,8 +40,10 @@ $categoria = $vencimentoData['categoria'];
 // Obter categorias
 $categorias = obterCategorias($conn);
 
-// Enviar dados do formulário
-enviarDados($conn, $userId);
+// Verificar se o formulário de adição de item foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_POST['valor']) && isset($_POST['categoria']) && isset($_POST['tipo'])) {
+  enviarDados($conn, $userId);
+}
 
 // Consultar histórico
 $historicoItems = consultarHistorico($conn, $userId);
@@ -157,13 +168,23 @@ $conn->close();
         </div>
       </div>
 
-      <div class="card--vencimentos">
+      <!-- Card Vencimentos -->
+      <div class="card--vencimentos <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'card--vencimentos-sem-vencimento' : ''; ?>">
         <div class="header--card-v">
           <div class="titulo--header-v">
             <img src="../../assets/icons/icon--calendario.svg" alt="icon--calendario" />
             <span class="dias--restantes"><?php echo calcularDiasRestantes($data_vencimento); ?></span>
           </div>
-          <span class="mes--vencimento"><?php echo mesEmPortugues($data_vencimento); ?></span>
+          <span class="mes--vencimento">
+            <?php
+            // Verifica se não há vencimentos pendentes
+            if ($valor == 0 && $descricao == 'Sem vencimentos pendentes') {
+              echo mesEmPortugues(date('Y-m-d')); // Mostra o mês atual
+            } else {
+              echo mesEmPortugues($data_vencimento); // Mostra o mês da data de vencimento
+            }
+            ?>
+          </span>
         </div>
         <div class="info--vencimentos">
           <div class="info--descricao">
@@ -176,92 +197,112 @@ $conn->close();
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
+             
 
-      <div class="card--lembretes">
+      <!-- Card Lembretes -->
+      <div class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">
         <div class="header--card-l">
           <span class="titulo">Lembretes</span>
-          <?php if (isset($vencimentoData['tipo_transacao'])): ?>
+          <!-- Apenas mostra o tipo_transacao se não estiver "Sem vencimentos pendentes" -->
+          <?php if (!($valor == 0 && $descricao == 'Sem vencimentos pendentes') && isset($vencimentoData['tipo_transacao'])): ?>
             <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
               <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); ?>
             </span>
           <?php endif; ?>
         </div>
+
         <div class="info--lembrete">
-          <div class="detalhes--info">
-            <span class="descricao--info"><?php echo $descricao; ?></span>
-            <span class="valor--lembrete">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
-          </div>
-          <div class="status--info">
-            <span>Em aberto</span>
-            <input type="checkbox" name="status--checkbox" />
-          </div>
+          <?php if ($valor != 0 || $descricao != 'Sem vencimentos pendentes'): ?>
+            <div class="detalhes--info">
+              <span class="descricao--info"><?php echo $descricao; ?></span>
+              <span class="valor--lembrete">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
+            </div>
+            <div class="status--info">
+              <span>Em aberto</span>
+              <input type="checkbox" name="status--checkbox" />
+            </div>
+            <form method="POST" action="">
+              <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
+              <button type="submit" name="confirmar_pagamento">Confirmar Pagamento</button>
+            </form>
+          <?php else: ?>
+            <div class="sem-vencimento-info">
+              <span class="descricao--info" id="fraseLembrete">Tudo certo por aqui!</span>
+              <span class="valor--lembrete">R$ 0,00</span>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Início PopUp Adição de Item -->
-  <div class="popup-container" id="popup-container" style="display: none;">
-    <div class="popup">
-      <div class="close-btn" id="close-btn">&times;</div>
-      <h2>Adicionar Item</h2>
-      <form method="POST" action="">
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" id="nome" required autocomplete="off">
-        <div id="suggestions" class="suggestions-box"></div>
+      <!-- Início PopUp Adição de Item -->
+      <div class="popup-container" id="popup-container" style="display: none;">
+        <div class="popup">
+          <div class="close-btn" id="close-btn">&times;</div>
+          <h2>Adicionar Item</h2>
+          <form method="POST" action="">
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" required autocomplete="off">
+            <div id="suggestions" class="suggestions-box"></div>
 
-        <label for="valor">Valor:</label>
-        <input type="text" id="valor" name="valor" required placeholder="0,00">
+            <label for="valor">Valor:</label>
+            <input type="text" id="valor" name="valor" required placeholder="0,00">
 
-        <label for="categoria">Categoria:</label>
-        <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
+            <label for="categoria">Categoria:</label>
+            <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
-        <input type="hidden" name="categoria" id="categoria-id" required>
+            <input type="hidden" name="categoria" id="categoria-id" required>
 
-        <label for="tipo">Tipo:</label>
-        <select name="tipo" required>
-          <option value="receita">Receita</option>
-          <option value="despesa">Despesa</option>
-        </select>
+            <label for="tipo">Tipo:</label>
+            <select name="tipo" required>
+              <option value="receita">Receita</option>
+              <option value="despesa">Despesa</option>
+            </select>
 
-        <button type="submit">Adicionar</button>
-      </form>
-    </div>
-  </div>
+            <button type="submit">Adicionar</button>
+          </form>
+        </div>
+      </div>
 
-  <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
-  <div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
-    <div class="popup-categorias-conteudo">
-      <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
-      <h2 class="categoria-titulo">Selecionar uma categoria</h2>
+      <!-- INICIO POP-UP SELECT DE CATEGORIAS -->
+      <div id="popup-categorias-unico" class="popup-categorias" style="display: none;">
+        <div class="popup-categorias-conteudo">
+          <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
+          <h2 class="categoria-titulo">Selecionar uma categoria</h2>
 
-      <button id="botao-filtro-categorias" class="btn-filtro-categorias">
-        A-Z
-      </button>
+          <button id="botao-filtro-categorias" class="btn-filtro-categorias">
+            A-Z
+          </button>
 
-      <ul id="lista-categorias" class="lista-categorias">
-        <?php
-        if (!empty($categorias)) {
-          foreach ($categorias as $categoria) {
-            $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
-            echo '<li>
+          <ul id="lista-categorias" class="lista-categorias">
+            <?php
+            if (!empty($categorias)) {
+              foreach ($categorias as $categoria) {
+                $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
+                echo '<li>
                   <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
                       <i class="' . $iconeCategoria . ' categoria-icon"></i>
                       <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
                   </button>
                 </li>';
-          }
-        } else {
-          echo '<li>Nenhuma categoria disponível.</li>';
-        }
-        ?>
-      </ul>
-    </div>
-  </div>
+              }
+            } else {
+              echo '<li>Nenhuma categoria disponível.</li>';
+            }
+            ?>
+          </ul>
+        </div>
+      </div>
 
-  <script src="../../js/conteudos/dashboard/popup.js"></script>
-  <script src="../../js/conteudos/dashboard/categorias.js"></script>
-  <script src="../../js/conteudos/dashboard/formataMoeda.js"></script>
+      <script src="../../js/conteudos/dashboard/popup.js"></script>
+      <script src="../../js/conteudos/dashboard/categorias.js"></script>
+      <script src="../../js/conteudos/dashboard/formataMoeda.js"></script>
+      <script src="../../js/conteudos/dashboard/fraseLembrete.js"></script>
+      <script>
+        // Chama a função após a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+          alternarFraseLembrete();
+        });
+      </script>
 </body>
 
 </html>
