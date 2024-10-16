@@ -39,6 +39,19 @@ $historicoItems = consultarHistorico($conn, $userId);
 // Obter saudação
 $saudacao = obterSaudacao();
 
+// Definindo as dicas financeiras
+$dicasFinanceiras = [
+  "Mantenha um registro detalhado de suas receitas e despesas.",
+  "Estabeleça um orçamento mensal e siga-o.",
+  "Considere usar aplicativos de finanças pessoais para monitorar suas despesas.",
+  "Reserve uma porcentagem de suas receitas para poupança.",
+  "Evite compras por impulso; dê um tempo antes de tomar a decisão.",
+  "Revise seus gastos mensais e identifique onde você pode economizar.",
+  "Considere investir em educação financeira para aprimorar suas habilidades.",
+  "Crie um fundo de emergência para cobrir despesas imprevistas.",
+  "Defina metas financeiras claras e monitore seu progresso regularmente."
+];
+
 // Fecha a conexão
 $conn->close();
 ?>
@@ -176,26 +189,39 @@ $conn->close();
         </div>
       </div>
 
-      <div class="card--lembretes">
-        <div class="header--card-l">
-          <span class="titulo">Lembretes</span>
-          <?php if (isset($vencimentoData['tipo_transacao'])): ?>
-            <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
-              <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); ?>
-            </span>
-          <?php endif; ?>
-        </div>
-        <div class="info--lembrete">
-          <div class="detalhes--info">
-            <span class="descricao--info"><?php echo $descricao; ?></span>
-            <span class="valor--lembrete">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
-          </div>
-          <div class="status--info">
-            <span>Em aberto</span>
-            <input type="checkbox" name="status--checkbox" />
-          </div>
-        </div>
-      </div>
+      <div class="card--dicas">
+    <div class="header--card-d">
+        <span class="titulo">Dica para Controle Financeiro</span>
+    </div>
+    <div class="info--dicas">
+        <p id="dica"><?php echo htmlspecialchars($dicasFinanceiras[array_rand($dicasFinanceiras)]); ?></p>
+    </div>
+</div>
+
+<script>
+    // Array de dicas financeiras
+    const dicasFinanceiras = [
+        "Mantenha um registro detalhado de suas receitas e despesas.",
+        "Estabeleça um orçamento mensal e siga-o.",
+        "Considere usar aplicativos de finanças pessoais para monitorar suas despesas.",
+        "Reserve uma porcentagem de suas receitas para poupança.",
+        "Evite compras por impulso; dê um tempo antes de tomar a decisão.",
+        "Revise seus gastos mensais e identifique onde você pode economizar.",
+        "Considere investir em educação financeira para aprimorar suas habilidades.",
+        "Crie um fundo de emergência para cobrir despesas imprevistas.",
+        "Defina metas financeiras claras e monitore seu progresso regularmente."
+    ];
+
+    // Função para mostrar uma nova dica
+    function mostrarNovaDica() {
+        const dicaAleatoria = dicasFinanceiras[Math.floor(Math.random() * dicasFinanceiras.length)];
+        document.getElementById("dica").innerText = dicaAleatoria;
+    }
+
+    // Muda a dica automaticamente a cada 5 segundos (5000 milissegundos)
+    setInterval(mostrarNovaDica, 5000);
+</script>
+
     </div>
   </div>
 

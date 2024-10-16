@@ -1,5 +1,4 @@
 <?php
-// Iniciar sessão
 session_start();
 
 // Incluir a conexão com o banco de dados
@@ -7,12 +6,24 @@ include('../../database/conexao.php');
 
 // Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
-    // Se o usuário não estiver logado, redireciona para a página de login
     header("Location: ../../../views/login/login.php");
     exit();
 }
 
-$usuario_id = $_SESSION['user_id']; // Pega o ID do usuário logado da sessão
+$usuario_id = $_SESSION['user_id'];
+
+// Verifica se o usuário existe na tabela 'users'
+$queryCheckUser = "SELECT id FROM users WHERE id = ?";
+$stmtCheckUser = $conn->prepare($queryCheckUser);
+$stmtCheckUser->bind_param("i", $usuario_id);
+$stmtCheckUser->execute();
+$resultCheckUser = $stmtCheckUser->get_result();
+
+if ($resultCheckUser->num_rows === 0) {
+    // Usuário não encontrado, encerra o processo
+    echo "Usuário inválido.";
+    exit();
+}
 
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("iss", $usuario_id, $nome, $icone);
 
         if ($stmt->execute()) {
-            header("Location: ../../../views/conteudos/(6) categorias.php"); // Redireciona de volta para a página de categorias
+            header("Location: ../../../views/conteudos/(6) categorias.php");
             exit();
         } else {
             $erro = "Erro ao adicionar a categoria.";

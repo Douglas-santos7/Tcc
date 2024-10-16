@@ -77,7 +77,20 @@ if ($interval === 'diario') {
         $despesas[$mes] = $row['totalDespesas'];
     }
 }
+// Consultar as despesas por categoria
+$queryDespesasPorCategoria = "SELECT c.nome AS categoria, SUM(t.valor) AS total 
+                               FROM transacoes t
+                               JOIN categorias c ON t.categoria_id = c.id
+                               WHERE t.tipo = 'despesa' AND t.usuario_id = $userId 
+                               GROUP BY c.nome 
+                               ORDER BY total DESC";
 
+$resultDespesasPorCategoria = mysqli_query($conn, $queryDespesasPorCategoria);
+
+$categoriasDespesas = [];
+while ($row = mysqli_fetch_assoc($resultDespesasPorCategoria)) {
+    $categoriasDespesas[] = $row;
+}
 
 // Fecha a conexão
 $conn->close();
@@ -91,104 +104,117 @@ $conn->close();
     <title>Dashboard Financeiro</title>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-       
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: auto;
-        }
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
 
-        .card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-        .card-title {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #333;
-        }
+.card-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+}
 
-        .row {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
+.row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
 
-        .chart-card {
-            flex: 2; 
-        }
+.chart-card {
+    flex: 2; 
+}
 
-        .options-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+.options-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 
-        .button {
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: background-color 0.3s;
-        }
+.button {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
 
-        .button:hover {
-            background-color: #0056b3;
-        }
+.button:hover {
+    background-color: #0056b3;
+}
 
-        h3 {
-            margin-top: 20px;
-            color: #555;
-        }
+h3 {
+    margin-top: 20px;
+    color: #555;
+    border-bottom: 2px solid #007BFF; /* Linha abaixo do título */
+    padding-bottom: 10px;
+}
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-        ul li {
-            background: #e9ecef;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
+ul li {
+    background: #e9ecef;
+    padding: 15px; /* Aumentado para melhor visualização */
+    margin: 10px 0; /* Aumentado o espaçamento entre itens */
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s; /* Adiciona efeito ao passar o mouse */
+}
 
-        .cricri-card {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px; 
-        }
+ul li:hover {
+    background: #d4d4d4; /* Muda a cor de fundo ao passar o mouse */
+    transform: translateY(-2px); /* Leve movimento para cima ao passar o mouse */
+}
 
-        .cricri-card img {
-            max-width: 80%; 
-            height: auto;
-            margin-top: 10px;
-        }
+ul li::before {
+    content: "✔️"; /* Ícone de verificação antes de cada dica */
+    margin-right: 10px;
+    color: #007BFF; /* Cor do ícone */
+}
 
-  
-        #chart {
-            border-radius: 8px; 
-            overflow: hidden; 
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-        }
+.cricri-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px; 
+}
+
+.cricri-card img {
+    max-width: 80%; 
+    height: auto;
+    margin-top: 10px;
+}
+
+#chart {
+    border-radius: 8px; 
+    overflow: hidden; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+}
+
     </style>
 </head>
 <body>
@@ -218,43 +244,46 @@ $conn->close();
             <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></p>
 
             <h3>Dicas:</h3>
-            <ul>
-                <?php
-                $totalReceitas = array_sum($receitas);
-                $totalDespesas = array_sum($despesas);
-                $porcentagemReceitas = ($totalReceitas > 0) ? (($totalReceitas - $totalDespesas) / $totalReceitas) * 100 : 0;
-                $porcentagemDespesas = ($totalDespesas > 0) ? (($totalDespesas - $totalReceitas) / $totalDespesas) * 100 : 0;
+<ul>
+    <?php
+    $totalReceitas = array_sum($receitas);
+    $totalDespesas = array_sum($despesas);
+    $porcentagemReceitas = ($totalReceitas > 0) ? (($totalReceitas - $totalDespesas) / $totalReceitas) * 100 : 0;
+    $porcentagemDespesas = ($totalDespesas > 0) ? (($totalDespesas - $totalReceitas) / $totalDespesas) * 100 : 0;
 
-                // Defina limites para a personalização das dicas
-                $limiteAltoReceitas = 5000; // Exemplo de limite de receita alta
-                $limiteBaixoDespesas = 2000; // Exemplo de limite de despesa baixa
+    // Defina limites para a personalização das dicas
+    $limiteAltoReceitas = 5000; // Exemplo de limite de receita alta
+    $limiteBaixoDespesas = 2000; // Exemplo de limite de despesa baixa
 
-                // Condição se receitas são superiores às despesas
-                if ($totalReceitas > $totalDespesas): ?>
-                    <li>Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
-                    <li>Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
+    // Condição se receitas são superiores às despesas
+    if ($totalReceitas > $totalDespesas): ?>
+        <li style="color: green;">Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
+        <li style="color: green;">Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
+        <li style="color: green;">Considere diversificar seus investimentos para reduzir riscos.</li>
+        <li style="color: green;">Acompanhe suas receitas regularmente para identificar fontes adicionais.</li>
+        <?php if ($totalReceitas > $limiteAltoReceitas): ?>
+            <li style="color: green;">Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
+        <?php endif; ?>
+    <?php // Condição se despesas são superiores às receitas
+    elseif ($totalDespesas > $totalReceitas): ?>
+        <li style="color: red;">Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
+        <li style="color: red;">Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
+        <li style="color: red;">Considere estabelecer um limite mensal para despesas variáveis.</li>
+        <li style="color: red;">Se possível, busque formas de aumentar sua renda, como um trabalho extra.</li>
+        <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
+            <li style="color: red;">Suas despesas estão bastante elevadas. Considere reduzir gastos com lazer e alimentação para equilibrar seu orçamento.</li>
+        <?php endif; ?>
+    <?php // Condição se receitas e despesas estão equilibradas
+    else: ?>
+        <li style="color: orange;">Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
+        <li style="color: orange;">Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
+        <li style="color: orange;">Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
+        <li style="color: orange;">Considere investir em educação financeira para aprimorar suas habilidades.</li>
+    <?php endif; ?>
+    
+    <li>Recomenda-se revisar seu planejamento financeiro mensalmente para ajustar suas metas.</li>
+</ul>
 
-                    <?php if ($totalReceitas > $limiteAltoReceitas): ?>
-                        <li>Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
-                    <?php endif; ?>
-
-                <?php // Condição se despesas são superiores às receitas
-                elseif ($totalDespesas > $totalReceitas): ?>
-                    <li>Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
-                    <li>Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
-
-                    <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
-                        <li>Suas despesas estão bastante elevadas. Considere reduzir gastos com lazer e alimentação para equilibrar seu orçamento.</li>
-                    <?php endif; ?>
-
-                <?php // Condição se receitas e despesas estão equilibradas
-                else: ?>
-                    <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
-                    <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
-                <?php endif; ?>
-
-                <li>Recomenda-se revisar seu planejamento financeiro mensalmente para ajustar suas metas.</li>
-            </ul>
         </div>
 
         <script>
