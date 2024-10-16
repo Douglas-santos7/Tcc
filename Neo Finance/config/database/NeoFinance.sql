@@ -7,10 +7,13 @@ USE finance;
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
-    email VARCHAR(191) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    remember_token VARCHAR(64),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    saldo DECIMAL(10, 2) DEFAULT 0.00,  -- Campo para armazenar o saldo do usuário
+    saldo_inicial_adicionado TINYINT(1) DEFAULT 0,  -- Para marcar se o saldo inicial foi adicionado
+    remember_token VARCHAR(64) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Criação da tabela para armazenar tentativas de login
@@ -55,6 +58,7 @@ CREATE TABLE transacoes (
     FOREIGN KEY (categoria_id) REFERENCES categorias (id) ON DELETE CASCADE,
     icone VARCHAR(255) -- Pode armazenar a classe do ícone, se necessário
 );
+
 
 -- Criação da tabela de entradas no calendário
 CREATE TABLE entradas_calendario (
