@@ -1,9 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-include '../../config/database/conexao.php'; // conexão com o banco de dados
+session_start(); // Inicia a sessão, se ainda não estiver iniciada
+include '../../config/database/conexao.php'; // Conexão com o banco de dados
 
 require '../../vendor/autoload.php';
 
@@ -14,8 +11,8 @@ if ($conn->connect_error) {
     die("Erro de conexão: " . $conn->connect_error);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['forgot-email'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['forgot-email']);
 
     // Verificação se o email existe no banco de dados
     $stmt = $conn->prepare("SELECT id, username FROM users WHERE email = ?");
@@ -95,26 +92,26 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Senha</title>
-    <link rel="stylesheet" href="../../css/login/telaCadastro.css">
+    <link rel="stylesheet" href="../../css/login/telaRedefinirSenha.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <div class="main-container">
         <div class="image-container">
-            <!-- Carrossel de Imagens -->
-            <div class="carousel">
-                <div class="carousel-images">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/2.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <video src="../../assets/img/carrosel--logjn/iphon.mp4" loop muted autoplay></video>
-                </div>
-                <div class="carousel-dots">
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                    <span class="dot" onclick="currentSlide(4)"></span>
+            <!-- Swiper Carrossel -->
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
+                    <div class="swiper-slide">
+                        <video src="../../assets/img/carrosel--logjn/Iphon.mp4" muted autoplay></video>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -154,43 +151,45 @@ $conn->close();
         </div>
     </div>
 
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        let slideIndex = 1;
-        showSlides(slideIndex);
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: false,
+            },
+            autoplay: {
+                delay: 5000,
+            },
+            on: {
+                slideChange: function() {
+                    const videos = document.querySelectorAll('.swiper-slide video');
+                    videos.forEach(video => {
+                        video.pause();
+                        video.currentTime = 0; // Reseta o vídeo
+                    });
+                    const activeSlide = this.slides[this.activeIndex].querySelector('video');
+                    if (activeSlide) {
+                        activeSlide.play();
+                    }
+                },
+            },
+        });
 
-        // Mudar o slide a cada 3 segundos
-        setInterval(() => {
-            showSlides(slideIndex += 1);
-        }, 10000); // 3000 milissegundos = 3 segundos
-
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
+        const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
+        if (initialVideo) {
+            initialVideo.play();
         }
 
-        function showSlides(n) {
-            const slides = document.querySelectorAll('.carousel-images img, .carousel-images video');
-            const dots = document.querySelectorAll('.dot');
+        function togglePasswordVisibility(inputId, eyeIcon) {
+            const inputField = document.getElementById(inputId);
+            const isPassword = inputField.type === 'password';
 
-            if (n > slides.length) {
-                slideIndex = 1
-            }
-            if (n < 1) {
-                slideIndex = slides.length
-            }
-
-            slides.forEach((slide, index) => {
-                slide.style.display = (index + 1 === slideIndex) ? 'block' : 'none';
-                // Reproduzir o vídeo ativo
-                if (index + 1 === slideIndex && slide.tagName === 'VIDEO') {
-                    slide.play();
-                } else if (slide.tagName === 'VIDEO') {
-                    slide.pause();
-                }
-            });
-
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index + 1 === slideIndex);
-            });
+            inputField.type = isPassword ? 'text' : 'password';
+            eyeIcon.classList.toggle('fa-eye', isPassword);
+            eyeIcon.classList.toggle('fa-eye-slash', !isPassword);
         }
     </script>
 </body>

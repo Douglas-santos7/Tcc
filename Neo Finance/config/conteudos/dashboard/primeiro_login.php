@@ -1,26 +1,37 @@
 <?php
 include("../../config/conteudos/dashboard/init.php"); // Inclui init.php que contém a lógica de inicialização
 
-// Verifica se o formulário foi enviado
+// Função para obter o saldo inicial do usuário
+function obterSaldoInicial($conn, $userId)
+{
+    $query = "SELECT SUM(valor) AS total_saldo_inicial FROM transacoes WHERE usuario_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc()['total_saldo_inicial'] ?? 0; // Retorna saldo inicial ou 0 se não houver
+}
+
+// Verifica se o formulário de saldo inicial foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['saldo_inicial'])) {
+        // Converte o valor para o formato correto (de ',' para '.')
         $saldo_inicial = str_replace(',', '.', $_POST['saldo_inicial']);
 
+        // Aqui você pode adicionar a lógica de salvar o saldo inicial no banco de dados, se necessário
 
-        // Redirecionar após salvar FIX
+        // Redirecionar após o envio do formulário para evitar reenvios
         header("Location: ../../../views/conteudos/dashboard.php");
         exit();
-    } else {
-        $saldo_inicial = 0; // Valor padrão se não enviado
     }
 } else {
-    // Obter saldo inicial
+    // Se o formulário não foi enviado, obter o saldo inicial existente
     $saldo_inicial = obterSaldoInicial($conn, $userId);
 }
 
-// Calcular o balanço total
-$balanco = calcularBalanco($conn, $userId, $saldo_inicial);
+// Não é mais necessário calcular o balanço aqui, já que ele será calculado no dashboard.php
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">

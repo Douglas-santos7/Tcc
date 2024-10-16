@@ -2,10 +2,7 @@
 // Inclui os arquivos necessários para a conexão com o banco de dados e outras funcionalidades
 include("../../config/database/conexao.php");
 include("../../config/conteudos/login/verifica_login.php");
-
-
-
-include("../../config/conteudos/dashboard/primeiro_login.php");
+include("../../config/conteudos/dashboard/funcoes_balanco.php");
 include("../../config/conteudos/dashboard/logica_vencimentos.php");
 include("../../config/conteudos/dashboard/logica_calendario.php");
 include("../../config/conteudos/dashboard/seleciona_categorias.php");
@@ -14,13 +11,7 @@ include("../../config/conteudos/dashboard/consulta_historico.php");
 include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
 
-include("../../config/conteudos/dashboard/init.php"); // Inclui init.php
-
-// Calcular o balanço total
-$saldo_inicial = obterSaldoInicial($conn, $userId);
-$balanco = calcularBalanco($conn, $userId, $saldo_inicial);
-
-
+$userId = $_SESSION['user_id']; // ID do usuário logado
 
 // Obter dados do balanço
 $balancoData = calcularBalanco($conn, $userId);

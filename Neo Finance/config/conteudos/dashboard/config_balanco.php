@@ -1,7 +1,6 @@
 <?php
 include("../../config/database/conexao.php");
 
-
 function calcularBalanco($conn, $userId, $saldoInicial = 0)
 {
     // Consultar receitas e despesas
@@ -25,8 +24,8 @@ function calcularBalanco($conn, $userId, $saldoInicial = 0)
 
     // Calcular proporções
     $total = $receitas + $despesas;
-    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura em pixels
-    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura em pixels
+    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0;
+    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0;
 
     return [
         'receitas' => $receitas,
@@ -35,15 +34,5 @@ function calcularBalanco($conn, $userId, $saldoInicial = 0)
         'proporcaoReceitas' => $proporcaoReceitas,
         'proporcaoDespesas' => $proporcaoDespesas
     ];
-}
-
-function obterSaldoInicial($conn, $userId)
-{
-    $query = "SELECT SUM(valor) AS total_saldo_inicial FROM transacoes WHERE usuario_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc()['total_saldo_inicial'] ?? 0; // Retorna saldo inicial
 }
 ?>

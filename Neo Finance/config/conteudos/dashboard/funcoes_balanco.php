@@ -10,20 +10,28 @@ function calcularBalanco($conn, $userId)
   $resultReceitas = mysqli_query($conn, $queryReceitas);
   $resultDespesas = mysqli_query($conn, $queryDespesas);
 
-  // Extrair valores
+  // Extrair valores de receitas e despesas
   $receitas = mysqli_fetch_assoc($resultReceitas)['totalReceitas'] ?? 0;
   $despesas = mysqli_fetch_assoc($resultDespesas)['totalDespesas'] ?? 0;
+
+  // Consultar saldo do usuário
+  $querySaldo = "SELECT saldo FROM users WHERE id = $userId";
+  $resultSaldo = mysqli_query($conn, $querySaldo);
+  $saldo = mysqli_fetch_assoc($resultSaldo)['saldo'] ?? 0;
+
+  // Calcular o total de receitas e despesas para a proporção
   $total = $receitas + $despesas;
   $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura em pixels
   $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura em pixels
 
-  // Calcular Balanço Total
-  $balanco = $receitas - $despesas;
+  // Calcular Balanço Total (incluindo o saldo)
+  $balanco = ($receitas - $despesas) + $saldo;
 
   return [
-    'receitas' => $receitas,
+    'receitas' => $receitas + $saldo,
     'despesas' => $despesas,
-    'balanco' => $balanco,
+    'saldo' => $saldo, // Retornar saldo para exibição, se necessário
+    'balanco' => $balanco, // Balanço inclui o saldo agora
     'proporcaoReceitas' => $proporcaoReceitas,
     'proporcaoDespesas' => $proporcaoDespesas
   ];
