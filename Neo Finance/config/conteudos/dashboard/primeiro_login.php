@@ -1,27 +1,3 @@
-<?php
-include("../../config/conteudos/dashboard/init.php"); // Inclui init.php que contém a lógica de inicialização
-
-// Verifica se o formulário foi enviado
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['saldo_inicial'])) {
-        $saldo_inicial = str_replace(',', '.', $_POST['saldo_inicial']);
-
-
-        // Redirecionar após salvar FIX
-        header("Location: ../../../views/conteudos/dashboard.php");
-        exit();
-    } else {
-        $saldo_inicial = 0; // Valor padrão se não enviado
-    }
-} else {
-    // Obter saldo inicial
-    $saldo_inicial = obterSaldoInicial($conn, $userId);
-}
-
-// Calcular o balanço total
-$balanco = calcularBalanco($conn, $userId, $saldo_inicial);
-?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
