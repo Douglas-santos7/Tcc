@@ -65,7 +65,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <span>Metas</span>
           </li>
           <div class="espacamentoLi"></div>
-          <li class="Item8" data-src="./conteudos/(8) teste.html" data-title="Suporte">
+          <li class="Item8" data-src="./conteudos/(8) teste.php" data-title="Suporte">
             <div class="barra--icon"></div>
             <img class="icon--li" src="../assets/icons/home--sidebar/suport--icon.svg" />
             <span>Suporte</span>

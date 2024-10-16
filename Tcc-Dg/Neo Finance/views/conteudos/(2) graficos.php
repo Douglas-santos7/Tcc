@@ -257,33 +257,32 @@ ul li::before {
 
     // Condição se receitas são superiores às despesas
     if ($totalReceitas > $totalDespesas): ?>
-        <li style="color: green;">Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
-        <li style="color: green;">Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
-        <li style="color: green;">Considere diversificar seus investimentos para reduzir riscos.</li>
-        <li style="color: green;">Acompanhe suas receitas regularmente para identificar fontes adicionais.</li>
+        <li>Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
+        <li>Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
+        <li>Considere diversificar seus investimentos para reduzir riscos.</li>
+        <li>Acompanhe suas receitas regularmente para identificar fontes adicionais.</li>
         <?php if ($totalReceitas > $limiteAltoReceitas): ?>
-            <li style="color: green;">Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
+            <li>Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
         <?php endif; ?>
     <?php // Condição se despesas são superiores às receitas
     elseif ($totalDespesas > $totalReceitas): ?>
-        <li style="color: red;">Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
-        <li style="color: red;">Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
-        <li style="color: red;">Considere estabelecer um limite mensal para despesas variáveis.</li>
-        <li style="color: red;">Se possível, busque formas de aumentar sua renda, como um trabalho extra.</li>
+        <li>Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
+        <li>Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
+        <li>Considere estabelecer um limite mensal para despesas variáveis.</li>
+        <li>Se possível, busque formas de aumentar sua renda, como um trabalho extra.</li>
         <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
-            <li style="color: red;">Suas despesas estão bastante elevadas. Considere reduzir gastos com lazer e alimentação para equilibrar seu orçamento.</li>
+            <li>Suas despesas estão bastante elevadas. Considere reduzir gastos com lazer e alimentação para equilibrar seu orçamento.</li>
         <?php endif; ?>
     <?php // Condição se receitas e despesas estão equilibradas
     else: ?>
-        <li style="color: orange;">Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
-        <li style="color: orange;">Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
-        <li style="color: orange;">Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
-        <li style="color: orange;">Considere investir em educação financeira para aprimorar suas habilidades.</li>
+        <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
+        <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
+        <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
+        <li>Considere investir em educação financeira para aprimorar suas habilidades.</li>
     <?php endif; ?>
     
     <li>Recomenda-se revisar seu planejamento financeiro mensalmente para ajustar suas metas.</li>
 </ul>
-
         </div>
 
         <script>
