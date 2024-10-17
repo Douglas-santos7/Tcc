@@ -4,6 +4,7 @@ include("../../config/database/conexao.php");
 
 // Verificar se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Receber dados do formulário
   $nome_meta = $_POST['nome'] ?? null;
   $valor_meta = $_POST['valor'] ?? null;
   $data_meta = $_POST['data'] ?? null;
@@ -14,11 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
   }
 
-  // Operação de depósito
+  // Verificar se é uma operação de depósito
   if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
     $id_meta = $_POST['id_meta'];
     $valor_deposito = $_POST['valor_deposito'];
 
+    // Converter o valor do depósito para o formato correto
     if ($valor_deposito) {
       $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
     }
@@ -29,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
 
     if ($stmt->execute()) {
+      // Redirecionar para a página de metas com uma mensagem de sucesso
       header("Location: ../conteudos/(7) metas.php?sucesso=deposito");
       exit();
     } else {
@@ -36,11 +39,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // Operação de resgatar
+  // Validar os campos para adicionar uma nova meta
+  if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
+    // Preparar a query SQL para inserir na coluna correta (valor_alvo)
+    $sql = "INSERT INTO metas (nome_meta, valor_alvo, data_limite, usuario_id) VALUES (?, ?, ?, ?)";
+    // Preparar a declaração SQL
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssi", $nome_meta, $valor_meta, $data_meta, $usuario_id);
+
+    // Executar a query
+    if ($stmt->execute()) {
+      // Redirecionar para a página de metas ou exibir uma mensagem de sucesso
+      header("Location: ../conteudos/(7) metas.php?sucesso=1");
+      exit();
+    } else {
+      echo "Erro ao adicionar meta: " . $conn->error;
+    }
+  } else {
+    echo "Todos os campos são obrigatórios e o valor deve ser numérico!";
+  }
+
+  // APAGAR META
+  if (isset($_POST['id_meta']) && !isset($_POST['valor_deposito']) && !isset($_POST['valor_resgatar'])) {
+    $id_meta = $_POST['id_meta'];
+
+    // Preparar a query SQL para deletar a meta
+    $sql = "DELETE FROM metas WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_meta);
+
+    // Executar a query
+    if ($stmt->execute()) {
+      // Redirecionar para a página de metas após apagar a meta
+      header("Location: ../conteudos/(7) metas.php?sucesso=2");
+      exit();
+    } else {
+      echo "Erro ao remover meta: " . $conn->error;
+    }
+  }
+
+  // Verificar se é uma operação de resgatar
   if (isset($_POST['valor_resgatar']) && isset($_POST['id_meta'])) {
     $id_meta = $_POST['id_meta'];
     $valor_resgatar = $_POST['valor_resgatar'];
 
+    // Converter o valor do resgate para o formato correto
     if ($valor_resgatar) {
       $valor_resgatar = str_replace(",", ".", str_replace(".", "", $valor_resgatar));
     }
@@ -51,40 +94,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("diii", $valor_resgatar, $id_meta, $usuario_id, $valor_resgatar);
 
     if ($stmt->execute()) {
+      // Redirecionar para a página de metas com uma mensagem de sucesso
       header("Location: ../conteudos/(7) metas.php?sucesso=resgatar");
       exit();
     } else {
       echo "Erro ao resgatar valor: " . $conn->error;
-    }
-  }
-
-  // Adicionar uma nova meta
-  if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
-    $sql = "INSERT INTO metas (nome_meta, valor_alvo, data_limite, usuario_id) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $nome_meta, $valor_meta, $data_meta, $usuario_id);
-
-    if ($stmt->execute()) {
-      header("Location: ../conteudos/(7) metas.php?sucesso=1");
-      exit();
-    } else {
-      echo "Erro ao adicionar meta: " . $conn->error;
-    }
-  }
-
-  // Exclusão de meta (somente quando o botão de exclusão for clicado)
-  if (isset($_POST['id_meta']) && isset($_POST['acao']) && $_POST['acao'] === 'deletar') {
-    $id_meta = $_POST['id_meta'];
-
-    $sql = "DELETE FROM metas WHERE id = ? AND usuario_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id_meta, $usuario_id);
-
-    if ($stmt->execute()) {
-      header("Location: ../conteudos/(7) metas.php?sucesso=2");
-      exit();
-    } else {
-      echo "Erro ao remover meta: " . $conn->error;
     }
   }
 }
@@ -104,7 +118,6 @@ $result = $conn->query($sql);
   <title>Metas</title>
   <link rel="stylesheet" href="../../css/conteudos/metas/metas.css">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
 </head>
 
 <body>
@@ -152,13 +165,11 @@ $result = $conn->query($sql);
             <!-- Formulário para remover a meta -->
             <form method="POST" action="../conteudos/(7) metas.php" style="display:inline;">
               <input type="hidden" name="id_meta" value="<?php echo $meta['id']; ?>">
-              <input type="hidden" name="acao" value="deletar"> <!-- Adicionar ação -->
               <button type="submit" class="icone-lixeira" aria-label="Remover meta"
                 onclick="return confirm('Tem certeza que deseja remover esta meta?');">
                 <i class="fi fi-sr-trash"></i>
               </button>
             </form>
-
           </div>
           <div class="progresso-meta">
             <span>R$ <?php echo number_format($meta['valor_atual'], 2, ',', '.'); ?></span> <!-- Valor atual -->
@@ -184,9 +195,8 @@ $result = $conn->query($sql);
               <div for="icon2"><i class="fi fi-sr-home"></i></div> Histórico
             </button>
           </div>
-          <!-- Elemento de gráfico para a meta -->
-          <div class="grafico-meta" id="grafico-<?php echo $meta['id']; ?>"></div>
-
+          <!-- Elemento para o gráfico -->
+          <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 100px; width: 100%;"></div>
         </div>
       <?php } ?>
     </div>
@@ -229,96 +239,124 @@ $result = $conn->query($sql);
       </div>
     </div>
 
-  </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var metas = <?php echo json_encode($result->fetch_all(MYSQLI_ASSOC)); ?>; // Pega as metas do PHP
 
-        metas.forEach(function (meta) {
-            var progresso = (meta.valor_atual / meta.valor_alvo) * 100;
+    <script>
+      //Função - input data - obter data atual
+  // Obtém a data atual
+  const today = new Date();
+  
+  // Formata a data como 'AAAA-MM-DD' para ser compatível com o valor do input de tipo date
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // meses começam em 0
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  // Define o valor mínimo no input para a data atual
+  const minDate = `${year}-${month}-${day}`;
+  document.getElementById('data_meta').setAttribute('min', minDate);
+</script>
 
-            var options = {
-                series: [progresso], // Porcentagem inicial baseada no progresso da meta
-                chart: {
-                    height: 200,
-                    type: 'radialBar',
-                    toolbar: { show: true }
+    <script>
+      var options = {
+        series: [0], // Porcentagem inicial
+        chart: {
+          height: 200,
+          type: 'radialBar',
+          toolbar: { show: true }
+        },
+        plotOptions: {
+          radialBar: {
+            startAngle: -135,
+            endAngle: 225,
+            hollow: {
+              margin: 0,
+              size: '60%',
+              background: '#fff',
+            },
+            track: {
+              background: '#fff',
+              strokeWidth: '67%',
+            },
+            dataLabels: {
+              show: true,
+              name: {
+                offsetY: -10,
+                color: '#888',
+                fontSize: '12px'
+              },
+              value: {
+                formatter: function (val) {
+                  return parseInt(val);
                 },
-                plotOptions: {
-                    radialBar: {
-                        startAngle: -135,
-                        endAngle: 225,
-                        hollow: {
-                            margin: 0,
-                            size: '60%',
-                            background: '#fff',
-                        },
-                        track: {
-                            background: '#fff',
-                            strokeWidth: '67%',
-                        },
-                        dataLabels: {
-                            show: true,
-                            name: {
-                                offsetY: -10,
-                                color: '#888',
-                                fontSize: '12px'
-                            },
-                            value: {
-                                formatter: function (val) {
-                                    return parseInt(val);
-                                },
-                                color: '#111',
-                                fontSize: '20px',
-                                show: true,
-                            }
-                        }
-                    }
-                },
-                fill: {
-                    colors: ['#00e060'],
-                },
-                stroke: {
-                    lineCap: 'round'
-                },
-                labels: ['Progresso'],
-            };
+                color: '#111',
+                fontSize: '20px',
+                show: true,
+              }
+            }
+          }
+        },
+        fill: {
+          colors: ['#00e060'],
+        },
+        stroke: {
+          lineCap: 'round'
+        },
+        labels: ['Porcentagem'],
+      };
 
-            var chart = new ApexCharts(document.querySelector("#grafico-" + meta.id), options);
-            chart.render();
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
 
-        });
-    });
-
-    // Abrir modal para depositar valor
-    function abrirModalDepositar(idMeta) {
+      // Abrir modal para depositar valor
+      function abrirModalDepositar(idMeta) {
         var modalDepositar = document.getElementById('pop-up-depositar-container');
         var idMetaInput = document.getElementById('id_meta_depositar');
         idMetaInput.value = idMeta;
         modalDepositar.style.display = 'block';
-    }
+      }
 
-    // Fechar modal Depositar
-    var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
-    closeBtnDepositar.onclick = function () {
+      // Fechar modal
+      var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
+      closeBtnDepositar.onclick = function () {
         document.getElementById('pop-up-depositar-container').style.display = 'none';
-    }
+      }
 
-    // Abrir modal para resgatar valor
-    function abrirModalResgatar(idMeta) {
-        var modalResgatar = document.getElementById('pop-up-resgatar-container');
-        var idMetaInput = document.getElementById('id_meta_resgatar');
-        idMetaInput.value = idMeta;
-        modalResgatar.style.display = 'block';
-    }
+      // Abrir modal para resgatar valor
+function abrirModalResgatar(idMeta) {
+  var modalResgatar = document.getElementById('pop-up-resgatar-container');
+  var idMetaInput = document.getElementById('id_meta_resgatar');
+  idMetaInput.value = idMeta;
+  modalResgatar.style.display = 'block';
+}
 
-    // Fechar modal Resgatar
-    var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
-    closeBtnResgatar.onclick = function () {
-        document.getElementById('pop-up-resgatar-container').style.display = 'none';
-    }
-</script>
+// Fechar modal
+var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
+closeBtnResgatar.onclick = function () {
+  document.getElementById('pop-up-resgatar-container').style.display = 'none';
+}
 
+
+      // Gráfico de progresso das metas
+      <?php foreach ($result as $meta) { ?>
+        var chartOptions<?php echo $meta['id']; ?> = {
+          series: [<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>],
+          chart: {
+            height: 100,
+            type: 'radialBar',
+          },
+          plotOptions: {
+            radialBar: {
+              hollow: {
+                size: '60%',
+              }
+            },
+          },
+          labels: ['Progresso'],
+        };
+
+        var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
+        chart<?php echo $meta['id']; ?>.render();
+      <?php } ?>
+    </script>
 
   </div>
 
@@ -343,20 +381,6 @@ $result = $conn->query($sql);
         modalAdicionar.style.display = 'none';
       }
     }
-  </script>
-  <script>
-    //Função de obter a data atual - input data limite
-    // Obtém a data atual
-    const today = new Date();
-
-    // Formata a data como 'AAAA-MM-DD' para ser compatível com o valor do input de tipo date
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // meses começam em 0
-    const day = String(today.getDate()).padStart(2, '0');
-
-    // Define o valor mínimo no input para a data atual
-    const minDate = `${year}-${month}-${day}`;
-    document.getElementById('data_meta').setAttribute('min', minDate);
   </script>
 
 </body>
