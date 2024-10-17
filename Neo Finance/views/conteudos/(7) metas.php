@@ -316,7 +316,7 @@ $result = $conn->query($sql);
       }
     },
     fill: {
-      colors: ['#28a745'],
+      colors: ['#28a745'], // Cor verde
     },
     stroke: {
       lineCap: 'round'
@@ -342,8 +342,17 @@ $result = $conn->query($sql);
         radialBar: {
           hollow: {
             size: '60%',
+          },
+          track: {
+            background: '#fff',
           }
         },
+      },
+      fill: {
+        colors: ['#28a745'], // Cor verde para todos os gráficos
+      },
+      stroke: {
+        lineCap: 'round'
       },
       labels: ['Progresso'],
     };
@@ -352,6 +361,7 @@ $result = $conn->query($sql);
     chart<?php echo $meta['id']; ?>.render();
   <?php } ?>
 </script>
+
 
   </div>
   <script src="../../js/conteudos/metas/abrirModais.js"></script>
