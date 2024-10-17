@@ -147,7 +147,7 @@ $result = $conn->query($sql);
           <label for="data_meta">Data Limite:</label>
           <input type="date" id="data_meta" name="data" required>
 
-          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
+          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para usuario_id -->
 
           <button type="submit">Adicionar Meta</button>
         </form>
@@ -241,7 +241,7 @@ $result = $conn->query($sql);
           <label for="valor_deposito">Valor a Depositar:</label>
           <input type="text" id="valor_deposito" name="valor_deposito" required placeholder="0,00">
 
-          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
+          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para usuario_id -->
           <input type="hidden" name="id_meta" id="id_meta_depositar" value="">
 
           <button type="submit">Depositar</button>
@@ -260,7 +260,7 @@ $result = $conn->query($sql);
           <label for="valor_resgatar">Valor a Resgatar:</label>
           <input type="text" id="valor_resgatar" name="valor_resgatar" required placeholder="0,00">
 
-          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
+          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para usuario_id -->
           <input type="hidden" name="id_meta" id="id_meta_resgatar" value="">
 
           <button type="submit">Resgatar</button>
@@ -352,7 +352,6 @@ $result = $conn->query($sql);
     chart<?php echo $meta['id']; ?>.render();
   <?php } ?>
 </script>
-
 
   </div>
   <script src="../../js/conteudos/metas/abrirModais.js"></script>
