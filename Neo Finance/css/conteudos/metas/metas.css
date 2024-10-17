@@ -173,10 +173,9 @@ body {
 }
 
 
-@import url(../../root.css);
 
-/* Estilo para o container do popup de metas */
-.pop-up-metas-container {
+/* Estilo para o container do popup de adicionar metas */
+.pop-up-adicionar-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -185,12 +184,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro com opacidade */
   z-index: 9999;
 }
 
-/* Estilo para o popup de metas */
-.pop-up-metas-conteudo {
+/* Estilo para o conteúdo do popup de adicionar metas */
+.pop-up-adicionar-conteudo {
   background-color: var(--verde--vidro);
   padding: 40px;
   border-radius: 12px;
@@ -208,8 +207,8 @@ body {
   overflow-y: auto;
 }
 
-/* Estilo para o título do popup de metas */
-.pop-up-metas-conteudo h2 {
+/* Estilo para o título do popup de adicionar metas */
+.pop-up-adicionar-conteudo h2 {
   color: var(--cor--destaque-verde);
   margin-bottom: 20px;
   font-size: 24px;
@@ -217,8 +216,8 @@ body {
   font-weight: 600;
 }
 
-/* Estilo para os rótulos dentro do popup de metas */
-.pop-up-metas-conteudo label {
+/* Estilo para os rótulos dentro do popup de adicionar metas */
+.pop-up-adicionar-conteudo label {
   color: white;
   display: block;
   margin-top: 15px;
@@ -226,8 +225,9 @@ body {
   font-weight: 500;
 }
 
-/* Estilo para os inputs dentro do popup de metas */
-.pop-up-metas-conteudo input[type="text"] {
+/* Estilo para os inputs de texto no popup de adicionar metas */
+.pop-up-adicionar-conteudo input[type="text"],
+.pop-up-adicionar-conteudo input[type="date"] {
   width: 100%;
   padding: 12px 20px;
   margin-top: 5px;
@@ -239,43 +239,16 @@ body {
   transition: all 0.3s ease;
 }
 
-/* Foco no input */
-.pop-up-metas-conteudo input[type="text"]:focus {
+/* Foco nos inputs */
+.pop-up-adicionar-conteudo input[type="text"]:focus,
+.pop-up-adicionar-conteudo input[type="date"]:focus {
   outline: none;
   background-color: var(--cor--destaque-verde);
   border: 2px solid var(--cor--destaque-verde);
 }
 
-/* Estilo para o input de data */
-input[type="date"] {
-    width: 100%;
-    padding: 12px 20px;
-    margin-top: 5px;
-    background-color: var(--verde--vidro); /* Cor de fundo */
-    color: var(--fonte-branco-100); /* Cor do texto */
-    border: none;
-    border-radius: 4px; /* Bordas arredondadas */
-    box-sizing: border-box; /* Para incluir padding e border no tamanho total */
-    transition: all 0.3s ease; /* Transição suave */
-  }
-  
-  /* Estilo ao focar no input de data */
-  input[type="date"]:focus {
-    outline: none; /* Remove o contorno padrão */
-    background-color: var(--cor--destaque-verde); /* Cor de fundo ao focar */
-    border: 2px solid var(--cor--destaque-verde); /* Borda ao focar */
-  }
-  
-  /* Estilo para o placeholder (opcional) */
-  input[type="date"]::placeholder {
-    color: rgba(255, 255, 255, 0.7); /* Cor do placeholder */
-    opacity: 1; /* Para garantir que o placeholder é opaco */
-  }
-  
-
-
-/* Estilo para o botão de envio dentro do popup de metas */
-.pop-up-metas-conteudo button {
+/* Estilo para o botão de envio dentro do popup de adicionar metas */
+.pop-up-adicionar-conteudo button {
   background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
   border: none;
@@ -289,27 +262,31 @@ input[type="date"] {
   transition: background-color 0.3s ease, transform 0.2s;
 }
 
-/* Hover no botão dentro do popup de metas */
-.pop-up-metas-conteudo button:hover {
+/* Hover no botão de envio */
+.pop-up-adicionar-conteudo button:hover {
   background-color: var(--hover);
   transform: scale(1.05);
 }
 
-/* Botão de fechar estilizado para o popup de metas */
-.popup-metas-close-btn {
+/* Estilo para o botão de fechar (X) */
+.popup-adicionar-close-btn {
   position: absolute;
   top: 12px;
   right: 12px;
   font-size: 24px;
   color: var(--fonte-branco-100);
   cursor: pointer;
-  padding: 0;
   background: none;
   border: none;
   transition: color 0.3s ease;
 }
 
 /* Hover no botão de fechar */
-.popup-metas-close-btn:hover {
+.popup-adicionar-close-btn:hover {
   color: var(--cor--destaque-verde);
+}
+
+/* Espaço adicional para a data limite */
+.data-limite {
+  margin-bottom: 20px;
 }

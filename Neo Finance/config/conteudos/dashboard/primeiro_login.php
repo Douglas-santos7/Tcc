@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 include("../../config/conteudos/dashboard/init.php"); // Inclui init.php que contém a lógica de inicialização
 
@@ -33,6 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
+=======
+>>>>>>> d67464482db9cc651020d4c317d02f592f3e8519
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
