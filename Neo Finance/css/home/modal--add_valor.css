@@ -90,14 +90,17 @@ h2 {
   opacity: 1;
 }
 
+/* Para navegadores baseados em WebKit (Chrome, Safari, etc.) */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
+/* Para Edge e outros navegadores baseados em Blink */
+input[type="number"]::-ms-clear,
+input[type="number"]::-ms-reveal {
+  display: none;
 }
 
 #buttonContainer {
