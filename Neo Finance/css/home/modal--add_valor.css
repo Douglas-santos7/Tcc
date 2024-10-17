@@ -1,0 +1,99 @@
+@import url(./root.css);
+body {
+  font-family: var(--fonte-principal);
+}
+.modal {
+  display: none; /* Inicialmente oculto */
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background);
+  opacity: 0; /* Começa invisível */
+  transition: opacity 0.5s ease; /* Transição de opacidade */
+}
+
+.modal.show {
+  display: flex; /* Mostra o modal */
+  opacity: 1; /* Torna o modal visível */
+}
+
+.modal-content {
+  font-size: 2.5rem;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.modal-content.show {
+  opacity: 1; /* Torna o conteúdo visível */
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.modal-content input {
+  outline: none; /* Remove o contorno de foco */
+  border: 2px solid;
+  border-color: transparent transparent black;
+  text-align: center;
+  max-width: 400px;
+  background: transparent;
+  width: 90%;
+  font-size: 2.5rem;
+}
+.modal-content input :focus {
+  outline: none;
+
+  border: 2px solid;
+  border-color: transparent transparent black;
+}
+
+.modal-content button {
+  font-family: var(--fonte-principal);
+  background-color: var(--card);
+  outline: none;
+  border: none;
+  border-radius: 12px;
+  font-size: 2rem;
+  padding: 10px 50px;
+  margin: 30px;
+}
+
+h2 {
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+/* Para navegadores WebKit (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Remove os botões de spin */
+  margin: 0; /* Remove margens indesejadas */
+}
+
+/* Para Firefox */
+input[type="number"] {
+  -moz-appearance: textfield; /* Remove os botões de spin no Firefox */
+}
+#buttonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#buttonContainer.visible {
+  opacity: 1;
+  gap: 10px 50px;
+}

@@ -20,7 +20,7 @@ $user = $result->fetch_assoc();
 $saldo_inicial_adicionado = $user['saldo_inicial_adicionado'];
 
 // Processa o formulário de saldo inicial somente se o saldo não foi adicionado
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $saldo_inicial_adicionado == 0) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   if (isset($_POST['saldo_inicial'])) {
     $saldo_inicial = $_POST['saldo_inicial'];
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $saldo_inicial_adicionado == 0) {
     $_SESSION['saldo'] = $user['saldo'] + $saldo_inicial;
 
     // Redireciona após adicionar o saldo para evitar a repetição do envio do formulário
-    header("Location: ./home.php");
+    header("Location: ./home.php?saldo_adicionado=1");
     exit();
   } elseif (isset($_POST['skip_saldo'])) {
     // Atualiza o campo saldo_inicial_adicionado para 1
@@ -60,50 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $saldo_inicial_adicionado == 0) {
   <link rel="stylesheet" href="../css/home.css" />
   <script src="../js/home/sidebar.js" defer></script>
   <script src="../js/home/iframe.js" defer></script>
-  <style>
-    /* Estilo do modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      width: 400px;
-      text-align: center;
-    }
-
-    .close {
-      color: red;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: #000;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  </style>
+  <link rel="stylesheet" href="../css/home/modal--bemvindo.css">
+  <link rel="stylesheet" href="../css/home/modal--add_valor.css">
 </head>
 
 <body>
   <div class="container">
     <div class="sidebar" id="sidebar">
       <div class="sidebar-content" id="bloquear-selecao">
-        <div class="logo--sidebar" <!-- id="logo--sidebar" -->>
+        <div class="logo--sidebar" id="logo--sidebar">
           <img src="../assets/img/neofinance--logo.svg" />
         </div>
         <ul>
@@ -159,84 +124,151 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $saldo_inicial_adicionado == 0) {
     </div>
   </div>
   <div class="conteudo" id="conteudo">
-    <!-- Conteúdo da página -->
     <iframe id="mainIframe" src="./conteudos/(1) dashboard.php" width="100%" height="100%"></iframe>
     <button class="toggle-button">></button>
 
     <!-- Modal de Boas-Vindas -->
-    <div id="welcomeModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Bem-vindo ao Neo Finance!</h2>
-        <p>Gostaria de adicionar um saldo inicial?</p>
-        <button id="addSaldoButton">Sim</button>
-        <form method="POST" action="">
-          <input type="hidden" name="skip_saldo" value="1">
-          <button type="submit" id="skipSaldoButton">Não</button>
-        </form>
+    <div id="welcomeModal" class="welcome-modal">
+      <div class="welcome-modal-content">
+        <h2 id="modalMessage"></h2>
+        <div id="welcomeButtonContainer">
+          <button id="addSaldoButton" class="welcome-button">Sim</button>
+          <form method="POST" action="">
+            <input type="hidden" name="skip_saldo" value="1" />
+            <button type="submit" id="skipSaldoButton" class="welcome-button">Não</button>
+          </form>
+        </div>
       </div>
     </div>
 
     <!-- Modal de Saldo -->
-    <div id="saldoModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Adicionar Saldo Inicial</h2>
-        <form method="POST" action="">
-          <label for="saldo_inicial">Digite o saldo inicial:</label>
-          <input type="number" name="saldo_inicial" step="0.01" required>
-          <button type="submit">Adicionar Saldo</button>
+    <div id="saldoModal" class="saldo-modal">
+      <div class="saldo-modal-content">
+        <h2 id="saldoModalMessage">Digite o saldo inicial</h2>
+        <form id="saldoForm" method="POST" action="">
+          <input id="valor_saldo" type="number" name="saldo_inicial" step="0.01" required>
+          <button type="submit" class="saldo-button">Adicionar Saldo</button>
         </form>
       </div>
     </div>
+
+    <script>
+      var welcomeModal = document.getElementById("welcomeModal");
+      var saldoModal = document.getElementById("saldoModal");
+      var saldoModalMessage = document.getElementById("saldoModalMessage");
+
+      function abrirWelcomeModal() {
+        welcomeModal.classList.add("show");
+        const h2 = document.getElementById("modalMessage");
+        const messages = [
+          "Olá",
+          "Bem-vindo ao Neo Finance!",
+          "Antes de começarmos, deseja definir um saldo inicial?"
+        ];
+        const welcomeButtonContainer = document.getElementById("welcomeButtonContainer");
+        let currentIndex = 0;
+
+        function changeMessage() {
+          if (currentIndex < messages.length) {
+            h2.classList.add("hidden");
+            setTimeout(() => {
+              h2.textContent = messages[currentIndex];
+              h2.classList.remove("hidden");
+
+              if (currentIndex === 2) {
+                setTimeout(() => {
+                  welcomeButtonContainer.classList.add("visible");
+                }, 500); // Tempo para mostrar o botão
+              }
+
+              currentIndex++;
+              setTimeout(changeMessage, 4000); // Tempo entre mensagens
+            }, 500); // Tempo para a transição de ocultar
+          }
+        }
+
+        document.getElementById("skipSaldoButton").addEventListener("click", (event) => {
+          event.preventDefault();
+          h2.classList.add("hidden");
+          welcomeButtonContainer.classList.remove("visible");
+          setTimeout(() => {
+            h2.textContent = "Ok, então vamos lá";
+            h2.classList.remove("hidden");
+            setTimeout(() => {
+              welcomeModal.classList.remove("show");
+            }, 2000);
+          }, 500);
+
+          const form = new FormData();
+          form.append('skip_saldo', '1');
+          fetch('', {
+            method: 'POST',
+            body: form
+          });
+        });
+
+        setTimeout(changeMessage, 100);
+      }
+
+      document.getElementById("addSaldoButton").onclick = function() {
+        fecharWelcomeModal();
+        abrirSaldoModal();
+      };
+
+      function fecharWelcomeModal() {
+        welcomeModal.classList.remove("show");
+      }
+
+      function abrirSaldoModal() {
+        saldoModal.classList.add("show");
+        setTimeout(() => {
+          const modalContent = saldoModal.querySelector(".saldo-modal-content");
+          modalContent.classList.add("show");
+        }, 500);
+      }
+
+      window.onclick = function(event) {
+        if (event.target === welcomeModal || event.target === saldoModal) {
+          fecharWelcomeModal();
+          saldoModal.classList.remove("show");
+        }
+      }
+
+      <?php if ($saldo_inicial_adicionado == 0): ?>
+        abrirWelcomeModal();
+      <?php endif; ?>
+
+      document.getElementById("saldoForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        saldoModalMessage.textContent = "Ótimo, já podemos começar";
+
+        const form = this;
+        form.classList.add("hidden"); // Esconde o formulário
+
+        saldoModalMessage.classList.remove("hidden"); // Exibe a mensagem de confirmação
+
+        const formData = new FormData(form);
+        fetch('', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (response.ok) {
+              // Fecha o modal após 2 segundos
+              setTimeout(() => {
+                saldoModal.classList.remove("show");
+              }, 2000);
+            }
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+          });
+      });
+    </script>
+
+
   </div>
-
-  <script>
-    var welcomeModal = document.getElementById("welcomeModal");
-    var saldoModal = document.getElementById("saldoModal");
-    var span = document.getElementsByClassName("close");
-
-    // Função para abrir o modal de boas-vindas
-    function abrirWelcomeModal() {
-      welcomeModal.style.display = "flex";
-    }
-
-    // Função para abrir o modal de saldo
-    function abrirSaldoModal() {
-      welcomeModal.style.display = "none";
-      saldoModal.style.display = "flex";
-    }
-
-    // Função para fechar o modal
-    function fecharModal() {
-      welcomeModal.style.display = "none";
-      saldoModal.style.display = "none";
-    }
-
-    // Fecha o modal quando clicar fora dele
-    window.onclick = function(event) {
-      if (event.target == welcomeModal || event.target == saldoModal) {
-        fecharModal();
-      }
-    }
-
-    // Fecha o modal ao clicar no botão de fechar
-    for (var i = 0; i < span.length; i++) {
-      span[i].onclick = function() {
-        fecharModal();
-      }
-    }
-
-    // Abre o modal de boas-vindas automaticamente se o saldo inicial ainda não foi adicionado
-    <?php if ($saldo_inicial_adicionado == 0): ?>
-      abrirWelcomeModal();
-    <?php endif; ?>
-
-    // Eventos para os botões do modal de boas-vindas
-    document.getElementById("addSaldoButton").onclick = function() {
-      abrirSaldoModal();
-    }
-  </script>
 </body>
 
 </html>
