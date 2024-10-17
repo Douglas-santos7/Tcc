@@ -277,3 +277,30 @@ body {
 .data-limite {
     margin-bottom: 20px;
 }
+
+
+/*======================
+Gráficos CSS
+========================*/
+
+  /* Estilo geral para os gráficos */
+  .grafico {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px; /* Espaçamento interno */
+    border-radius: 15px; /* Bordas arredondadas */
+    transition: transform 0.3s ease; /* Transição suave para hover */
+  }
+
+  .grafico:hover {
+    transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+  }
+
+  /* Estilo dos rótulos dos gráficos */
+  .apexcharts-datalabels {
+    font-family: 'Arial', sans-serif; /* Fonte mais moderna */
+    font-weight: bold; /* Texto em negrito */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Sombra do texto */
+  }

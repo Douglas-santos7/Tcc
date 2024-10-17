@@ -173,12 +173,12 @@ $result = $conn->query($sql);
 
 
 
-      <!-- PROGRESSO -->
+          <!-- PROGRESSO -->
           <?php
           // Verifica se o valor atual é maior que o valor alvo e trava no valor alvo se necessário
           if ($meta['valor_atual'] >= $meta['valor_alvo']) {
             $valor_atual_exibido = $meta['valor_alvo'];
-            $mensagem = "Parabéns, sua meta ". $meta['nome_meta'] . " de R$ " . number_format($meta['valor_alvo'], 2, ',', '.') . " foi alcançada!";
+            $mensagem = "Parabéns, sua meta " . $meta['nome_meta'] . " de R$ " . number_format($meta['valor_alvo'], 2, ',', '.') . " foi alcançada!";
           } else {
             $valor_atual_exibido = $meta['valor_atual'];
             $mensagem = "";
@@ -225,7 +225,10 @@ $result = $conn->query($sql);
 
           </div>
           <!-- Elemento para o gráfico -->
-          <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 100px; width: 100%;"></div>
+
+          <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 200px; width: 100%;"></div>
+
+
         </div>
       <?php } ?>
     </div>
@@ -277,90 +280,116 @@ $result = $conn->query($sql);
       </div>
     </div>
     <script>
-  var options = {
-    series: [0], // Porcentagem inicial
-    chart: {
-      height: 200,
-      type: 'radialBar',
-      toolbar: { show: true }
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -135,
-        endAngle: 225,
-        hollow: {
-          margin: 0,
-          size: '60%',
-          background: '#fff',
+      var options = {
+        series: [0], // Porcentagem inicial
+        chart: {
+          height: 200,
+          type: 'radialBar',
+          offsetY: 0,
+          sparkline: {
+            enabled: false
+          }
         },
-        track: {
-          background: '#fff',
-          strokeWidth: '67%',
-        },
-        dataLabels: {
-          show: true,
-          name: {
-            offsetY: -10,
-            color: '#888',
-            fontSize: '12px'
-          },
-          value: {
-            formatter: function (val) {
-              return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
+        plotOptions: {
+          radialBar: {
+            startAngle: -90, // Começa o gráfico no topo
+            endAngle: 90, // Termina o gráfico no topo
+            hollow: {
+              margin: 0,
+              size: '50%',
+              background: '#fff',
             },
-            color: '#111',
-            fontSize: '20px',
-            show: true,
-          }
-        }
-      }
-    },
-    fill: {
-      colors: ['#28a745'], // Cor verde
-    },
-    stroke: {
-      lineCap: 'round'
-    },
-    labels: ['Porcentagem'],
-  };
-
-  var chart = new ApexCharts(document.querySelector("#chart"), options);
-  chart.render();
-
-
-  // Gráfico de progresso das metas
-  <?php foreach ($result as $meta) { ?>
-    var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%
-    
-    var chartOptions<?php echo $meta['id']; ?> = {
-      series: [progresso], // Passa o valor limitado
-      chart: {
-        height: 100,
-        type: 'radialBar',
-      },
-      plotOptions: {
-        radialBar: {
-          hollow: {
-            size: '60%',
-          },
-          track: {
-            background: '#fff',
+            track: {
+              background: '#f0f0f0', // Fundo da trilha
+              strokeWidth: '70%',
+            },
+            dataLabels: {
+              show: true,
+              name: {
+                offsetY: -5,
+                color: '#333',
+                fontSize: '14px'
+              },
+              value: {
+                formatter: function (val) {
+                  return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
+                },
+                color: '#28a745', // Cor do valor
+                fontSize: '22px',
+                show: true,
+              }
+            }
           }
         },
-      },
-      fill: {
-        colors: ['#28a745'], // Cor verde para todos os gráficos
-      },
-      stroke: {
-        lineCap: 'round'
-      },
-      labels: ['Progresso'],
-    };
+        fill: {
+          colors: ['#28a745'], // Cor verde
+        },
+        stroke: {
+          lineCap: 'round'
+        },
+        labels: ['Porcentagem'],
+      };
 
-    var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
-    chart<?php echo $meta['id']; ?>.render();
-  <?php } ?>
-</script>
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
+
+
+      // Gráfico de progresso das metas
+      <?php foreach ($result as $meta) { ?>
+        var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%
+
+        var chartOptions<?php echo $meta['id']; ?> = {
+          series: [progresso], // Passa o valor limitado
+          chart: {
+            height: 200,
+            type: 'radialBar',
+            offsetY: 0,
+            sparkline: {
+              enabled: false
+            }
+          },
+          plotOptions: {
+            radialBar: {
+              startAngle: -90, // Começa o gráfico no topo
+              endAngle: 90, // Termina o gráfico no topo
+              hollow: {
+                size: '50%',
+              },
+              track: {
+                background: '#f0f0f0', // Fundo da trilha
+                strokeWidth: '70%',
+              },
+              dataLabels: {
+                show: true,
+                name: {
+                  offsetY: -5,
+                  color: '#333',
+                  fontSize: '14px'
+                },
+                value: {
+                  formatter: function (val) {
+                    return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
+                  },
+                  color: '#28a745', // Cor do valor
+                  fontSize: '22px',
+                  show: true,
+                }
+              }
+            },
+          },
+          fill: {
+            colors: ['#28a745'], // Cor verde para todos os gráficos
+          },
+          stroke: {
+            lineCap: 'round'
+          },
+          labels: ['Progresso'],
+        };
+
+        var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
+        chart<?php echo $meta['id']; ?>.render();
+      <?php } ?>
+    </script>
 
 
   </div>
