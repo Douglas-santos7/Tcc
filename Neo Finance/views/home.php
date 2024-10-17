@@ -142,130 +142,145 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <!-- Modal de Saldo -->
-    <div id="saldoModal" class="saldo-modal">
-      <div class="saldo-modal-content">
+    <div id="saldoModal" class="modal">
+      <div class="modal-content">
         <h2 id="saldoModalMessage">Digite o saldo inicial</h2>
         <form id="saldoForm" method="POST" action="">
           <input id="valor_saldo" type="number" name="saldo_inicial" step="0.01" required>
-          <button type="submit" class="saldo-button">Adicionar Saldo</button>
+          <button type="submit">Adicionar Saldo</button>
         </form>
       </div>
     </div>
 
     <script>
-      var welcomeModal = document.getElementById("welcomeModal");
-      var saldoModal = document.getElementById("saldoModal");
-      var saldoModalMessage = document.getElementById("saldoModalMessage");
+  var welcomeModal = document.getElementById("welcomeModal");
+  var saldoModal = document.getElementById("saldoModal");
+  var saldoModalMessage = document.getElementById("saldoModalMessage");
 
-      function abrirWelcomeModal() {
-        welcomeModal.classList.add("show");
-        const h2 = document.getElementById("modalMessage");
-        const messages = [
-          "Olá",
-          "Bem-vindo ao Neo Finance!",
-          "Antes de começarmos, deseja definir um saldo inicial?"
-        ];
-        const welcomeButtonContainer = document.getElementById("welcomeButtonContainer");
-        let currentIndex = 0;
+  function abrirWelcomeModal() {
+    welcomeModal.classList.add("show");
+    welcomeModal.style.display = 'flex'; // Garante que o modal fique visível
 
-        function changeMessage() {
-          if (currentIndex < messages.length) {
-            h2.classList.add("hidden");
-            setTimeout(() => {
-              h2.textContent = messages[currentIndex];
-              h2.classList.remove("hidden");
+    const h2 = document.getElementById("modalMessage");
+    const messages = [
+      "Olá",
+      "Bem-vindo ao Neo Finance!",
+      "Antes de começarmos, deseja definir um saldo inicial?"
+    ];
+    const welcomeButtonContainer = document.getElementById("welcomeButtonContainer");
+    let currentIndex = 0;
 
-              if (currentIndex === 2) {
-                setTimeout(() => {
-                  welcomeButtonContainer.classList.add("visible");
-                }, 500); // Tempo para mostrar o botão
-              }
-
-              currentIndex++;
-              setTimeout(changeMessage, 4000); // Tempo entre mensagens
-            }, 500); // Tempo para a transição de ocultar
-          }
-        }
-
-        document.getElementById("skipSaldoButton").addEventListener("click", (event) => {
-          event.preventDefault();
-          h2.classList.add("hidden");
-          welcomeButtonContainer.classList.remove("visible");
-          setTimeout(() => {
-            h2.textContent = "Ok, então vamos lá";
-            h2.classList.remove("hidden");
-            setTimeout(() => {
-              welcomeModal.classList.remove("show");
-            }, 2000);
-          }, 500);
-
-          const form = new FormData();
-          form.append('skip_saldo', '1');
-          fetch('', {
-            method: 'POST',
-            body: form
-          });
-        });
-
-        setTimeout(changeMessage, 100);
-      }
-
-      document.getElementById("addSaldoButton").onclick = function() {
-        fecharWelcomeModal();
-        abrirSaldoModal();
-      };
-
-      function fecharWelcomeModal() {
-        welcomeModal.classList.remove("show");
-      }
-
-      function abrirSaldoModal() {
-        saldoModal.classList.add("show");
+    function changeMessage() {
+      if (currentIndex < messages.length) {
+        h2.classList.add("hidden");
         setTimeout(() => {
-          const modalContent = saldoModal.querySelector(".saldo-modal-content");
-          modalContent.classList.add("show");
-        }, 500);
-      }
+          h2.textContent = messages[currentIndex];
+          h2.classList.remove("hidden");
 
-      window.onclick = function(event) {
-        if (event.target === welcomeModal || event.target === saldoModal) {
+          if (currentIndex === 2) {
+            setTimeout(() => {
+              welcomeButtonContainer.classList.add("visible");
+            }, 500); // Tempo para mostrar o botão
+          }
+
+          currentIndex++;
+          setTimeout(changeMessage, 4000); // Tempo entre mensagens
+        }, 500); // Tempo para a transição de ocultar
+      }
+    }
+
+    document.getElementById("skipSaldoButton").addEventListener("click", (event) => {
+      event.preventDefault();
+      h2.classList.add("hidden");
+      welcomeButtonContainer.classList.remove("visible");
+      setTimeout(() => {
+        h2.textContent = "Ok, então vamos lá";
+        h2.classList.remove("hidden");
+        setTimeout(() => {
           fecharWelcomeModal();
-          saldoModal.classList.remove("show");
-        }
-      }
+        }, 2000);
+      }, 500);
 
-      <?php if ($saldo_inicial_adicionado == 0): ?>
-        abrirWelcomeModal();
-      <?php endif; ?>
-
-      document.getElementById("saldoForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        saldoModalMessage.textContent = "Ótimo, já podemos começar";
-
-        const form = this;
-        form.classList.add("hidden"); // Esconde o formulário
-
-        saldoModalMessage.classList.remove("hidden"); // Exibe a mensagem de confirmação
-
-        const formData = new FormData(form);
-        fetch('', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (response.ok) {
-              // Fecha o modal após 2 segundos
-              setTimeout(() => {
-                saldoModal.classList.remove("show");
-              }, 2000);
-            }
-          })
-          .catch(error => {
-            console.error('Erro:', error);
-          });
+      const form = new FormData();
+      form.append('skip_saldo', '1');
+      fetch('', {
+        method: 'POST',
+        body: form
       });
-    </script>
+    });
+
+    setTimeout(changeMessage, 100);
+  }
+
+  document.getElementById("addSaldoButton").onclick = function() {
+    fecharWelcomeModal();
+    abrirSaldoModal();
+  };
+
+  function fecharWelcomeModal() {
+    welcomeModal.classList.add("hide");
+    welcomeModal.addEventListener('transitionend', () => {
+      if (!welcomeModal.classList.contains("show")) {
+        welcomeModal.classList.remove("show");
+        welcomeModal.style.display = 'none'; // Esconde o modal
+      }
+    }, {
+      once: true
+    });
+  }
+
+  function abrirSaldoModal() {
+    saldoModal.classList.add("show");
+    saldoModal.style.display = 'flex'; // Garante que o modal fique visível
+    setTimeout(() => {
+      const modalContent = saldoModal.querySelector(".modal-content");
+      modalContent.classList.add("show");
+    }, 500);
+  }
+
+  <?php if ($saldo_inicial_adicionado == 0): ?>
+    abrirWelcomeModal();
+  <?php endif; ?>
+
+  document.getElementById("saldoForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    saldoModalMessage.textContent = "Ótimo, já podemos começar";
+
+    const form = this;
+    form.classList.add("hidden"); // Esconde o formulário
+
+    saldoModalMessage.classList.remove("hidden"); // Exibe a mensagem de confirmação
+
+    const formData = new FormData(form);
+    fetch('', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          // Fecha o modal após 2 segundos
+          setTimeout(() => {
+            saldoModal.classList.remove("show");
+            saldoModal.classList.add("hide");
+            saldoModal.addEventListener('transitionend', () => {
+              if (!saldoModal.classList.contains("show")) {
+                saldoModal.style.display = 'none'; // Esconde o modal
+                // Atualiza o iframe após o modal ser fechado
+                document.getElementById("mainIframe").contentWindow.location.reload();
+              }
+            }, {
+              once: true
+            });
+          }, 2000);
+        }
+      })
+      .catch(error => {
+        console.error('Erro:', error);
+      });
+  });
+</script>
+
 
 
   </div>

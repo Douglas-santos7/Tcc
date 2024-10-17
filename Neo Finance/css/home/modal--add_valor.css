@@ -1,9 +1,11 @@
 @import url(./root.css);
+
 body {
   font-family: var(--fonte-principal);
 }
+
 .modal {
-  display: none; /* Inicialmente oculto */
+  display: none; /* padrão */
   justify-content: center;
   align-items: center;
   position: fixed;
@@ -12,13 +14,16 @@ body {
   width: 100%;
   height: 100%;
   background-color: var(--background);
-  opacity: 0; /* Começa invisível */
-  transition: opacity 0.5s ease; /* Transição de opacidade */
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .modal.show {
-  display: flex; /* Mostra o modal */
-  opacity: 1; /* Torna o modal visível */
+  display: flex; /* ou block, dependendo do layout */
+  opacity: 1; /* modal visível */
+}
+.modal.hide {
+  opacity: 0; /* iniciar a transição de saída */
 }
 
 .modal-content {
@@ -27,11 +32,17 @@ body {
   padding: 20px;
   border-radius: 5px;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Adicionada transição de transformação */
 }
 
 .modal-content.show {
-  opacity: 1; /* Torna o conteúdo visível */
+  opacity: 1;
+  transform: translateY(0); /* Inicia na posição original */
+}
+
+.modal-content.hidden {
+  opacity: 0;
+  transform: translateY(20px); /* Move para baixo enquanto oculta */
 }
 
 .modal-content form {
@@ -43,19 +54,18 @@ body {
 }
 
 .modal-content input {
-  outline: none; /* Remove o contorno de foco */
-  border: 2px solid;
-  border-color: transparent transparent black;
+  outline: none;
+  border: 2px solid transparent;
+  border-bottom: 2px solid black;
   text-align: center;
   max-width: 400px;
   background: transparent;
   width: 90%;
   font-size: 2.5rem;
+  transition: border-color 0.3s ease; /* Transição suave para a borda */
 }
-.modal-content input :focus {
-  outline: none;
 
-  border: 2px solid;
+.modal-content input:focus {
   border-color: transparent transparent black;
 }
 
@@ -68,23 +78,28 @@ body {
   font-size: 2rem;
   padding: 10px 50px;
   margin: 30px;
+  transition: background-color 0.3s ease; /* Transição suave para o botão */
+}
+
+.modal-content button:hover {
+  background-color: darken(var(--card), 10%); /* Efeito de escurecimento ao passar o mouse */
 }
 
 h2 {
   transition: opacity 0.5s ease;
   opacity: 1;
 }
-/* Para navegadores WebKit (Chrome, Safari) */
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none; /* Remove os botões de spin */
-  margin: 0; /* Remove margens indesejadas */
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-/* Para Firefox */
 input[type="number"] {
-  -moz-appearance: textfield; /* Remove os botões de spin no Firefox */
+  -moz-appearance: textfield;
 }
+
 #buttonContainer {
   display: flex;
   align-items: center;
@@ -96,4 +111,9 @@ input[type="number"] {
 #buttonContainer.visible {
   opacity: 1;
   gap: 10px 50px;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }

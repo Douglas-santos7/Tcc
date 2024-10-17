@@ -15,11 +15,16 @@ body {
   background-color: var(--background);
   opacity: 0; /* Começa invisível */
   transition: opacity 0.5s ease; /* Transição de opacidade */
+  display: none; /* Padrão escondido */
 }
 
 .welcome-modal.show {
   display: flex; /* Mostra o modal */
   opacity: 1; /* Torna o modal visível */
+}
+
+.welcome-modal.hide {
+  opacity: 0; /* Transição de saída */
 }
 
 .welcome-modal-content {
@@ -58,5 +63,5 @@ h2 {
 }
 
 #welcomeButtonContainer.visible {
-  opacity: 1;
+  opacity: 1; /* Torna o container visível */
 }
