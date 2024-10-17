@@ -104,6 +104,7 @@ $result = $conn->query($sql);
   <title>Metas</title>
   <link rel="stylesheet" href="../../css/conteudos/metas/metas.css">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 </head>
 
 <body>
@@ -185,6 +186,7 @@ $result = $conn->query($sql);
           </div>
           <!-- Elemento de gráfico para a meta -->
           <div class="grafico-meta" id="grafico-<?php echo $meta['id']; ?>"></div>
+
         </div>
       <?php } ?>
     </div>
@@ -229,107 +231,94 @@ $result = $conn->query($sql);
 
   </div>
   <script>
-    var options = {
-      series: [0], // Porcentagem inicial
-      chart: {
-        height: 200,
-        type: 'radialBar',
-        toolbar: { show: true }
-      },
-      plotOptions: {
-        radialBar: {
-          startAngle: -135,
-          endAngle: 225,
-          hollow: {
-            margin: 0,
-            size: '60%',
-            background: '#fff',
-          },
-          track: {
-            background: '#fff',
-            strokeWidth: '67%',
-          },
-          dataLabels: {
-            show: true,
-            name: {
-              offsetY: -10,
-              color: '#888',
-              fontSize: '12px'
-            },
-            value: {
-              formatter: function (val) {
-                return parseInt(val);
-              },
-              color: '#111',
-              fontSize: '20px',
-              show: true,
-            }
-          }
-        }
-      },
-      fill: {
-        colors: ['#00e060'],
-      },
-      stroke: {
-        lineCap: 'round'
-      },
-      labels: ['Porcentagem'],
-    };
+    document.addEventListener("DOMContentLoaded", function () {
+        var metas = <?php echo json_encode($result->fetch_all(MYSQLI_ASSOC)); ?>; // Pega as metas do PHP
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+        metas.forEach(function (meta) {
+            var progresso = (meta.valor_atual / meta.valor_alvo) * 100;
+
+            var options = {
+                series: [progresso], // Porcentagem inicial baseada no progresso da meta
+                chart: {
+                    height: 200,
+                    type: 'radialBar',
+                    toolbar: { show: true }
+                },
+                plotOptions: {
+                    radialBar: {
+                        startAngle: -135,
+                        endAngle: 225,
+                        hollow: {
+                            margin: 0,
+                            size: '60%',
+                            background: '#fff',
+                        },
+                        track: {
+                            background: '#fff',
+                            strokeWidth: '67%',
+                        },
+                        dataLabels: {
+                            show: true,
+                            name: {
+                                offsetY: -10,
+                                color: '#888',
+                                fontSize: '12px'
+                            },
+                            value: {
+                                formatter: function (val) {
+                                    return parseInt(val);
+                                },
+                                color: '#111',
+                                fontSize: '20px',
+                                show: true,
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    colors: ['#00e060'],
+                },
+                stroke: {
+                    lineCap: 'round'
+                },
+                labels: ['Progresso'],
+            };
+
+            var chart = new ApexCharts(document.querySelector("#grafico-" + meta.id), options);
+            chart.render();
+
+        });
+    });
 
     // Abrir modal para depositar valor
     function abrirModalDepositar(idMeta) {
-      var modalDepositar = document.getElementById('pop-up-depositar-container');
-      var idMetaInput = document.getElementById('id_meta_depositar');
-      idMetaInput.value = idMeta;
-      modalDepositar.style.display = 'block';
+        var modalDepositar = document.getElementById('pop-up-depositar-container');
+        var idMetaInput = document.getElementById('id_meta_depositar');
+        idMetaInput.value = idMeta;
+        modalDepositar.style.display = 'block';
     }
 
-    // Fechar modal
+    // Fechar modal Depositar
     var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
     closeBtnDepositar.onclick = function () {
-      document.getElementById('pop-up-depositar-container').style.display = 'none';
+        document.getElementById('pop-up-depositar-container').style.display = 'none';
     }
 
     // Abrir modal para resgatar valor
     function abrirModalResgatar(idMeta) {
-      var modalResgatar = document.getElementById('pop-up-resgatar-container');
-      var idMetaInput = document.getElementById('id_meta_resgatar');
-      idMetaInput.value = idMeta;
-      modalResgatar.style.display = 'block';
+        var modalResgatar = document.getElementById('pop-up-resgatar-container');
+        var idMetaInput = document.getElementById('id_meta_resgatar');
+        idMetaInput.value = idMeta;
+        modalResgatar.style.display = 'block';
     }
 
-    // Fechar modal
+    // Fechar modal Resgatar
     var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
     closeBtnResgatar.onclick = function () {
-      document.getElementById('pop-up-resgatar-container').style.display = 'none';
+        document.getElementById('pop-up-resgatar-container').style.display = 'none';
     }
+</script>
 
-
-    // Gráfico de progresso das metas
-    <?php foreach ($result as $meta) { ?>
-      var chartOptions<?php echo $meta['id']; ?> = {
-        series: [<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>],
-        chart: {
-          height: 100,
-          type: 'radialBar',
-        },
-        plotOptions: {
-          radialBar: {
-            hollow: {
-              size: '60%',
-            }
-          },
-        },
-        labels: ['Progresso'],
-      };
-
-      var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
-      chart<?php echo $meta['id']; ?>.render();
-    <?php } ?>
-  </script>
 
   </div>
 
@@ -354,6 +343,20 @@ $result = $conn->query($sql);
         modalAdicionar.style.display = 'none';
       }
     }
+  </script>
+  <script>
+    //Função de obter a data atual - input data limite
+    // Obtém a data atual
+    const today = new Date();
+
+    // Formata a data como 'AAAA-MM-DD' para ser compatível com o valor do input de tipo date
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // meses começam em 0
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // Define o valor mínimo no input para a data atual
+    const minDate = `${year}-${month}-${day}`;
+    document.getElementById('data_meta').setAttribute('min', minDate);
   </script>
 
 </body>
