@@ -4,7 +4,6 @@ include("../../config/database/conexao.php");
 
 // Verificar se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Receber dados do formulário
   $nome_meta = $_POST['nome'] ?? null;
   $valor_meta = $_POST['valor'] ?? null;
   $data_meta = $_POST['data'] ?? null;
@@ -15,12 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
   }
 
-  // Verificar se é uma operação de depósito
+  // Operação de depósito
   if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
     $id_meta = $_POST['id_meta'];
     $valor_deposito = $_POST['valor_deposito'];
 
-    // Converter o valor do depósito para o formato correto
     if ($valor_deposito) {
       $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
     }
@@ -31,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
 
     if ($stmt->execute()) {
-      // Redirecionar para a página de metas com uma mensagem de sucesso
       header("Location: ../conteudos/(7) metas.php?sucesso=deposito");
       exit();
     } else {
@@ -39,38 +36,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // Validar os campos para adicionar uma nova meta
+  // Operação de resgatar
+  if (isset($_POST['valor_resgatar']) && isset($_POST['id_meta'])) {
+    $id_meta = $_POST['id_meta'];
+    $valor_resgatar = $_POST['valor_resgatar'];
+
+    if ($valor_resgatar) {
+      $valor_resgatar = str_replace(",", ".", str_replace(".", "", $valor_resgatar));
+    }
+
+    // Atualizar o valor atual da meta subtraindo o valor resgatado
+    $sql = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ? AND valor_atual >= ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("diii", $valor_resgatar, $id_meta, $usuario_id, $valor_resgatar);
+
+    if ($stmt->execute()) {
+      header("Location: ../conteudos/(7) metas.php?sucesso=resgatar");
+      exit();
+    } else {
+      echo "Erro ao resgatar valor: " . $conn->error;
+    }
+  }
+
+  // Adicionar uma nova meta
   if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
-    // Preparar a query SQL para inserir na coluna correta (valor_alvo)
     $sql = "INSERT INTO metas (nome_meta, valor_alvo, data_limite, usuario_id) VALUES (?, ?, ?, ?)";
-    // Preparar a declaração SQL
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssi", $nome_meta, $valor_meta, $data_meta, $usuario_id);
 
-    // Executar a query
     if ($stmt->execute()) {
-      // Redirecionar para a página de metas ou exibir uma mensagem de sucesso
       header("Location: ../conteudos/(7) metas.php?sucesso=1");
       exit();
     } else {
       echo "Erro ao adicionar meta: " . $conn->error;
     }
-  } else {
-    echo "Todos os campos são obrigatórios e o valor deve ser numérico!";
   }
 
-  // APAGAR META
-  if (isset($_POST['id_meta']) && !isset($_POST['valor_deposito'])) {
+  // Exclusão de meta (somente quando o botão de exclusão for clicado)
+  if (isset($_POST['id_meta']) && isset($_POST['acao']) && $_POST['acao'] === 'deletar') {
     $id_meta = $_POST['id_meta'];
 
-    // Preparar a query SQL para deletar a meta
-    $sql = "DELETE FROM metas WHERE id = ?";
+    $sql = "DELETE FROM metas WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_meta);
+    $stmt->bind_param("ii", $id_meta, $usuario_id);
 
-    // Executar a query
     if ($stmt->execute()) {
-      // Redirecionar para a página de metas após apagar a meta
       header("Location: ../conteudos/(7) metas.php?sucesso=2");
       exit();
     } else {
@@ -83,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $sql = "SELECT * FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
 $result = $conn->query($sql);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -106,29 +117,29 @@ $result = $conn->query($sql);
       </div>
     </div>
 
-     <!-- POPUP ADICIONAR META -->
-<div class="pop-up-adicionar-container" id="pop-up-adicionar-container" style="display: none;">
-  <div class="pop-up-adicionar-conteudo">
-    <span class="popup-adicionar-close-btn" id="btn-fechar-popup-adicionar">&times;</span>
-    <h2 class="adicionar-titulo">Adicionar Meta</h2>
+    <!-- POPUP ADICIONAR META -->
+    <div class="pop-up-adicionar-container" id="pop-up-adicionar-container" style="display: none;">
+      <div class="pop-up-adicionar-conteudo">
+        <span class="popup-adicionar-close-btn" id="btn-fechar-popup-adicionar">&times;</span>
+        <h2 class="adicionar-titulo">Adicionar Meta</h2>
 
-    <!-- Formulário para adicionar uma meta -->
-    <form method="POST" action="">
-      <label for="nome_meta">Nome da Meta:</label>
-      <input type="text" id="nome_meta" name="nome" required placeholder="Digite o nome da meta">
+        <!-- Formulário para adicionar uma meta -->
+        <form method="POST" action="">
+          <label for="nome_meta">Nome da Meta:</label>
+          <input type="text" id="nome_meta" name="nome" required placeholder="Digite o nome da meta">
 
-      <label for="valor_meta">Valor da Meta:</label>
-      <input type="text" id="valor_meta" name="valor" required placeholder="0,00">
+          <label for="valor_meta">Valor da Meta:</label>
+          <input type="text" id="valor_meta" name="valor" required placeholder="0,00">
 
-      <label for="data_meta">Data Limite:</label>
-      <input type="date" id="data_meta" name="data" required>
+          <label for="data_meta">Data Limite:</label>
+          <input type="date" id="data_meta" name="data" required>
 
-      <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
+          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
 
-      <button type="submit">Adicionar Meta</button>
-    </form>
-  </div>
-</div>
+          <button type="submit">Adicionar Meta</button>
+        </form>
+      </div>
+    </div>
 
 
     <!-- Cards de Metas -->
@@ -140,16 +151,20 @@ $result = $conn->query($sql);
             <!-- Formulário para remover a meta -->
             <form method="POST" action="../conteudos/(7) metas.php" style="display:inline;">
               <input type="hidden" name="id_meta" value="<?php echo $meta['id']; ?>">
+              <input type="hidden" name="acao" value="deletar"> <!-- Adicionar ação -->
               <button type="submit" class="icone-lixeira" aria-label="Remover meta"
                 onclick="return confirm('Tem certeza que deseja remover esta meta?');">
                 <i class="fi fi-sr-trash"></i>
               </button>
             </form>
+
           </div>
           <div class="progresso-meta">
             <span>R$ <?php echo number_format($meta['valor_atual'], 2, ',', '.'); ?></span> <!-- Valor atual -->
             <div class="barra-progresso">
-              <div class="barra-progresso-preenchida" style="width: <?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>%;"></div> <!-- Progresso -->
+              <div class="barra-progresso-preenchida"
+                style="width: <?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>%;"></div>
+              <!-- Progresso -->
             </div>
             <span>de R$ <?php echo number_format($meta['valor_alvo'], 2, ',', '.'); ?></span>
           </div>
@@ -160,15 +175,16 @@ $result = $conn->query($sql);
             <button class="btn-depositar" onclick="abrirModalDepositar(<?php echo $meta['id']; ?>)">
               <div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar
             </button>
-            <button class="btn-resgatar">
+            <button class="btn-resgatar" onclick="abrirModalResgatar(<?php echo $meta['id']; ?>)">
               <div for="icon2"><i class="fi fi-sr-home"></i></div> Resgatar
             </button>
+
             <button class="btn-historico">
               <div for="icon2"><i class="fi fi-sr-home"></i></div> Histórico
             </button>
           </div>
-          <!-- Elemento para o gráfico -->
-          <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 100px; width: 100%;"></div>
+          <!-- Elemento de gráfico para a meta -->
+          <div class="grafico-meta" id="grafico-<?php echo $meta['id']; ?>"></div>
         </div>
       <?php } ?>
     </div>
@@ -192,118 +208,153 @@ $result = $conn->query($sql);
       </div>
     </div>
 
-    <script>
-      var options = {
-        series: [0], // Porcentagem inicial
+    <!-- POPUP RESGATAR -->
+    <div class="pop-up-resgatar-container" id="pop-up-resgatar-container" style="display: none;">
+      <div class="pop-up-resgatar-conteudo">
+        <span class="popup-resgatar-close-btn" id="btn-fechar-popup-resgatar">&times;</span>
+        <h2 class="resgatar-titulo">Resgatar Valor</h2>
+
+        <!-- Formulário para resgatar -->
+        <form method="POST" action="" id="form-resgatar">
+          <label for="valor_resgatar">Valor a Resgatar:</label>
+          <input type="text" id="valor_resgatar" name="valor_resgatar" required placeholder="0,00">
+
+          <input type="hidden" name="usuario_id" value="1"> <!-- Exemplo para `usuario_id` -->
+          <input type="hidden" name="id_meta" id="id_meta_resgatar" value="">
+
+          <button type="submit">Resgatar</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    var options = {
+      series: [0], // Porcentagem inicial
+      chart: {
+        height: 200,
+        type: 'radialBar',
+        toolbar: { show: true }
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: -135,
+          endAngle: 225,
+          hollow: {
+            margin: 0,
+            size: '60%',
+            background: '#fff',
+          },
+          track: {
+            background: '#fff',
+            strokeWidth: '67%',
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              offsetY: -10,
+              color: '#888',
+              fontSize: '12px'
+            },
+            value: {
+              formatter: function (val) {
+                return parseInt(val);
+              },
+              color: '#111',
+              fontSize: '20px',
+              show: true,
+            }
+          }
+        }
+      },
+      fill: {
+        colors: ['#00e060'],
+      },
+      stroke: {
+        lineCap: 'round'
+      },
+      labels: ['Porcentagem'],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    // Abrir modal para depositar valor
+    function abrirModalDepositar(idMeta) {
+      var modalDepositar = document.getElementById('pop-up-depositar-container');
+      var idMetaInput = document.getElementById('id_meta_depositar');
+      idMetaInput.value = idMeta;
+      modalDepositar.style.display = 'block';
+    }
+
+    // Fechar modal
+    var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
+    closeBtnDepositar.onclick = function () {
+      document.getElementById('pop-up-depositar-container').style.display = 'none';
+    }
+
+    // Abrir modal para resgatar valor
+    function abrirModalResgatar(idMeta) {
+      var modalResgatar = document.getElementById('pop-up-resgatar-container');
+      var idMetaInput = document.getElementById('id_meta_resgatar');
+      idMetaInput.value = idMeta;
+      modalResgatar.style.display = 'block';
+    }
+
+    // Fechar modal
+    var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
+    closeBtnResgatar.onclick = function () {
+      document.getElementById('pop-up-resgatar-container').style.display = 'none';
+    }
+
+
+    // Gráfico de progresso das metas
+    <?php foreach ($result as $meta) { ?>
+      var chartOptions<?php echo $meta['id']; ?> = {
+        series: [<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>],
         chart: {
-          height: 200,
+          height: 100,
           type: 'radialBar',
-          toolbar: { show: true }
         },
         plotOptions: {
           radialBar: {
-            startAngle: -135,
-            endAngle: 225,
             hollow: {
-              margin: 0,
               size: '60%',
-              background: '#fff',
-            },
-            track: {
-              background: '#fff',
-              strokeWidth: '67%',
-            },
-            dataLabels: {
-              show: true,
-              name: {
-                offsetY: -10,
-                color: '#888',
-                fontSize: '12px'
-              },
-              value: {
-                formatter: function (val) {
-                  return parseInt(val);
-                },
-                color: '#111',
-                fontSize: '20px',
-                show: true,
-              }
             }
-          }
+          },
         },
-        fill: {
-          colors: ['#00e060'],
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ['Porcentagem'],
+        labels: ['Progresso'],
       };
 
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
-
-      // Abrir modal para depositar valor
-      function abrirModalDepositar(idMeta) {
-        var modalDepositar = document.getElementById('pop-up-depositar-container');
-        var idMetaInput = document.getElementById('id_meta_depositar');
-        idMetaInput.value = idMeta;
-        modalDepositar.style.display = 'block';
-      }
-
-      // Fechar modal
-      var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
-      closeBtnDepositar.onclick = function () {
-        document.getElementById('pop-up-depositar-container').style.display = 'none';
-      }
-
-      // Gráfico de progresso das metas
-      <?php foreach ($result as $meta) { ?>
-        var chartOptions<?php echo $meta['id']; ?> = {
-          series: [<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>],
-          chart: {
-            height: 100,
-            type: 'radialBar',
-          },
-          plotOptions: {
-            radialBar: {
-              hollow: {
-                size: '60%',
-              }
-            },
-          },
-          labels: ['Progresso'],
-        };
-
-        var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
-        chart<?php echo $meta['id']; ?>.render();
-      <?php } ?>
-    </script>
+      var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
+      chart<?php echo $meta['id']; ?>.render();
+    <?php } ?>
+  </script>
 
   </div>
- 
 
-<script>
-  // Função para abrir o modal de adicionar meta
-  function abrirModalAdicionar() {
-    var modalAdicionar = document.getElementById('pop-up-adicionar-container');
-    modalAdicionar.style.display = 'block';
-  }
 
-  // Função para fechar o modal de adicionar meta
-  var closeBtnAdicionar = document.getElementById('btn-fechar-popup-adicionar');
-  closeBtnAdicionar.onclick = function () {
-    document.getElementById('pop-up-adicionar-container').style.display = 'none';
-  }
-
-  // Fechar o modal se clicar fora dele
-  window.onclick = function (event) {
-    var modalAdicionar = document.getElementById('pop-up-adicionar-container');
-    if (event.target == modalAdicionar) {
-      modalAdicionar.style.display = 'none';
+  <script>
+    // Função para abrir o modal de adicionar meta
+    function abrirModalAdicionar() {
+      var modalAdicionar = document.getElementById('pop-up-adicionar-container');
+      modalAdicionar.style.display = 'block';
     }
-  }
-</script>
+
+    // Função para fechar o modal de adicionar meta
+    var closeBtnAdicionar = document.getElementById('btn-fechar-popup-adicionar');
+    closeBtnAdicionar.onclick = function () {
+      document.getElementById('pop-up-adicionar-container').style.display = 'none';
+    }
+
+    // Fechar o modal se clicar fora dele
+    window.onclick = function (event) {
+      var modalAdicionar = document.getElementById('pop-up-adicionar-container');
+      if (event.target == modalAdicionar) {
+        modalAdicionar.style.display = 'none';
+      }
+    }
+  </script>
 
 </body>
 
