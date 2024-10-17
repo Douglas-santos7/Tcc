@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
+
 // Buscar as metas do usuário
 $sql = "SELECT * FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
 $result = $conn->query($sql);
@@ -127,7 +128,7 @@ $result = $conn->query($sql);
     <!-- Menu Lateral -->
     <div class="menu-lateral" onclick="abrirModalAdicionar()">
       <div class="adicionar--btn">
-        <img src="../../assets/icons/quadrado-adicionar.png" alt="add--btn">
+        <img src="../../assets/icons/icon--add--btn.png" alt="add--btn">
       </div>
     </div>
 
@@ -185,15 +186,16 @@ $result = $conn->query($sql);
           </div>
           <div class="botoes-meta">
             <button class="btn-depositar" onclick="abrirModalDepositar(<?php echo $meta['id']; ?>)">
-              <div for="icon2"><i class="fi fi-sr-home"></i></div> Depositar
+              <div for="icon2"><img src="../../assets/icons/icon--resgatar--metas.svg" alt="depositar"></i></div> Depositar
             </button>
             <button class="btn-resgatar" onclick="abrirModalResgatar(<?php echo $meta['id']; ?>)">
-              <div for="icon2"><i class="fi fi-sr-home"></i></div> Resgatar
+              <div for="icon2"><img src="../../assets/icons/icon--depositar--meta.svg" alt="resgatar"></div> Resgatar
             </button>
 
-            <button class="btn-historico">
-              <div for="icon2"><i class="fi fi-sr-home"></i></div> Histórico
+            <button class="btn-historico" onclick="abrirModalHistorico(<?php echo $meta['id']; ?>)">
+              <div for="icon2"><img src="../../assets/icons/icon--historico--metas.svg" alt=""></div> Histórico
             </button>
+
           </div>
           <!-- Elemento para o gráfico -->
           <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 100px; width: 100%;"></div>
@@ -238,6 +240,16 @@ $result = $conn->query($sql);
         </form>
       </div>
     </div>
+
+    <!-- POPUP HISTÓRICO -->
+  <div class="pop-up-historico-container" id="pop-up-historico-container" style="display: none;">
+    <div class="pop-up-historico-conteudo">
+      <span class="popup-historico-close-btn" id="btn-fechar-popup-historico">&times;</span>
+      <h2 class="historico-titulo">Histórico da Meta</h2>
+      <div id="historico-conteudo"></div>
+    </div>
+  </div>
+
 
 
     <script>
@@ -295,7 +307,7 @@ $result = $conn->query($sql);
           }
         },
         fill: {
-          colors: ['#00e060'],
+          colors: ['#28a745'],
         },
         stroke: {
           lineCap: 'round'
@@ -381,6 +393,9 @@ closeBtnResgatar.onclick = function () {
         modalAdicionar.style.display = 'none';
       }
     }
+  </script>
+  <script>
+
   </script>
 
 </body>
