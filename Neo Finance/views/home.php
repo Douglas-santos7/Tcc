@@ -259,6 +259,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       })
       .then(response => {
         if (response.ok) {
+          // Atualiza o iframe antes de fechar o modal
+          document.getElementById("mainIframe").contentWindow.location.reload();
+
           // Fecha o modal após 2 segundos
           setTimeout(() => {
             saldoModal.classList.remove("show");
@@ -266,8 +269,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             saldoModal.addEventListener('transitionend', () => {
               if (!saldoModal.classList.contains("show")) {
                 saldoModal.style.display = 'none'; // Esconde o modal
-                // Atualiza o iframe após o modal ser fechado
-                document.getElementById("mainIframe").contentWindow.location.reload();
               }
             }, {
               once: true
@@ -280,6 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       });
   });
 </script>
+
 
 
 
