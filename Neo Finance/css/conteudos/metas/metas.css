@@ -81,28 +81,43 @@ body {
     width: 32px; /* Aumenta o tamanho do ícone */
     height: 32px;
 }
-
 .progresso-meta {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px 0 20px; /* Margem superior e inferior para espaçamento */
-    font-size: 18px; /* Aumenta o tamanho da fonte dos textos de progresso */
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Espaço entre a barra e a mensagem */
 }
 
 .barra-progresso {
-    background-color: #d9d9d9;
-    width: 200px; /* Aumenta a largura da barra de progresso */
-    height: 12px; /* Aumenta a altura da barra de progresso */
-    border-radius: 6px;
-    margin: 0 20px; /* Aumenta o espaçamento lateral da barra de progresso */
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px; /* Espaço entre a barra e os textos */
 }
 
 .barra-progresso-preenchida {
-    background-color: #00e060;
-    height: 100%; /* Altura completa da barra preenchida */
-    border-radius: 6px;
+    height: 100%;
+    background-color: #28a745; /* Verde para indicar progresso */
+    border-radius: 10px 0 0 10px;
 }
+
+.mensagem-meta-alcancada {
+    font-size: 18px;
+    color: #28a745; /* Verde de sucesso */
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: left; /* Garante que a mensagem fique alinhada à esquerda */
+    width: 100%; /* Garante que a mensagem ocupe toda a linha */
+}
+
+.progresso-meta span {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
 
 /* Estilos para botões */
 .botoes-meta {
