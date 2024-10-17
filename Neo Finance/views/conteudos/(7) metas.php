@@ -103,7 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-
 // Buscar as metas do usuário
 $sql = "SELECT * FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
 $result = $conn->query($sql);
@@ -241,6 +240,8 @@ $result = $conn->query($sql);
       </div>
     </div>
 
+
+
     <!-- POPUP HISTÓRICO -->
   <div class="pop-up-historico-container" id="pop-up-historico-container" style="display: none;">
     <div class="pop-up-historico-conteudo">
@@ -318,34 +319,6 @@ $result = $conn->query($sql);
       var chart = new ApexCharts(document.querySelector("#chart"), options);
       chart.render();
 
-      // Abrir modal para depositar valor
-      function abrirModalDepositar(idMeta) {
-        var modalDepositar = document.getElementById('pop-up-depositar-container');
-        var idMetaInput = document.getElementById('id_meta_depositar');
-        idMetaInput.value = idMeta;
-        modalDepositar.style.display = 'block';
-      }
-
-      // Fechar modal
-      var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
-      closeBtnDepositar.onclick = function () {
-        document.getElementById('pop-up-depositar-container').style.display = 'none';
-      }
-
-      // Abrir modal para resgatar valor
-function abrirModalResgatar(idMeta) {
-  var modalResgatar = document.getElementById('pop-up-resgatar-container');
-  var idMetaInput = document.getElementById('id_meta_resgatar');
-  idMetaInput.value = idMeta;
-  modalResgatar.style.display = 'block';
-}
-
-// Fechar modal
-var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
-closeBtnResgatar.onclick = function () {
-  document.getElementById('pop-up-resgatar-container').style.display = 'none';
-}
-
 
       // Gráfico de progresso das metas
       <?php foreach ($result as $meta) { ?>
@@ -376,27 +349,75 @@ closeBtnResgatar.onclick = function () {
   <script>
     // Função para abrir o modal de adicionar meta
     function abrirModalAdicionar() {
-      var modalAdicionar = document.getElementById('pop-up-adicionar-container');
-      modalAdicionar.style.display = 'block';
+        document.getElementById('pop-up-adicionar-container').style.display = 'block';
     }
 
-    // Função para fechar o modal de adicionar meta
+    // Fechar o modal de adicionar
     var closeBtnAdicionar = document.getElementById('btn-fechar-popup-adicionar');
     closeBtnAdicionar.onclick = function () {
-      document.getElementById('pop-up-adicionar-container').style.display = 'none';
+        document.getElementById('pop-up-adicionar-container').style.display = 'none';
+    }
+
+    // Função para abrir o modal de depositar
+    function abrirModalDepositar(idMeta) {
+        document.getElementById('id_meta_depositar').value = idMeta;
+        document.getElementById('pop-up-depositar-container').style.display = 'block';
+    }
+
+    // Fechar o modal de depositar
+    var closeBtnDepositar = document.getElementById('btn-fechar-popup-depositar');
+    closeBtnDepositar.onclick = function () {
+        document.getElementById('pop-up-depositar-container').style.display = 'none';
+    }
+
+    // Função para abrir o modal de resgatar
+    function abrirModalResgatar(idMeta) {
+        document.getElementById('id_meta_resgatar').value = idMeta;
+        document.getElementById('pop-up-resgatar-container').style.display = 'block';
+    }
+
+    // Fechar o modal de resgatar
+    var closeBtnResgatar = document.getElementById('btn-fechar-popup-resgatar');
+    closeBtnResgatar.onclick = function () {
+        document.getElementById('pop-up-resgatar-container').style.display = 'none';
+    }
+
+    // Função para abrir o modal do histórico
+    function abrirModalHistorico(idMeta) {
+        var modalHistorico = document.getElementById('pop-up-historico-container');
+        var historicoConteudo = document.getElementById('historico-conteudo');
+        
+        // Aqui você pode adicionar lógica para carregar o histórico baseado no ID da meta
+        historicoConteudo.innerHTML = "Histórico para a Meta ID: " + idMeta;
+
+        modalHistorico.style.display = 'block';
+    }
+
+    // Fechar o modal do histórico
+    var closeBtnHistorico = document.getElementById('btn-fechar-popup-historico');
+    closeBtnHistorico.onclick = function () {
+        document.getElementById('pop-up-historico-container').style.display = 'none';
     }
 
     // Fechar o modal se clicar fora dele
     window.onclick = function (event) {
-      var modalAdicionar = document.getElementById('pop-up-adicionar-container');
-      if (event.target == modalAdicionar) {
-        modalAdicionar.style.display = 'none';
-      }
+        var modalAdicionar = document.getElementById('pop-up-adicionar-container');
+        var modalDepositar = document.getElementById('pop-up-depositar-container');
+        var modalResgatar = document.getElementById('pop-up-resgatar-container');
+        var modalHistorico = document.getElementById('pop-up-historico-container');
+        
+        if (event.target == modalAdicionar) {
+            modalAdicionar.style.display = 'none';
+        } else if (event.target == modalDepositar) {
+            modalDepositar.style.display = 'none';
+        } else if (event.target == modalResgatar) {
+            modalResgatar.style.display = 'none';
+        } else if (event.target == modalHistorico) {
+            modalHistorico.style.display = 'none';
+        }
     }
-  </script>
-  <script>
-
-  </script>
+</script>
+  
 
 </body>
 
