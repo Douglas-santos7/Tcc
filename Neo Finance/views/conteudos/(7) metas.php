@@ -10,14 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data_meta = $_POST['data'] ?? null;
   $usuario_id = $_POST['usuario_id'] ?? null;
 
-  // Verificar se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Receber dados do formulário
-  $nome_meta = $_POST['nome'] ?? null;
-  $valor_meta = $_POST['valor'] ?? null;
-  $data_meta = $_POST['data'] ?? null;
-  $usuario_id = $_POST['usuario_id'] ?? null;
-
   // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
   if ($valor_meta) {
       $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
@@ -61,10 +53,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           echo "Erro ao realizar depósito: " . $conn->error;
       }
   }
-}
 
+  // Verificar se é uma operação de resgate
+  if (isset($_POST['valor_resgate']) && isset($_POST['id_meta'])) {
+      $id_meta = $_POST['id_meta'];
+      $valor_resgate = $_POST['valor_resgate'];
 
-  
+      // Converter o valor do resgate para o formato correto
+      if ($valor_resgate) {
+          $valor_resgate = str_replace(",", ".", str_replace(".", "", $valor_resgate));
+      }
+
+      // Começar uma transação no banco de dados
+      $conn->begin_transaction();
+
+      try {
+          // Atualizar o valor atual da meta removendo o valor do resgate
+          $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ? AND valor_atual >= ?";
+          $stmt_meta = $conn->prepare($sql_meta);
+          $stmt_meta->bind_param("diii", $valor_resgate, $id_meta, $usuario_id, $valor_resgate);
+          $stmt_meta->execute();
+
+          // Adicionar o valor de volta à tabela transacoes
+          $sql_transacoes = "UPDATE transacoes SET valor = valor + ? WHERE usuario_id = ?";
+          $stmt_transacoes = $conn->prepare($sql_transacoes);
+          $stmt_transacoes->bind_param("di", $valor_resgate, $usuario_id);
+          $stmt_transacoes->execute();
+
+          // Confirmar a transação
+          $conn->commit();
+
+          // Redirecionar para a página de metas com uma mensagem de sucesso
+          header("Location: ../conteudos/(7) metas.php?sucesso=resgate");
+          exit();
+      } catch (Exception $e) {
+          // Se ocorrer um erro, reverter a transação
+          $conn->rollback();
+          echo "Erro ao realizar resgate: " . $conn->error;
+      }
+  }
+
 
   // Validar os campos para adicionar uma nova meta
   if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {

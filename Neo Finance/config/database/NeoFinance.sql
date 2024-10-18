@@ -1,6 +1,5 @@
 -- Criação do banco de dados
 CREATE DATABASE finance;
-
 USE finance;
 
 -- Criação da tabela de usuários
@@ -15,7 +14,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- Criação da tabela para armazenar tentativas de login
 CREATE TABLE login_attempts (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,20 +42,24 @@ CREATE TABLE categorias (
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE,
     UNIQUE (usuario_id, nome) -- Garante que um usuário não crie categorias duplicadas apenas se não estiver excluída
 );
+
 -- Criação da tabela de transações
 CREATE TABLE transacoes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     categoria_id BIGINT NOT NULL,
+    meta_id BIGINT NULL,  -- Adicionando a coluna meta_id
     nome VARCHAR(255) NOT NULL,
     valor DECIMAL(10, 2) NOT NULL,
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (categoria_id) REFERENCES categorias (id) ON DELETE CASCADE,
+    FOREIGN KEY (meta_id) REFERENCES metas(id) ON DELETE CASCADE,  -- Adicionando a chave estrangeira
     icone VARCHAR(255) -- Pode armazenar a classe do ícone, se necessário
 );
+
 
 
 -- Criação da tabela de entradas no calendário
@@ -115,6 +117,7 @@ CREATE TABLE metas (
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+
 DELIMITER //
 
 CREATE TRIGGER atualizar_valor_meta
@@ -126,13 +129,23 @@ BEGIN
         -- Atualiza o valor atual da meta, subtraindo o valor da transação
         UPDATE metas 
         SET valor_atual = valor_atual - NEW.valor
-        WHERE usuario_id = NEW.usuario_id;
+        WHERE usuario_id = NEW.usuario_id 
+        AND id = NEW.meta_id; -- Certifique-se de que NEW.meta_id está disponível e correto
+
+    -- Verifica se a transação é uma receita (tipo = 'receita')
+    ELSEIF NEW.tipo = 'receita' THEN
+        -- Atualiza o valor atual da meta, adicionando o valor da transação
+        UPDATE metas 
+        SET valor_atual = valor_atual + NEW.valor
+        WHERE usuario_id = NEW.usuario_id 
+        AND id = NEW.meta_id; -- Certifique-se de que NEW.meta_id está disponível e correto
     END IF;
-    
-    -- Se necessário, adicione mais regras para transações de receita ou outras
+
+    -- Adicione outras regras, se necessário, para outros tipos de transações
 END //
 
 DELIMITER ;
+
 
 
 -- Criação do Trigger para inserir categorias predefinidas para novos usuários
@@ -167,3 +180,4 @@ END;
 //
 
 DELIMITER ;
+
