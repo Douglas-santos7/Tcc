@@ -16,15 +16,18 @@ body {
   opacity: 0; /* Começa invisível */
   transition: opacity 0.5s ease; /* Transição de opacidade */
   display: none; /* Padrão escondido */
+  pointer-events: none; /* Impede interações quando invisível */
 }
 
 .welcome-modal.show {
   display: flex; /* Mostra o modal */
   opacity: 1; /* Torna o modal visível */
+  pointer-events: auto; /* Permite interações quando visível */
 }
 
 .welcome-modal.hide {
   opacity: 0; /* Transição de saída */
+  pointer-events: none; /* Impede interações enquanto está ocultando */
 }
 
 .welcome-modal-content {

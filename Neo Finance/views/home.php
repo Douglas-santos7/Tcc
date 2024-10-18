@@ -235,6 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!welcomeModal.classList.contains("show")) {
               welcomeModal.classList.remove("show");
               welcomeModal.style.display = 'none';
+              welcomeModal.style.pointerEvents = 'none';
             }
           }, {
             once: true
@@ -248,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           setTimeout(() => {
             const modalContent = saldoModal.querySelector(".modal-content");
             modalContent.classList.add("show");
-          }, 500);
+          }, 50); // Pequeno atraso para animação
         }
 
         // Verifica se o saldo inicial foi adicionado e abre o modal de boas-vindas se não foi
@@ -281,6 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   saldoModal.addEventListener('transitionend', () => {
                     if (!saldoModal.classList.contains("show")) {
                       saldoModal.style.display = 'none';
+                      saldoModal.style.pointerEvents = 'none'; // Evita interações após o fechamento
                     }
                   }, {
                     once: true
@@ -292,6 +294,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               console.error('Erro:', error);
             });
         });
+
+        // Função para formatar o valor como moeda
+        function formatarMoeda(valor) {
+          return 'R$ ' + valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        }
       </script>
     </div>
   </body>
