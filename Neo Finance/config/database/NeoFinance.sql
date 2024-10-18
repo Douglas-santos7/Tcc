@@ -138,10 +138,9 @@ BEGIN
         UPDATE metas 
         SET valor_atual = valor_atual + NEW.valor
         WHERE usuario_id = NEW.usuario_id 
-        AND id = NEW.meta_id; -- Certifique-se de que NEW.meta_id está disponível e correto
+        AND id = NEW.meta_id; 
     END IF;
 
-    -- Adicione outras regras, se necessário, para outros tipos de transações
 END //
 
 DELIMITER ;
