@@ -38,9 +38,6 @@
     function abrirModalHistorico(idMeta) {
         var modalHistorico = document.getElementById('pop-up-historico-container');
         var historicoConteudo = document.getElementById('historico-conteudo');
-        
-        // Aqui você pode adicionar lógica para carregar o histórico baseado no ID da meta
-        historicoConteudo.innerHTML = "Histórico para a Meta ID: " + idMeta;
 
         modalHistorico.style.display = 'block';
     }

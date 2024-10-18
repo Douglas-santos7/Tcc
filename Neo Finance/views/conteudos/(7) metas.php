@@ -54,44 +54,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
   }
 
-  // Verificar se é uma operação de resgate
-  if (isset($_POST['valor_resgate']) && isset($_POST['id_meta'])) {
-      $id_meta = $_POST['id_meta'];
-      $valor_resgate = $_POST['valor_resgate'];
+  // Verificar se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Receber dados do formulário
+    $nome_meta = $_POST['nome'] ?? null;
+    $valor_meta = $_POST['valor'] ?? null;
+    $data_meta = $_POST['data'] ?? null;
+    $usuario_id = $_POST['usuario_id'] ?? null;
 
-      // Converter o valor do resgate para o formato correto
-      if ($valor_resgate) {
-          $valor_resgate = str_replace(",", ".", str_replace(".", "", $valor_resgate));
-      }
+    // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
+    if ($valor_meta) {
+        $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
+    }
 
-      // Começar uma transação no banco de dados
-      $conn->begin_transaction();
+    // Verificar se é uma operação de resgate
+    if (isset($_POST['valor_resgate']) && isset($_POST['id_meta'])) {
+        $id_meta = $_POST['id_meta'];
+        $valor_resgate = $_POST['valor_resgate'];
 
-      try {
-          // Atualizar o valor atual da meta removendo o valor do resgate
-          $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ? AND valor_atual >= ?";
-          $stmt_meta = $conn->prepare($sql_meta);
-          $stmt_meta->bind_param("diii", $valor_resgate, $id_meta, $usuario_id, $valor_resgate);
-          $stmt_meta->execute();
+        // Converter o valor do resgate para o formato correto
+        if ($valor_resgate) {
+            $valor_resgate = str_replace(",", ".", str_replace(".", "", $valor_resgate));
+        }
 
-          // Adicionar o valor de volta à tabela transacoes
-          $sql_transacoes = "UPDATE transacoes SET valor = valor + ? WHERE usuario_id = ?";
-          $stmt_transacoes = $conn->prepare($sql_transacoes);
-          $stmt_transacoes->bind_param("di", $valor_resgate, $usuario_id);
-          $stmt_transacoes->execute();
+        // Começar uma transação no banco de dados
+        $conn->begin_transaction();
 
-          // Confirmar a transação
-          $conn->commit();
+        try {
+            // Atualizar o valor atual da meta com o valor do resgate
+            $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ?";
+            $stmt_meta = $conn->prepare($sql_meta);
+            $stmt_meta->bind_param("dii", $valor_resgate, $id_meta, $usuario_id);
+            $stmt_meta->execute();
 
-          // Redirecionar para a página de metas com uma mensagem de sucesso
-          header("Location: ../conteudos/(7) metas.php?sucesso=resgate");
-          exit();
-      } catch (Exception $e) {
-          // Se ocorrer um erro, reverter a transação
-          $conn->rollback();
-          echo "Erro ao realizar resgate: " . $conn->error;
-      }
-  }
+            // Registrar a transação na tabela transacoes
+            $sql_transacoes = "INSERT INTO transacoes (usuario_id, meta_id, valor, tipo) VALUES (?, ?, ?, 'resgate')";
+            $stmt_transacoes = $conn->prepare($sql_transacoes);
+            $stmt_transacoes->bind_param("iid", $usuario_id, $id_meta, $valor_resgate);
+            $stmt_transacoes->execute();
+
+            // Confirmar a transação
+            $conn->commit();
+
+            // Redirecionar para a página de metas com uma mensagem de sucesso
+            header("Location: ../conteudos/(7) metas.php?sucesso=resgate");
+            exit();
+        } catch (Exception $e) {
+            // Se ocorrer um erro, reverter a transação
+            $conn->rollback();
+            echo "Erro ao realizar resgate: " . $e->getMessage();
+        }
+    }
+}
+
 
 
   // Validar os campos para adicionar uma nova meta
@@ -192,6 +207,7 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Metas</title>
   <link rel="stylesheet" href="../../css/conteudos/metas/metas.css">
+  <link rel="stylesheet" href="../../css/conteudos/metas/popUpMetas.css">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
@@ -359,7 +375,11 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
       <div class="pop-up-historico-conteudo">
         <span class="popup-historico-close-btn" id="btn-fechar-popup-historico">&times;</span>
         <h2 class="historico-titulo">Histórico da Meta</h2>
-        <div id="historico-conteudo"></div>
+        <div class="historico-conteudo" id="historico-conteudo">
+        <?php echo $id_meta; ?></h2>
+      <h2>Valor Depositado: <?php echo number_format($valor_deposito, 2, ',', '.'); ?></h2>
+      <h2>Valor Resgatado: <?php echo number_format($valor_resgate, 2, ',', '.'); ?></h2>
+        </div>
       </div>
     </div>
 
