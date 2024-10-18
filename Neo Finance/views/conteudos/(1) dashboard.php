@@ -188,7 +188,6 @@ $conn->close();
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
-             
 
       <!-- Card Lembretes -->
       <div class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">
