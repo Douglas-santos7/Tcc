@@ -115,6 +115,26 @@ CREATE TABLE metas (
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+DELIMITER //
+
+CREATE TRIGGER atualizar_valor_meta
+AFTER INSERT ON transacoes
+FOR EACH ROW
+BEGIN
+    -- Verifica se a transação é uma despesa (tipo = 'despesa')
+    IF NEW.tipo = 'despesa' THEN
+        -- Atualiza o valor atual da meta, subtraindo o valor da transação
+        UPDATE metas 
+        SET valor_atual = valor_atual - NEW.valor
+        WHERE usuario_id = NEW.usuario_id;
+    END IF;
+    
+    -- Se necessário, adicione mais regras para transações de receita ou outras
+END //
+
+DELIMITER ;
+
+
 -- Criação do Trigger para inserir categorias predefinidas para novos usuários
 DELIMITER //
 

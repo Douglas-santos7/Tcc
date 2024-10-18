@@ -12,8 +12,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
   if ($valor_meta) {
-    $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
+      $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
   }
+
+  // Verificar se é uma operação de depósito
+  if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
+      $id_meta = $_POST['id_meta'];
+      $valor_deposito = $_POST['valor_deposito'];
+
+      // Converter o valor do depósito para o formato correto
+      if ($valor_deposito) {
+          $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
+      }
+
+      // Começar uma transação no banco de dados
+      $conn->begin_transaction();
+
+      try {
+          // Atualizar o valor atual da meta com o valor do depósito
+          $sql_meta = "UPDATE metas SET valor_atual = valor_atual + ? WHERE id = ? AND usuario_id = ?";
+          $stmt_meta = $conn->prepare($sql_meta);
+          $stmt_meta->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
+          $stmt_meta->execute();
+
+          // Subtrair o valor da tabela transacoes
+          $sql_transacoes = "UPDATE transacoes SET valor = valor - ? WHERE usuario_id = ? AND valor >= ?";
+          $stmt_transacoes = $conn->prepare($sql_transacoes);
+          $stmt_transacoes->bind_param("dii", $valor_deposito, $usuario_id, $valor_deposito);
+          $stmt_transacoes->execute();
+
+          // Confirmar a transação
+          $conn->commit();
+
+          // Redirecionar para a página de metas com uma mensagem de sucesso
+          header("Location: ../conteudos/(7) metas.php?sucesso=deposito");
+          exit();
+      } catch (Exception $e) {
+          // Se ocorrer um erro, reverter a transação
+          $conn->rollback();
+          echo "Erro ao realizar depósito: " . $conn->error;
+      }
+  }
+
 
   // Verificar se é uma operação de depósito
   if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
