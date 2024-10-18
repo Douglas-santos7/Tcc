@@ -134,14 +134,19 @@ body {
 }
 
 .icone-lixeira {
-    color: var(--vermelho);
+    background: none; /* Remove o background */
+    border: none; /* Remove a borda */
+    color: red; /* Define o ícone como vermelho */
     cursor: pointer;
+    font-size: 24px; /* Aumenta o tamanho do ícone */
     transition: transform 0.3s ease;
 }
 
 .icone-lixeira:hover {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Efeito de aumentar ligeiramente ao passar o mouse */
 }
+
+
 
 .btn-depositar,
 .btn-historico,
