@@ -7,7 +7,8 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Adicionado para alinhar conteúdo verticalmente */
+    justify-content: flex-start;
     align-items: center;
     height: 100vh;
 }
@@ -15,11 +16,13 @@ body {
 .container {
     position: relative;
     display: flex;
+    flex-direction: column; /* Adicionado para garantir que os itens fiquem em colunas */
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     max-width: 1200px;
     padding: 20px;
+    margin-bottom: 20px; /* Espaço entre os cards e a navegação */
 }
 
 /* Menu Lateral */
@@ -53,8 +56,12 @@ body {
     gap: 30px; /* Espaçamento entre os cards */
     flex-grow: 1;
     padding: 0 20px;
-    margin-left: 2px; /* Espaço extra para o menu lateral */
+    margin-left: 130px; /* Espaço ajustado para o menu lateral */
+    width: calc(100% - 150px); /* Ajusta a largura para não sobrepor a barra lateral */
+    margin-bottom: 20px; /* Espaço entre os cards e a navegação */
+    margin-top: 40px; /* Aumenta o espaçamento no topo */
 }
+
 
 /* Estilos dos Cards de Metas */
 .card-meta {
@@ -304,3 +311,69 @@ Gráficos CSS
     font-weight: bold; /* Texto em negrito */
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Sombra do texto */
   }
+
+  /*===============
+  Navegação CSS
+  =================*/
+
+  /* Navegação */
+.navegacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px; /* Espaçamento entre os cards e a navegação */
+    padding: 10px;
+    background-color: rgba(0, 54, 23, 0.2); /* Fundo verde vidro */
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Garante que a navegação ocupe a largura completa */
+}
+
+.navegacao a {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgba(0, 54, 23, 0.7); /* Fundo Verde Datas */
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navegacao a:hover {
+    background-color: rgba(0, 224, 96, 0.8); /* Cor Hover Verde Destaque */
+    transform: scale(1.05); /* Efeito de zoom ao passar o mouse */
+    box-shadow: 0px 4px 8px rgba(0, 224, 96, 0.6); /* Sombra ao passar o mouse */
+}
+
+.navegacao a:active {
+    transform: scale(0.98); /* Efeito de clique */
+    background-color: rgba(0, 224, 96, 0.9);
+}
+
+.navegacao a.setinha {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.navegacao a.setinha::before {
+    content: '';
+    display: inline-block;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    background-image: url('../../assets/icons/arrow-left.svg'); /* Ícone personalizado */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.navegacao a.setinha:last-child::before {
+    content: '';
+    background-image: url('../../assets/icons/arrow-right.svg'); /* Ícone personalizado para próximo */
+    margin-right: 0;
+    margin-left: 10px;
+}
+

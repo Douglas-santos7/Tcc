@@ -103,9 +103,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-// Buscar as metas do usuário
-$sql = "SELECT * FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
+/*=================
+Lógica de Navegação
+===================*/
+// Variáveis para controle de navegação
+$offset = 0;
+$limit = 2;
+
+// Verificar se foi clicado na setinha para avançar ou retroceder
+if (isset($_GET['offset'])) {
+  $offset = (int) $_GET['offset'];
+}
+
+// Buscar as metas do usuário, limitando a 2 e aplicando o offset
+$sql = "SELECT * FROM metas WHERE usuario_id = 1 ORDER BY criada_em DESC LIMIT $limit OFFSET $offset"; // Ajuste para pegar o ID do usuário logado
 $result = $conn->query($sql);
+
+// Contar o total de metas do usuário
+$totalSql = "SELECT COUNT(*) as total FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
+$totalResult = $conn->query($totalSql);
+$total = $totalResult->fetch_assoc()['total'];
+
+// Calcular o próximo e anterior offsets
+$nextOffset = $offset + $limit < $total ? $offset + $limit : null;
+$prevOffset = $offset > 0 ? $offset - $limit : null;
 ?>
 
 <!DOCTYPE html>
@@ -155,8 +176,10 @@ $result = $conn->query($sql);
     </div>
 
 
+
     <!-- Cards de Metas -->
     <div class="container-cards">
+
       <?php while ($meta = $result->fetch_assoc()) { ?>
         <div class="card-meta">
           <div class="titulo-card">
@@ -170,8 +193,6 @@ $result = $conn->query($sql);
               </button>
             </form>
           </div>
-
-
 
           <!-- PROGRESSO -->
           <?php
@@ -205,14 +226,12 @@ $result = $conn->query($sql);
             <?php } ?>
           </div>
 
-
-
           <div class="data-limite">
             <span>Prazo para Meta: <?php echo date('d/m/Y', strtotime($meta['data_limite'])); ?></span>
           </div>
           <div class="botoes-meta">
             <button class="btn-depositar" onclick="abrirModalDepositar(<?php echo $meta['id']; ?>)">
-              <div for="icon2"><img src="../../assets/icons/icon--resgatar--metas.svg" alt="depositar"></i></div>
+              <div for="icon2"><img src="../../assets/icons/icon--resgatar--metas.svg" alt="depositar"></div>
               Depositar
             </button>
             <button class="btn-resgatar" onclick="abrirModalResgatar(<?php echo $meta['id']; ?>)">
@@ -227,11 +246,20 @@ $result = $conn->query($sql);
           <!-- Elemento para o gráfico -->
 
           <div class="grafico" id="chart-<?php echo $meta['id']; ?>" style="height: 200px; width: 100%;"></div>
-
-
         </div>
       <?php } ?>
     </div>
+
+    <!-- Navegação -->
+    <div class="navegacao">
+      <?php if ($prevOffset !== null) { ?>
+        <a href="?offset=<?php echo $prevOffset; ?>" class="setinha">← Anterior</a>
+      <?php } ?>
+      <?php if ($nextOffset !== null) { ?>
+        <a href="?offset=<?php echo $nextOffset; ?>" class="setinha">Próximo →</a>
+      <?php } ?>
+    </div>
+
 
     <!-- POPUP DEPOSITAR -->
     <div class="pop-up-depositar-container" id="pop-up-depositar-container" style="display: none;">
@@ -279,6 +307,7 @@ $result = $conn->query($sql);
         <div id="historico-conteudo"></div>
       </div>
     </div>
+
     <script>
       var options = {
         series: [0], // Porcentagem inicial
