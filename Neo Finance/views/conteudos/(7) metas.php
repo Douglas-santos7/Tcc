@@ -4,143 +4,115 @@ include("../../config/database/conexao.php");
 
 // Verificar se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Receber dados do formulário
-  $nome_meta = $_POST['nome'] ?? null;
-  $valor_meta = $_POST['valor'] ?? null;
-  $data_meta = $_POST['data'] ?? null;
-  $usuario_id = $_POST['usuario_id'] ?? null;
+    // Receber dados do formulário
+    $nome_meta = $_POST['nome'] ?? null;
+    $valor_meta = $_POST['valor'] ?? null;
+    $data_meta = $_POST['data'] ?? null;
+    $usuario_id = $_POST['usuario_id'] ?? null;
 
-  // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
-  if ($valor_meta) {
-      $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
-  }
-
-  // Verificar se é uma operação de depósito
-  if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
-      $id_meta = $_POST['id_meta'];
-      $valor_deposito = $_POST['valor_deposito'];
-
-      // Converter o valor do depósito para o formato correto
-      if ($valor_deposito) {
-          $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
-      }
-
-      // Começar uma transação no banco de dados
-      $conn->begin_transaction();
-
-      try {
-          // Atualizar o valor atual da meta com o valor do depósito
-          $sql_meta = "UPDATE metas SET valor_atual = valor_atual + ? WHERE id = ? AND usuario_id = ?";
-          $stmt_meta = $conn->prepare($sql_meta);
-          $stmt_meta->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
-          $stmt_meta->execute();
-
-          // Subtrair o valor da tabela transacoes
-          $sql_transacoes = "UPDATE transacoes SET valor = valor - ? WHERE usuario_id = ? AND valor >= ?";
-          $stmt_transacoes = $conn->prepare($sql_transacoes);
-          $stmt_transacoes->bind_param("dii", $valor_deposito, $usuario_id, $valor_deposito);
-          $stmt_transacoes->execute();
-
-          // Confirmar a transação
-          $conn->commit();
-
-          // Redirecionar para a página de metas com uma mensagem de sucesso
-          header("Location: ../conteudos/(7) metas.php?sucesso=deposito");
-          exit();
-      } catch (Exception $e) {
-          // Se ocorrer um erro, reverter a transação
-          $conn->rollback();
-          echo "Erro ao realizar depósito: " . $conn->error;
-      }
-  }
-
-
-  // Verificar se é uma operação de depósito
-  if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
-    $id_meta = $_POST['id_meta'];
-    $valor_deposito = $_POST['valor_deposito'];
-
-    // Converter o valor do depósito para o formato correto
-    if ($valor_deposito) {
-      $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
+    // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
+    if ($valor_meta) {
+        $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
     }
 
-    // Atualizar o valor atual da meta com o valor do depósito
-    $sql = "UPDATE metas SET valor_atual = valor_atual + ? WHERE id = ? AND usuario_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
+    // Começar uma transação no banco de dados
+    $conn->begin_transaction();
 
-    if ($stmt->execute()) {
-      // Redirecionar para a página de metas com uma mensagem de sucesso
-      header("Location: ../conteudos/(7) metas.php?sucesso=deposito");
-      exit();
+    try {
+        // Lógica de depósito
+        if (isset($_POST['valor_deposito']) && isset($_POST['id_meta'])) {
+            $id_meta = $_POST['id_meta'];
+            $valor_deposito = $_POST['valor_deposito'];
+
+            // Converter o valor do depósito para o formato correto
+            if ($valor_deposito) {
+                $valor_deposito = str_replace(",", ".", str_replace(".", "", $valor_deposito));
+            }
+
+            // Atualizar o valor atual da meta com o valor do depósito
+            $sql_meta = "UPDATE metas SET valor_atual = valor_atual + ? WHERE id = ? AND usuario_id = ?";
+            $stmt_meta = $conn->prepare($sql_meta);
+            $stmt_meta->bind_param("dii", $valor_deposito, $id_meta, $usuario_id);
+            $stmt_meta->execute();
+
+            // Adicionar o valor na tabela transacoes (sem duplicação)
+            $sql_transacoes = "UPDATE transacoes SET valor = valor + ? WHERE usuario_id = ?";
+            $stmt_transacoes = $conn->prepare($sql_transacoes);
+            $stmt_transacoes->bind_param("di", $valor_deposito, $usuario_id);
+            $stmt_transacoes->execute();
+        }
+
+        // Lógica de resgate
+        if (isset($_POST['valor_resgatar']) && isset($_POST['id_meta'])) {
+            $id_meta = $_POST['id_meta'];
+            $valor_resgatar = $_POST['valor_resgatar'];
+
+            // Converter o valor de resgate para o formato correto
+            if ($valor_resgatar) {
+                $valor_resgatar = str_replace(",", ".", str_replace(".", "", $valor_resgatar));
+            }
+
+            // Atualizar o valor atual da meta subtraindo o valor resgatado
+            $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ? AND valor_atual >= ?";
+            $stmt_meta = $conn->prepare($sql_meta);
+            $stmt_meta->bind_param("diii", $valor_resgatar, $id_meta, $usuario_id, $valor_resgatar);
+            $stmt_meta->execute();
+
+            // Subtrair o valor resgatado do saldo geral (tabela transacoes)
+            $sql_transacao = "UPDATE transacoes SET valor = valor - ? WHERE usuario_id = ?";
+            $stmt_transacao = $conn->prepare($sql_transacao);
+            $stmt_transacao->bind_param("di", $valor_resgatar, $usuario_id);
+            $stmt_transacao->execute();
+        }
+
+        // Confirmar a transação
+        $conn->commit();
+        header("Location: ../conteudos/(7) metas.php?sucesso=operacao");
+        exit();
+    } catch (Exception $e) {
+        // Se ocorrer um erro, reverter a transação
+        $conn->rollback();
+        echo "Erro ao realizar operação: " . $e->getMessage();
+    }
+
+    // Validar os campos para adicionar uma nova meta
+    if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
+        // Preparar a query SQL para inserir na coluna correta (valor_alvo)
+        $sql = "INSERT INTO metas (nome_meta, valor_alvo, data_limite, usuario_id) VALUES (?, ?, ?, ?)";
+        // Preparar a declaração SQL
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $nome_meta, $valor_meta, $data_meta, $usuario_id);
+
+        // Executar a query
+        if ($stmt->execute()) {
+            // Redirecionar para a página de metas ou exibir uma mensagem de sucesso
+            header("Location: ../conteudos/(7) metas.php?sucesso=1");
+            exit();
+        } else {
+            echo "Erro ao adicionar meta: " . $conn->error;
+        }
     } else {
-      echo "Erro ao depositar valor: " . $conn->error;
-    }
-  }
-
-  // Validar os campos para adicionar uma nova meta
-  if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
-    // Preparar a query SQL para inserir na coluna correta (valor_alvo)
-    $sql = "INSERT INTO metas (nome_meta, valor_alvo, data_limite, usuario_id) VALUES (?, ?, ?, ?)";
-    // Preparar a declaração SQL
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $nome_meta, $valor_meta, $data_meta, $usuario_id);
-
-    // Executar a query
-    if ($stmt->execute()) {
-      // Redirecionar para a página de metas ou exibir uma mensagem de sucesso
-      header("Location: ../conteudos/(7) metas.php?sucesso=1");
-      exit();
-    } else {
-      echo "Erro ao adicionar meta: " . $conn->error;
-    }
-  } else {
-    echo "Todos os campos são obrigatórios e o valor deve ser numérico!";
-  }
-
-  // APAGAR META
-  if (isset($_POST['id_meta']) && !isset($_POST['valor_deposito']) && !isset($_POST['valor_resgatar'])) {
-    $id_meta = $_POST['id_meta'];
-
-    // Preparar a query SQL para deletar a meta
-    $sql = "DELETE FROM metas WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_meta);
-
-    // Executar a query
-    if ($stmt->execute()) {
-      // Redirecionar para a página de metas após apagar a meta
-      header("Location: ../conteudos/(7) metas.php?sucesso=2");
-      exit();
-    } else {
-      echo "Erro ao remover meta: " . $conn->error;
-    }
-  }
-
-  // Verificar se é uma operação de resgatar
-  if (isset($_POST['valor_resgatar']) && isset($_POST['id_meta'])) {
-    $id_meta = $_POST['id_meta'];
-    $valor_resgatar = $_POST['valor_resgatar'];
-
-    // Converter o valor do resgate para o formato correto
-    if ($valor_resgatar) {
-      $valor_resgatar = str_replace(",", ".", str_replace(".", "", $valor_resgatar));
+        echo "Todos os campos são obrigatórios e o valor deve ser numérico!";
     }
 
-    // Atualizar o valor atual da meta subtraindo o valor resgatado
-    $sql = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ? AND valor_atual >= ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("diii", $valor_resgatar, $id_meta, $usuario_id, $valor_resgatar);
+    // APAGAR META
+    if (isset($_POST['id_meta']) && !isset($_POST['valor_deposito']) && !isset($_POST['valor_resgatar'])) {
+        $id_meta = $_POST['id_meta'];
 
-    if ($stmt->execute()) {
-      // Redirecionar para a página de metas com uma mensagem de sucesso
-      header("Location: ../conteudos/(7) metas.php?sucesso=resgatar");
-      exit();
-    } else {
-      echo "Erro ao resgatar valor: " . $conn->error;
+        // Preparar a query SQL para deletar a meta
+        $sql = "DELETE FROM metas WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id_meta);
+
+        // Executar a query
+        if ($stmt->execute()) {
+            // Redirecionar para a página de metas após apagar a meta
+            header("Location: ../conteudos/(7) metas.php?sucesso=2");
+            exit();
+        } else {
+            echo "Erro ao remover meta: " . $conn->error;
+        }
     }
-  }
 }
 
 /*=================
@@ -152,7 +124,7 @@ $limit = 2;
 
 // Verificar se foi clicado na setinha para avançar ou retroceder
 if (isset($_GET['offset'])) {
-  $offset = (int) $_GET['offset'];
+    $offset = (int) $_GET['offset'];
 }
 
 // Buscar as metas do usuário, limitando a 2 e aplicando o offset
@@ -168,6 +140,7 @@ $total = $totalResult->fetch_assoc()['total'];
 $nextOffset = $offset + $limit < $total ? $offset + $limit : null;
 $prevOffset = $offset > 0 ? $offset - $limit : null;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
