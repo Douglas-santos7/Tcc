@@ -49,7 +49,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             <img class="icon--li" src="../assets/icons/home--sidebar/calendario--icon.svg" />
             <span>Calendário</span>
           </li>
-          <li class="Item5" data-src="./conteudos/(5) teste.html" data-title="ChatBot">
+          <li class="Item5" data-src="./conteudos/(5) teste.php" data-title="ChatBot">
             <div class="barra--icon"></div>
             <img class="icon--li" src="../assets/icons/home--sidebar/chatbot--icon.svg" />
             <span>ChatBot</span>
