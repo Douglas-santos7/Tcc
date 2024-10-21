@@ -1,25 +1,52 @@
-function formatarMoeda(valor) {
-  // Remove todos os caracteres que não são dígitos
-  valor = valor.replace(/\D/g, "");
+document.addEventListener("DOMContentLoaded", function () {
+  function formatarMoeda(valor) {
+    valor = valor.replace(/\D/g, "");
 
-  // Limita o valor a 8 dígitos antes da vírgula (999.999,99)
-  if (valor.length > 8) {
-    valor = valor.slice(0, 8); // Limita a 8 caracteres (6 dígitos inteiros + 2 decimais)
+    if (valor.length > 8) {
+      valor = valor.slice(0, 8);
+    }
+
+    let valorFormatado = (valor / 100)
+      .toFixed(2)
+      .replace(".", ",")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    return valorFormatado;
   }
 
-  // Formata para moeda
-  let valorFormatado = (valor / 100)
-    .toFixed(2) // Converte para decimal e fixa em 2 casas decimais
-    .replace(".", ",") // Substitui o ponto decimal pela vírgula
-    .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona pontos para os milhares
+  // Função para adicionar o listener ao campo de valor
+  function adicionarListener() {
+    const inputValor = document.getElementById("valor");
 
-  return valorFormatado;
-}
+    if (inputValor) {
+      // Verifica se o elemento existe
+      inputValor.addEventListener("input", function () {
+        let valorAtual = this.value;
+        this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
+      });
+    } else {
+      console.warn("Elemento com ID 'valor' não encontrado. O listener não será adicionado.");
+    }
+  }
 
-// Evento de digitação
-document.getElementById("valor").addEventListener("input", function () {
-  let valorAtual = this.value;
+  // Chame a função para adicionar o listener
+  adicionarListener();
 
-  // Remove formatação e formata novamente
-  this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
+  // Se o pop-up for aberto, adicione o listener novamente (se necessário)
+  const btnOpenPopup = document.getElementById("btn-open-popup");
+  const popupContainer = document.getElementById("popup-container");
+
+  if (btnOpenPopup) {
+    btnOpenPopup.addEventListener("click", function () {
+      popupContainer.style.display = "block";
+      adicionarListener(); // Adiciona o listener novamente ao abrir o pop-up
+    });
+  }
+
+  const closeBtn = document.getElementById("close-btn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function () {
+      popupContainer.style.display = "none";
+    });
+  }
 });
