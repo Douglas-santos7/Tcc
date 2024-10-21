@@ -18,8 +18,8 @@ $balancoData = calcularBalanco($conn, $userId);
 $receitas = $balancoData['receitas'];
 $despesas = $balancoData['despesas'];
 $balanco = $balancoData['balanco'];
-$proporcaoReceitas = $balancoData['proporcaoReceitas'];
-$proporcaoDespesas = $balancoData['proporcaoDespesas'];
+$proporcaoReceitas = "";
+$proporcaoDespesas = "";
 
 // Obter próximo vencimento
 $vencimentoData = obterProximoVencimento($conn, $userId);
@@ -55,6 +55,7 @@ $conn->close();
   <title>Neo Finance - Dashboard</title>
   <link rel="stylesheet" href="../../css/conteudos/dashboard/dashboard.css">
   <link rel="stylesheet" href="../../css/conteudos/dashboard/popUp.css">
+  <script src="../../js/conteudos/dashboard/atualizarGrafico.js"></script>
 </head>
 
 <body>
@@ -139,21 +140,21 @@ $conn->close();
             <div class="icon--verde"></div>
             <div class="info--valores">
               <span>Receitas</span>
-              <span>R$ <?php echo number_format($receitas, 2, ',', '.'); ?></span>
+              <span>R$ 0,00</span>
             </div>
           </div>
           <div class="despesas--filtro">
             <div class="icon--vermelho"></div>
             <div class="info--valores">
               <span>Despesas</span>
-              <span>R$ <?php echo number_format($despesas, 2, ',', '.'); ?></span>
+              <span>R$ 0,00</span>
             </div>
           </div>
           <div class="saldo--filtro">
             <div class="icon--verde-claro"></div>
             <div class="info--valores">
               <span>Balanço</span>
-              <span>R$ <?php echo number_format($balanco, 2, ',', '.'); ?></span>
+              <span>R$ 0,00</span>
             </div>
           </div>
         </div>
@@ -294,35 +295,14 @@ $conn->close();
         });
       </script>
       <script>
-        function atualizarGrafico() {
-          const periodo = document.getElementById('Filtro--mes').value;
-
-          // Fazendo uma requisição AJAX para buscar novos dados
-          fetch(`../../config/conteudos/dashboard/filtrar_mes.php?periodo=${periodo}`)
-            .then(response => response.json())
-            .then(data => {
-              // Atualizando o gráfico e as informações
-              const graficoReceitas = document.querySelector('.grafico--receitas');
-              const graficoDespesas = document.querySelector('.grafico--despesas');
-              const receitasFiltro = document.querySelector('.receitas--filtro span:last-child');
-              const despesasFiltro = document.querySelector('.despesas--filtro span:last-child');
-              const saldoFiltro = document.querySelector('.saldo--filtro span:last-child');
-
-              graficoReceitas.style.width = data.proporcaoReceitas + 'px';
-              graficoDespesas.style.width = data.proporcaoDespesas + 'px';
-              receitasFiltro.textContent = 'R$ ' + parseFloat(data.receitas).toFixed(2).replace('.', ',');
-              despesasFiltro.textContent = 'R$ ' + parseFloat(data.despesas).toFixed(2).replace('.', ',');
-              saldoFiltro.textContent = 'R$ ' + parseFloat(data.balanco).toFixed(2).replace('.', ',');
-            })
-            .catch(error => console.error('Erro ao buscar dados:', error));
-        }
-
         // Chamando a função ao carregar a página
-        document.addEventListener('DOMContentLoaded', () => {
-          atualizarGrafico(); // Chama a função ao carregar a página
-        });
-      </script>
+        window.onload = () => {
+          const filtroPeriodo = document.getElementById("Filtro--mes");
+          filtroPeriodo.value = "diario";
 
+          atualizarGrafico();
+        }
+      </script>
 </body>
 
 </html>
