@@ -10,10 +10,11 @@ function buscarVencimentos($mesSelecionado, $conn)
 
     // Prepara a consulta
     $query = "SELECT v.id, v.descricao, v.data_vencimento, v.valor, v.categoria, v.status, v.tipo_transacao, c.id AS categoria_id, c.icone
-              FROM vencimentos v
-              JOIN categorias c ON v.categoria = c.nome
-              WHERE MONTH(v.data_vencimento) = ?  AND v.usuario_id = ?
-              ORDER BY status DESC";
+    FROM vencimentos v
+    JOIN categorias c ON v.categoria = c.nome
+    WHERE MONTH(v.data_vencimento) = ? AND v.usuario_id = ?
+    GROUP BY v.id
+    ORDER BY status DESC";
 
     // Usa prepared statements
     if ($stmt = mysqli_prepare($conn, $query)) {
