@@ -2,6 +2,9 @@
 // Incluir a conexão com o banco de dados
 include("../../config/database/conexao.php");
 
+// Iniciar a sessão
+session_start();
+
 // Verificar se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Receber dados do formulário
@@ -54,60 +57,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
   }
 
-  // Verificar se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Receber dados do formulário
-    $nome_meta = $_POST['nome'] ?? null;
-    $valor_meta = $_POST['valor'] ?? null;
-    $data_meta = $_POST['data'] ?? null;
-    $usuario_id = $_POST['usuario_id'] ?? null;
+  // Verificar se é uma operação de resgate
+  if (isset($_POST['valor_resgate']) && isset($_POST['id_meta'])) {
+      $id_meta = $_POST['id_meta'];
+      $valor_resgate = $_POST['valor_resgate'];
 
-    // Converter valor da meta para o formato correto (remover vírgulas, pontos etc.)
-    if ($valor_meta) {
-        $valor_meta = str_replace(",", ".", str_replace(".", "", $valor_meta));
-    }
+      // Converter o valor do resgate para o formato correto
+      if ($valor_resgate) {
+          $valor_resgate = str_replace(",", ".", str_replace(".", "", $valor_resgate));
+      }
 
-    // Verificar se é uma operação de resgate
-    if (isset($_POST['valor_resgate']) && isset($_POST['id_meta'])) {
-        $id_meta = $_POST['id_meta'];
-        $valor_resgate = $_POST['valor_resgate'];
+      // Começar uma transação no banco de dados
+      $conn->begin_transaction();
 
-        // Converter o valor do resgate para o formato correto
-        if ($valor_resgate) {
-            $valor_resgate = str_replace(",", ".", str_replace(".", "", $valor_resgate));
-        }
+      try {
+          // Atualizar o valor atual da meta com o valor do resgate
+          $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ?";
+          $stmt_meta = $conn->prepare($sql_meta);
+          $stmt_meta->bind_param("dii", $valor_resgate, $id_meta, $usuario_id);
+          $stmt_meta->execute();
 
-        // Começar uma transação no banco de dados
-        $conn->begin_transaction();
+          // Registrar a transação na tabela transacoes
+          $sql_transacoes = "INSERT INTO transacoes (usuario_id, meta_id, valor, tipo) VALUES (?, ?, ?, 'resgate')";
+          $stmt_transacoes = $conn->prepare($sql_transacoes);
+          $stmt_transacoes->bind_param("iid", $usuario_id, $id_meta, $valor_resgate);
+          $stmt_transacoes->execute();
 
-        try {
-            // Atualizar o valor atual da meta com o valor do resgate
-            $sql_meta = "UPDATE metas SET valor_atual = valor_atual - ? WHERE id = ? AND usuario_id = ?";
-            $stmt_meta = $conn->prepare($sql_meta);
-            $stmt_meta->bind_param("dii", $valor_resgate, $id_meta, $usuario_id);
-            $stmt_meta->execute();
+          // Confirmar a transação
+          $conn->commit();
 
-            // Registrar a transação na tabela transacoes
-            $sql_transacoes = "INSERT INTO transacoes (usuario_id, meta_id, valor, tipo) VALUES (?, ?, ?, 'resgate')";
-            $stmt_transacoes = $conn->prepare($sql_transacoes);
-            $stmt_transacoes->bind_param("iid", $usuario_id, $id_meta, $valor_resgate);
-            $stmt_transacoes->execute();
-
-            // Confirmar a transação
-            $conn->commit();
-
-            // Redirecionar para a página de metas com uma mensagem de sucesso
-            header("Location: ../conteudos/(7) metas.php?sucesso=resgate");
-            exit();
-        } catch (Exception $e) {
-            // Se ocorrer um erro, reverter a transação
-            $conn->rollback();
-            echo "Erro ao realizar resgate: " . $e->getMessage();
-        }
-    }
-}
-
-
+          // Redirecionar para a página de metas com uma mensagem de sucesso
+          header("Location: ../conteudos/(7) metas.php?sucesso=resgate");
+          exit();
+      } catch (Exception $e) {
+          // Se ocorrer um erro, reverter a transação
+          $conn->rollback();
+          echo "Erro ao realizar resgate: " . $e->getMessage();
+      }
+  }
 
   // Validar os campos para adicionar uma nova meta
   if (!empty($nome_meta) && is_numeric($valor_meta) && !empty($data_meta)) {
@@ -127,25 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   } else {
     echo "Todos os campos são obrigatórios e o valor deve ser numérico!";
-  }
-
-  // APAGAR META
-  if (isset($_POST['id_meta']) && !isset($_POST['valor_deposito']) && !isset($_POST['valor_resgatar'])) {
-    $id_meta = $_POST['id_meta'];
-
-    // Preparar a query SQL para deletar a meta
-    $sql = "DELETE FROM metas WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_meta);
-
-    // Executar a query
-    if ($stmt->execute()) {
-      // Redirecionar para a página de metas após apagar a meta
-      header("Location: ../conteudos/(7) metas.php?sucesso=2");
-      exit();
-    } else {
-      echo "Erro ao remover meta: " . $conn->error;
-    }
   }
 
   // Verificar se é uma operação de resgatar
@@ -173,30 +141,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-/*=================
-Lógica de Navegação
-===================*/
-// Variáveis para controle de navegação
-$offset = 0;
-$limit = 2;
-
-// Verificar se foi clicado na setinha para avançar ou retroceder
-if (isset($_GET['offset'])) {
-  $offset = (int) $_GET['offset'];
+/* HISTORICO
+// Função para obter o histórico de depósitos de uma meta
+function obterHistoricoDepositos($meta_id) {
+    global $conn;
+    $sql = "SELECT valor, criada_em FROM transacoes WHERE meta_id = ? AND tipo = 'deposito' ORDER BY criada_em DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $meta_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Buscar as metas do usuário, limitando a 2 e aplicando o offset
-$sql = "SELECT * FROM metas WHERE usuario_id = 1 ORDER BY criada_em DESC LIMIT $limit OFFSET $offset"; // Ajuste para pegar o ID do usuário logado
-$result = $conn->query($sql);
+// Armazenar o histórico de depósitos para cada meta
+$historicoDepositos = [];
+$sql = "SELECT id FROM metas WHERE usuario_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($meta = $result->fetch_assoc()) {
+    $historicoDepositos[$meta['id']] = obterHistoricoDepositos($meta['id']);
+}
+*/
 
-// Contar o total de metas do usuário
-$totalSql = "SELECT COUNT(*) as total FROM metas WHERE usuario_id = 1"; // Ajuste para pegar o ID do usuário logado
-$totalResult = $conn->query($totalSql);
-$total = $totalResult->fetch_assoc()['total'];
-
-// Calcular o próximo e anterior offsets
-$nextOffset = $offset + $limit < $total ? $offset + $limit : null;
-$prevOffset = $offset > 0 ? $offset - $limit : null;
+include("../../config/conteudos/metas/apagar_meta.php");
+include("../../config/conteudos/metas/navegacao.php");
 ?>
 
 <!DOCTYPE html>
@@ -245,8 +215,6 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
         </form>
       </div>
     </div>
-
-
 
     <!-- Cards de Metas -->
     <div class="container-cards">
@@ -301,17 +269,19 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
             <span>Prazo para Meta: <?php echo date('d/m/Y', strtotime($meta['data_limite'])); ?></span>
           </div>
           <div class="botoes-meta">
+            <!-- Botão Depositar -->
             <button class="btn-depositar" onclick="abrirModalDepositar(<?php echo $meta['id']; ?>)">
               <div for="icon2"><img src="../../assets/icons/icon--resgatar--metas.svg" alt="depositar"></div>
               Depositar
             </button>
+            <!-- Botão Resgatar -->
             <button class="btn-resgatar" onclick="abrirModalResgatar(<?php echo $meta['id']; ?>)">
               <div for="icon2"><img src="../../assets/icons/icon--depositar--meta.svg" alt="resgatar"></div> Resgatar
             </button>
 
-            <button class="btn-historico" onclick="abrirModalHistorico(<?php echo $meta['id']; ?>)">
+            <!--<button class="btn-historico" onclick="abrirModalHistorico(<?php echo $meta['id']; ?>)">
               <div for="icon2"><img src="../../assets/icons/icon--historico--metas.svg" alt=""></div> Histórico
-            </button>
+            </button>-->
 
           </div>
           <!-- Elemento para o gráfico -->
@@ -330,7 +300,6 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
         <a href="?offset=<?php echo $nextOffset; ?>" class="setinha">Próximo →</a>
       <?php } ?>
     </div>
-
 
     <!-- POPUP DEPOSITAR -->
     <div class="pop-up-depositar-container" id="pop-up-depositar-container" style="display: none;">
@@ -370,131 +339,48 @@ $prevOffset = $offset > 0 ? $offset - $limit : null;
       </div>
     </div>
 
-    <!-- POPUP HISTÓRICO -->
+    <!-- POPUP HISTÓRICO 
     <div class="pop-up-historico-container" id="pop-up-historico-container" style="display: none;">
       <div class="pop-up-historico-conteudo">
         <span class="popup-historico-close-btn" id="btn-fechar-popup-historico">&times;</span>
         <h2 class="historico-titulo">Histórico da Meta</h2>
         <div class="historico-conteudo" id="historico-conteudo">
-        <?php echo $id_meta; ?></h2>
-      <h2>Valor Depositado: <?php echo number_format($valor_deposito, 2, ',', '.'); ?></h2>
-      <h2>Valor Resgatado: <?php echo number_format($valor_resgate, 2, ',', '.'); ?></h2>
+          <h2>Valores Depositados:</h2>
+          <ul id="historico-lista">
+             O histórico será preenchido dinamicamente pelo JavaScript 
+          </ul>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <script>
-      var options = {
-        series: [0], // Porcentagem inicial
-        chart: {
-          height: 200,
-          type: 'radialBar',
-          offsetY: 0,
-          sparkline: {
-            enabled: false
-          }
-        },
-        plotOptions: {
-          radialBar: {
-            startAngle: -90, // Começa o gráfico no topo
-            endAngle: 90, // Termina o gráfico no topo
-            hollow: {
-              margin: 0,
-              size: '50%',
-              background: '#fff',
-            },
-            track: {
-              background: '#f0f0f0', // Fundo da trilha
-              strokeWidth: '70%',
-            },
-            dataLabels: {
-              show: true,
-              name: {
-                offsetY: -5,
-                color: '#333',
-                fontSize: '14px'
-              },
-              value: {
-                formatter: function (val) {
-                  return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
-                },
-                color: '#28a745', // Cor do valor
-                fontSize: '22px',
-                show: true,
-              }
-            }
-          }
-        },
-        fill: {
-          colors: ['#28a745'], // Cor verde
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ['Porcentagem'],
-      };
+      function abrirModalHistorico(metaId) {
+        // Exibir o popup de histórico
+        document.getElementById('pop-up-historico-container').style.display = 'block';
 
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
+        // Exibir o histórico da meta específica
+        var historicoLista = document.getElementById('historico-lista');
+        historicoLista.innerHTML = '';
+        var historico = <?php echo json_encode($historicoDepositos); ?>;
+        if (historico[metaId]) {
+          historico[metaId].forEach(function(deposito) {
+            var listItem = document.createElement('li');
+            listItem.textContent = 'R$ ' + deposito.valor.toFixed(2) + ' em ' + new Date(deposito.criada_em).toLocaleDateString();
+            historicoLista.appendChild(listItem);
+          });
+        } else {
+          historicoLista.innerHTML = '<li>Nenhum depósito registrado.</li>';
+        }
+      }
 
-
-      // Gráfico de progresso das metas
-      <?php foreach ($result as $meta) { ?>
-        var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%
-
-        var chartOptions<?php echo $meta['id']; ?> = {
-          series: [progresso], // Passa o valor limitado
-          chart: {
-            height: 200,
-            type: 'radialBar',
-            offsetY: 0,
-            sparkline: {
-              enabled: false
-            }
-          },
-          plotOptions: {
-            radialBar: {
-              startAngle: -90, // Começa o gráfico no topo
-              endAngle: 90, // Termina o gráfico no topo
-              hollow: {
-                size: '50%',
-              },
-              track: {
-                background: '#f0f0f0', // Fundo da trilha
-                strokeWidth: '70%',
-              },
-              dataLabels: {
-                show: true,
-                name: {
-                  offsetY: -5,
-                  color: '#333',
-                  fontSize: '14px'
-                },
-                value: {
-                  formatter: function (val) {
-                    return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
-                  },
-                  color: '#28a745', // Cor do valor
-                  fontSize: '22px',
-                  show: true,
-                }
-              }
-            },
-          },
-          fill: {
-            colors: ['#28a745'], // Cor verde para todos os gráficos
-          },
-          stroke: {
-            lineCap: 'round'
-          },
-          labels: ['Progresso'],
-        };
-
-        var chart<?php echo $meta['id']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id']; ?>"), chartOptions<?php echo $meta['id']; ?>);
-        chart<?php echo $meta['id']; ?>.render();
-      <?php } ?>
+      // Fechar o popup de histórico
+      document.getElementById('btn-fechar-popup-historico').addEventListener('click', function() {
+        document.getElementById('pop-up-historico-container').style.display = 'none';
+      });
     </script>
 
+    <!-- Gráficos em script-->
+    <?php include("../../config/conteudos/metas/graficos.php")?>
 
   </div>
   <script src="../../js/conteudos/metas/abrirModais.js"></script>
