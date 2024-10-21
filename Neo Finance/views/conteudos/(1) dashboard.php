@@ -209,12 +209,12 @@ $conn->close();
             </div>
             <div class="status--info">
               <span>Em aberto</span>
-              <input type="checkbox" name="status--checkbox" />
+              <form method="POST" action="">
+                <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
+                <input type="hidden" name="confirmar_pagamento" value="1">
+                <input type="checkbox" name="status--checkbox" onchange="if(this.checked){ this.form.submit(); }" />
+              </form>
             </div>
-            <form method="POST" action="">
-              <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
-              <button type="submit" name="confirmar_pagamento">Confirmar Pagamento</button>
-            </form>
           <?php else: ?>
             <div class="sem-vencimento-info">
               <span class="descricao--info" id="fraseLembrete">Tudo certo por aqui!</span>
