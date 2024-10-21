@@ -14,7 +14,7 @@ $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
 $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
 // Construir a query básica
-$query = "SELECT t.id, t.nome AS descricao, c.nome AS categoria, c.icone AS icone, t.valor, t.data, t.tipo 
+$query = "SELECT t.id, t.nome AS descricao, c.nome AS categoria, c.icone AS icone, t.valor, t.data, t.tipo , t.criado_em
           FROM transacoes t 
           JOIN categorias c ON t.categoria_id = c.id 
           WHERE t.usuario_id = ?";
@@ -30,6 +30,9 @@ if ($startDate && $endDate) {
     $params[] = $endDate;
 }
 
+// Adiciona a ordenação para do mais recente para o mais antigo
+$query .= " ORDER BY t.criado_em DESC";
+
 // Prepara e executa a consulta
 $stmt = $conn->prepare($query);
 $stmt->bind_param(str_repeat('s', count($params)), ...$params);
@@ -39,17 +42,18 @@ $result = $stmt->get_result();
 if (!$result) {
     echo "Erro ao buscar transações: " . mysqli_error($conn);
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Finance - Histórico</title>
     <link rel="stylesheet" href="../../css/conteudos/historico/historico.css">
 </head>
+
 <body>
     <div class="containter">
         <div class="container--header">
@@ -100,5 +104,7 @@ if (!$result) {
                 ?>
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>
