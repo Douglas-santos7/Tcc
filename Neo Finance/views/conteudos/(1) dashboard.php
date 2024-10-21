@@ -129,10 +129,10 @@ $conn->close();
         </div>
         <div class="infoXfiltro">
           <div class="select--filtro">
-            <select name="periodo" id="Filtro--mes">
+            <select name="periodo" id="Filtro--mes" onchange="atualizarGrafico()">
               <option value="mensal">Mensal</option>
               <option value="semanal">Semanal</option>
-              <option value="diario">Diário</option>
+              <option value="diario" selected>Diário</option>
             </select>
           </div>
           <div class="receitas--filtro">
@@ -152,7 +152,7 @@ $conn->close();
           <div class="saldo--filtro">
             <div class="icon--verde-claro"></div>
             <div class="info--valores">
-              <span>Saldo</span>
+              <span>Balanço</span>
               <span>R$ <?php echo number_format($balanco, 2, ',', '.'); ?></span>
             </div>
           </div>
@@ -293,6 +293,36 @@ $conn->close();
           alternarFraseLembrete();
         });
       </script>
+      <script>
+        function atualizarGrafico() {
+          const periodo = document.getElementById('Filtro--mes').value;
+
+          // Fazendo uma requisição AJAX para buscar novos dados
+          fetch(`../../config/conteudos/dashboard/filtrar_mes.php?periodo=${periodo}`)
+            .then(response => response.json())
+            .then(data => {
+              // Atualizando o gráfico e as informações
+              const graficoReceitas = document.querySelector('.grafico--receitas');
+              const graficoDespesas = document.querySelector('.grafico--despesas');
+              const receitasFiltro = document.querySelector('.receitas--filtro span:last-child');
+              const despesasFiltro = document.querySelector('.despesas--filtro span:last-child');
+              const saldoFiltro = document.querySelector('.saldo--filtro span:last-child');
+
+              graficoReceitas.style.width = data.proporcaoReceitas + 'px';
+              graficoDespesas.style.width = data.proporcaoDespesas + 'px';
+              receitasFiltro.textContent = 'R$ ' + parseFloat(data.receitas).toFixed(2).replace('.', ',');
+              despesasFiltro.textContent = 'R$ ' + parseFloat(data.despesas).toFixed(2).replace('.', ',');
+              saldoFiltro.textContent = 'R$ ' + parseFloat(data.balanco).toFixed(2).replace('.', ',');
+            })
+            .catch(error => console.error('Erro ao buscar dados:', error));
+        }
+
+        // Chamando a função ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+          atualizarGrafico(); // Chama a função ao carregar a página
+        });
+      </script>
+
 </body>
 
 </html>
