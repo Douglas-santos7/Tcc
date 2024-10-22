@@ -247,12 +247,11 @@ body {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 10px;
-  
 }
 
 .grafico--receitas,
 .grafico--despesas,
-.grafico--balanco{
+.grafico--balanco {
   height: 70px;
   width: 0;
   border-radius: 20px;
@@ -267,7 +266,7 @@ body {
   background-color: red;
 }
 
-.grafico--balanco{
+.grafico--balanco {
   background-color: rgba(90, 255, 0, 0.37);
 }
 
@@ -502,12 +501,11 @@ body {
   margin-right: 12px;
 }
 
-.img--categoria i{
+.img--categoria i {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.7rem;
-
 }
 
 .info--detalhada {
@@ -528,6 +526,10 @@ body {
   display: block;
   color: #003115;
   font-size: 1.2rem;
+  max-width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Estilização da segunda parte das informações */
@@ -883,4 +885,3 @@ body {
   width: 100%;
   justify-content: end;
 }
-
