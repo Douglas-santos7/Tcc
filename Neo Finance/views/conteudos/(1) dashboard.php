@@ -107,7 +107,7 @@ $conn->close();
       </div>
 
       <!-- Card Histórico Recente -->
-      <div class="card--historico-recente">
+      <div class="card--historico-recente" >
         <div class="header--card-hr">
           <span>Histórico Recente</span>
           <button id="ver-tudo-btn">Ver tudo</button>
@@ -121,7 +121,7 @@ $conn->close();
       </div>
 
       <!-- Card Receitas x Despesas -->
-      <div class="card--receitasXdespesas">
+      <div class="card--receitasXdespesas" id="cardReceitasDespesas">
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
           <div class="grafico--receitasXdespesas">
