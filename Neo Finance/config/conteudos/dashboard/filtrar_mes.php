@@ -5,7 +5,7 @@ include("../../database/conexao.php");
 // Iniciando a sessão
 session_start();
 // Obtendo o ID do usuário da sessão
-$userId = $_SESSION['user_id']; // Usar um valor padrão se o usuário não estiver autenticado
+$userId = $_SESSION['user_id'] ?? null; // Usar um valor padrão se o usuário não estiver autenticado
 
 // Obtendo o período da requisição (GET)
 $periodo = $_GET['periodo'] ?? 'diario'; // Define 'diario' como padrão
@@ -25,7 +25,7 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
             $dataInicial = date('Y-m-01 00:00:00'); // Primeiro dia do mês atual
             break;
         case 'semanal':
-            $dataInicial = date('Y-m-d H:i:s', strtotime('last Sunday')); // Último domingo
+            $dataInicial = date('Y-m-d H:i:s', strtotime('last Monday')); // Última segunda-feira
             break;
         case 'diario':
             $dataInicial = date('Y-m-d 00:00:00'); // Hoje
@@ -51,31 +51,26 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
     $receitas = mysqli_fetch_assoc($resultReceitas)['totalReceitas'] ?? 0;
     $despesas = mysqli_fetch_assoc($resultDespesas)['totalDespesas'] ?? 0;
 
+    // Calcular o balanço
+    $balanco = $receitas - $despesas + $saldo;
+
     // Calcular o total de receitas e despesas para a proporção
     $total = $receitas + $despesas + $saldo;
 
     // Calcular as proporções em pixels (800 é a largura total do gráfico)
-    $proporcaoReceitas = ($total > 0) ? (($receitas + $saldo) / $total) * 800 : 0; // Largura da barra de receitas
+    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura da barra de receitas
     $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura da barra de despesas
-
-    // Calcular o balanço
-    $balanco = $receitas - $despesas + $saldo;
+    $proporcaoBalanco = ($total > 0) ? (abs($balanco) / $total) * 800 : 0; // Proporção do balanço
 
     return [
-        'receitas' => $receitas + $saldo,  // Receitas totais incluindo saldo
-        'despesas' => $despesas,           // Despesas totais
-        'saldo' => $saldo,                 // Saldo atual do usuário
-        'balanco' => $balanco,             // Balanço inclui o saldo
+        'receitas' => number_format($receitas, 2, ',', '.'), // Formatação de receitas
+        'despesas' => number_format($despesas, 2, ',', '.'), // Formatação de despesas
+        'saldo' => number_format($saldo, 2, ',', '.'), // Formatação do saldo
+        'balanco' => number_format($balanco, 2, ',', '.'), // Formatação do balanço
         'proporcaoReceitas' => $proporcaoReceitas,  // Proporção de receitas no gráfico
         'proporcaoDespesas' => $proporcaoDespesas,  // Proporção de despesas no gráfico
-    
-        // Novas variáveis filtradas com base no período selecionado
-        'receitas_filtradas' => $receitas,     // Receitas filtradas pelo período
-        'despesas_filtradas' => $despesas,     // Despesas filtradas pelo período
-        'saldo_filtrado' => $saldo,            // Saldo filtrado pelo período (se aplicável)
-        'total_filtrado' => $total             // Total filtrado (receitas + despesas + saldo)
+        'proporcaoBalanco' => $proporcaoBalanco,    // Proporção do balanço no gráfico
     ];
-    
 }
 
 // Retornando os dados em formato JSON
