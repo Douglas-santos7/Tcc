@@ -247,11 +247,12 @@ body {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 10px;
-  margin-bottom: 50px;
+  
 }
 
 .grafico--receitas,
-.grafico--despesas {
+.grafico--despesas,
+.grafico--balanco{
   height: 70px;
   width: 0;
   border-radius: 20px;
@@ -264,6 +265,10 @@ body {
 
 .grafico--despesas {
   background-color: red;
+}
+
+.grafico--balanco{
+  background-color: rgba(90, 255, 0, 0.37);
 }
 
 @keyframes expandirGrafico {
@@ -476,6 +481,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 1rem;
+  text-wrap: nowrap;
 }
 
 /* Estilização das partes internas do item */
@@ -495,6 +502,14 @@ body {
   margin-right: 12px;
 }
 
+.img--categoria i{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+
+}
+
 .info--detalhada {
   flex-grow: 1;
 }
@@ -512,7 +527,7 @@ body {
 .nome--historico {
   display: block;
   color: #003115;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 /* Estilização da segunda parte das informações */

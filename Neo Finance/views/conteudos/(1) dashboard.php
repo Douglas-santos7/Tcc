@@ -20,6 +20,7 @@ $despesas = $balancoData['despesas'];
 $balanco = $balancoData['balanco'];
 $proporcaoReceitas = "";
 $proporcaoDespesas = "";
+$proporcaoBalanco = "";
 
 // Obter próximo vencimento
 $vencimentoData = obterProximoVencimento($conn, $userId);
@@ -126,6 +127,7 @@ $conn->close();
           <div class="grafico--receitasXdespesas">
             <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
+            <div class="grafico--balanco" data-largu ra="<?php echo $proporcaoBalanco; ?>"></div> 
           </div>
         </div>
         <div class="infoXfiltro">

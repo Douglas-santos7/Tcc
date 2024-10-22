@@ -7,8 +7,9 @@ function animateNumber(element, start, end, duration) {
   function updateNumber(currentTime) {
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / duration, 1);
-    const currentValue = Math.floor(start + range * progress);
+    const currentValue = start + Math.round(range * progress);
 
+    // Atualiza o texto do elemento
     element.textContent = `R$ ${currentValue.toFixed(2).replace(".", ",")}`;
 
     if (progress < 1) {
@@ -27,17 +28,22 @@ function atualizarGrafico() {
     .then((data) => {
       const graficoReceitas = document.querySelector(".grafico--receitas");
       const graficoDespesas = document.querySelector(".grafico--despesas");
+      const graficoBalanco = document.querySelector(".grafico--balanco"); // Gráfico de balanço
       const receitasFiltro = document.querySelector(".receitas--filtro span:last-child");
       const despesasFiltro = document.querySelector(".despesas--filtro span:last-child");
       const saldoFiltro = document.querySelector(".saldo--filtro span:last-child");
 
+      // Atualiza as larguras dos gráficos
       graficoReceitas.style.width = `${data.proporcaoReceitas}px`;
       graficoDespesas.style.width = `${data.proporcaoDespesas}px`;
+      graficoBalanco.style.width = `${data.proporcaoBalanco}px`; // Atualiza o gráfico de balanço
 
-      const newReceitas = parseFloat(data.receitas);
-      const newDespesas = parseFloat(data.despesas);
-      const newSaldo = parseFloat(data.balanco);
+      // Converte as receitas, despesas e saldo para número
+      const newReceitas = parseFloat(data.receitas.replace(",", "."));
+      const newDespesas = parseFloat(data.despesas.replace(",", "."));
+      const newSaldo = parseFloat(data.balanco.replace(",", "."));
 
+      // Anima os números
       animateNumber(
         receitasFiltro,
         parseFloat(receitasFiltro.textContent.replace("R$ ", "").replace(",", ".")),
@@ -50,7 +56,12 @@ function atualizarGrafico() {
         newDespesas,
         500
       );
-      animateNumber(saldoFiltro, parseFloat(saldoFiltro.textContent.replace("R$ ", "").replace(",", ".")), newSaldo, 500);
+      animateNumber(
+        saldoFiltro,
+        parseFloat(saldoFiltro.textContent.replace("R$ ", "").replace(",", ".")),
+        newSaldo,
+        500
+      );
     })
     .catch((error) => console.error("Erro ao buscar dados:", error));
 }
