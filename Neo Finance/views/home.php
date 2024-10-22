@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Conteúdo Principal -->
     <div class="conteudo" id="conteudo">
-      <iframe id="mainIframe" src="./conteudos/(1) dashboard.php" width="100%" height="100%"></iframe>
+      <iframe id="mainIframe" src="" width="100%" height="100%"></iframe>
       <button class="toggle-button">></button>
 
       <!-- Modal de Boas-Vindas -->
