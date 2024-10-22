@@ -123,6 +123,12 @@ $categorias = buscarCategorias($usuario_id, $conn);
                     </div>
                   </div>
                   <div class="lado--direito--card">
+                    <?php if ($vencimento['status'] !== 'Pago'): ?>
+                      <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">
+                        <img src="../../assets/icons/pagamento--icon.svg" class="icon">
+                        Confirmar Pagamento
+                      </button>
+                    <?php endif; ?>
                     <div class="data--X--valor-v">
                       <div class="data--completa-v">
                         <span><?php echo date('d M, Y', strtotime($vencimento['data_vencimento'])); ?></span>
@@ -131,9 +137,6 @@ $categorias = buscarCategorias($usuario_id, $conn);
                         <span>R$ <?php echo number_format($vencimento['valor'], 2, ',', '.'); ?></span>
                       </div>
                     </div>
-                    <?php if ($vencimento['status'] !== 'Pago'): ?>
-                      <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">Confirmar Pagamento</button>
-                    <?php endif; ?>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -209,7 +212,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
           <p>Você tem certeza que deseja confirmar o pagamento deste vencimento?</p>
           <form id="formConfirmarPagamento" method="POST" onsubmit="return confirmarPagamento(event)">
             <input type="hidden" id="vencimento_id" name="vencimento_id" value="">
-            <button type="submit" name="confirmarPagamento">Confirmar</button>
+            <button type="submit" name="confirmarPagamento"></button>
           </form>
         </div>
       </div>
