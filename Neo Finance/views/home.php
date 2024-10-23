@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <img class="icon--li" src="../assets/icons/home--sidebar/calendario--icon.svg" />
                         <span>Calendário</span>
                     </li>
-                    <li class="Item5" data-src="./conteudos/(5) teste.html" data-title="ChatBot">
+                    <li class="Item5" data-src="./conteudos/(5) chatbot.php" data-title="ChatBot">
                         <div class="barra--icon"></div>
                         <img class="icon--li" src="../assets/icons/home--sidebar/chatbot--icon.svg" />
                         <span>ChatBot</span>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <span>Metas</span>
                     </li>
                     <div class="espacamentoLi"></div>
-                    <li class="Item8" data-src="./conteudos/(8) teste.html" data-title="Suporte">
+                    <li class="Item8" data-src="./conteudos/(8) suporte.php" data-title="Suporte">
                         <div class="barra--icon"></div>
                         <img class="icon--li" src="../assets/icons/home--sidebar/suport--icon.svg" />
                         <span>Suporte</span>

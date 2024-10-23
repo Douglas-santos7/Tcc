@@ -90,6 +90,15 @@ CREATE TABLE historico_transacoes (
     FOREIGN KEY (categoria_id) REFERENCES categorias (id) ON DELETE CASCADE
 );
 
+-- Criação da tabela de histórico de Conversas
+CREATE TABLE historico_conversas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    mensagem TEXT NOT NULL,
+    resposta TEXT,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 -- Criação da tabela de vencimentos
 CREATE TABLE vencimentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
