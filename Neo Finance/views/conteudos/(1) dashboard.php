@@ -121,10 +121,10 @@ $conn->close();
       </div>
 
       <!-- Card Receitas x Despesas -->
-      <div class="card--receitasXdespesas" id="cardReceitasDespesas">
+      <div class="card--receitasXdespesas" >
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
-          <div class="grafico--receitasXdespesas">
+          <div class="grafico--receitasXdespesas" id="cardReceitasDespesas">
             <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
             <div class="grafico--balanco" data-largu ra="<?php echo $proporcaoBalanco; ?>"></div> 
