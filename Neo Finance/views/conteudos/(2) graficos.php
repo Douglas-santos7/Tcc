@@ -18,31 +18,54 @@ $interval = isset($_GET['interval']) && $_GET['interval'] === 'diario' ? 'diario
 
 // Consultar receitas e despesas de acordo com o intervalo selecionado
 if ($interval === 'diario') {
-    $queryReceitas = "SELECT DATE(data) as dia, DAYNAME(data) as dia_semana, SUM(valor) AS totalReceitas 
-                      FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId 
-                      AND DATE(data) = CURDATE() GROUP BY dia ORDER BY dia";
-    $queryDespesas = "SELECT DATE(data) as dia, DAYNAME(data) as dia_semana, SUM(valor) AS totalDespesas 
-                      FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId 
-                      AND DATE(data) = CURDATE() GROUP BY dia ORDER BY dia";
+    $queryReceitas = "
+        SELECT DATE(data) AS dia, DAYNAME(data) AS dia_semana, SUM(valor) AS totalReceitas 
+        FROM transacoes 
+        WHERE tipo = 'receita' AND usuario_id = $userId AND DATE(data) = CURDATE() 
+        GROUP BY dia 
+        ORDER BY dia";
+
+    $queryDespesas = "
+        SELECT DATE(data) AS dia, DAYNAME(data) AS dia_semana, SUM(valor) AS totalDespesas 
+        FROM transacoes 
+        WHERE tipo = 'despesa' AND usuario_id = $userId AND DATE(data) = CURDATE() 
+        GROUP BY dia 
+        ORDER BY dia";
 } else {
     if ($selectedMonth) {
         // Se um mês específico for selecionado
-        $queryReceitas = "SELECT DAY(data) as dia, SUM(valor) AS totalReceitas 
-                          FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId 
-                          AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
-                          GROUP BY dia ORDER BY dia";
-        $queryDespesas = "SELECT DAY(data) as dia, SUM(valor) AS totalDespesas 
-                          FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId 
-                          AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
-                          GROUP BY dia ORDER BY dia";
+        $queryReceitas = "
+            SELECT DAY(data) AS dia, SUM(valor) AS totalReceitas 
+            FROM transacoes 
+            WHERE tipo = 'receita' AND usuario_id = $userId 
+            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
+            GROUP BY dia 
+            ORDER BY dia";
+
+        $queryDespesas = "
+            SELECT DAY(data) AS dia, SUM(valor) AS totalDespesas 
+            FROM transacoes 
+            WHERE tipo = 'despesa' AND usuario_id = $userId 
+            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
+            GROUP BY dia 
+            ORDER BY dia";
     } else {
         // Se todos os meses forem selecionados
-        $queryReceitas = "SELECT MONTH(data) as mes, SUM(valor) AS totalReceitas 
-                          FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId 
-                          AND YEAR(data) = YEAR(CURDATE()) GROUP BY mes ORDER BY mes";
-        $queryDespesas = "SELECT MONTH(data) as mes, SUM(valor) AS totalDespesas 
-                          FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId 
-                          AND YEAR(data) = YEAR(CURDATE()) GROUP BY mes ORDER BY mes";
+        $queryReceitas = "
+            SELECT MONTH(data) AS mes, SUM(valor) AS totalReceitas 
+            FROM transacoes 
+            WHERE tipo = 'receita' AND usuario_id = $userId 
+            AND YEAR(data) = YEAR(CURDATE()) 
+            GROUP BY mes 
+            ORDER BY mes";
+
+        $queryDespesas = "
+            SELECT MONTH(data) AS mes, SUM(valor) AS totalDespesas 
+            FROM transacoes 
+            WHERE tipo = 'despesa' AND usuario_id = $userId 
+            AND YEAR(data) = YEAR(CURDATE()) 
+            GROUP BY mes 
+            ORDER BY mes";
     }
 }
 
@@ -77,19 +100,29 @@ if ($interval === 'diario') {
         $despesas[$mes] = $row['totalDespesas'];
     }
 }
+
 // Consultar as despesas por categoria
-$queryDespesasPorCategoria = "SELECT c.nome AS categoria, SUM(t.valor) AS total 
-                               FROM transacoes t
-                               JOIN categorias c ON t.categoria_id = c.id
-                               WHERE t.tipo = 'despesa' AND t.usuario_id = $userId 
-                               GROUP BY c.nome 
-                               ORDER BY total DESC";
+$queryDespesasPorCategoria = "
+    SELECT c.nome AS categoria, SUM(t.valor) AS total 
+    FROM transacoes t
+    JOIN categorias c ON t.categoria_id = c.id
+    WHERE t.tipo = 'despesa' AND t.usuario_id = $userId 
+    GROUP BY c.nome 
+    ORDER BY total DESC";
 
 $resultDespesasPorCategoria = mysqli_query($conn, $queryDespesasPorCategoria);
-
 $categoriasDespesas = [];
+$categoriaMaiorGasto = '';
+$valorMaiorGasto = 0;
+
 while ($row = mysqli_fetch_assoc($resultDespesasPorCategoria)) {
     $categoriasDespesas[] = $row;
+
+    // Verifica a categoria com o maior gasto
+    if ($row['total'] > $valorMaiorGasto) {
+        $valorMaiorGasto = $row['total'];
+        $categoriaMaiorGasto = $row['categoria'];
+    }
 }
 
 // Fecha a conexão
@@ -98,217 +131,123 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Financeiro</title>
+    <link rel="stylesheet" href="../../css/conteudos/grafico/grafico.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <style>
-        body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-}
-
-.card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-    font-size: 22px;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.row {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.chart-card {
-    flex: 2; 
-}
-
-.options-card {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.button {
-    background-color: #007BFF;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-bottom: 10px;
-    transition: background-color 0.3s;
-}
-
-.button:hover {
-    background-color: #0056b3;
-}
-
-h3 {
-    margin-top: 20px;
-    color: #555;
-    border-bottom: 2px solid #007BFF; /* Linha abaixo do título */
-    padding-bottom: 10px;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul li {
-    background: #e9ecef;
-    padding: 15px; /* Aumentado para melhor visualização */
-    margin: 10px 0; /* Aumentado o espaçamento entre itens */
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s; /* Adiciona efeito ao passar o mouse */
-}
-
-ul li:hover {
-    background: #d4d4d4; /* Muda a cor de fundo ao passar o mouse */
-    transform: translateY(-2px); /* Leve movimento para cima ao passar o mouse */
-}
-
-ul li::before {
-    content: "✔️"; /* Ícone de verificação antes de cada dica */
-    margin-right: 10px;
-    color: #007BFF; /* Cor do ícone */
-}
-
-.cricri-card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 20px; 
-}
-
-.cricri-card img {
-    max-width: 80%; 
-    height: auto;
-    margin-top: 10px;
-}
-
-#chart {
-    border-radius: 8px; 
-    overflow: hidden; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-}
-
-    </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="card chart-card">
-                <h2 class="card-title">Visão Financeira - <?= ucfirst($interval) ?></h2>
-                <div id="chart"></div>
+    <div class="container--header">
+        <header class="banner">
+            <div class="titulo--banner">
+                <img src="../../assets/icons/home--sidebar/graficos--icon.svg" alt="calendario--icon" />
+                <h1>Gráficos</h1>
             </div>
+            <div class="notificacao--usuario">
+                <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
+            </div>
+        </header>
+    </div>
 
-            <div class="card options-card">
-                <h2 class="card-title">Selecionar Intervalo</h2>
-                <a href="?interval=mensal" class="button">Mensal</a>
+    <div class="row">
+        <div class="card chart-card">
+            <h2 class="card-title">Visão Financeira - <?= ucfirst($interval) ?></h2>
+
+            <!-- Botões dentro do cartão do gráfico -->
+            <div class="button-container">
+                <a href="?interval=mensal&month=<?= $selectedMonth ?>" class="button">Mensal</a>
                 <a href="?interval=diario" class="button">Diário</a>
-
-                <div class="cricri-card">
-                    <h2 class="card-title">Dúvidas? Fale com Cristopher</h2>
-                    <img src="../../assets/img/download.jpg" alt="icon-notificacao" />
-                </div>
             </div>
+
+            <div id="chart"></div>
         </div>
 
-        <!-- Análise dos dados -->
-        <div class="card">
+        <div class="card options-card">
             <h2 class="card-title">Análise dos Dados</h2>
             <p style="color: green;">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></p>
             <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></p>
+            <p style="color: orange;">Balanço Total: R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?></p>
 
             <h3>Dicas:</h3>
-<ul>
-    <?php
-    $totalReceitas = array_sum($receitas);
-    $totalDespesas = array_sum($despesas);
-    $porcentagemReceitas = ($totalReceitas > 0) ? (($totalReceitas - $totalDespesas) / $totalReceitas) * 100 : 0;
-    $porcentagemDespesas = ($totalDespesas > 0) ? (($totalDespesas - $totalReceitas) / $totalDespesas) * 100 : 0;
+            <ul>
+                <?php
+                $totalReceitas = array_sum($receitas);
+                $totalDespesas = array_sum($despesas);
+                $porcentagemReceitas = ($totalReceitas > 0) ? (($totalReceitas - $totalDespesas) / $totalReceitas) * 100 : 0;
+                $porcentagemDespesas = ($totalDespesas > 0) ? (($totalDespesas - $totalReceitas) / $totalDespesas) * 100 : 0;
 
-    // Defina limites para a personalização das dicas
-    $limiteAltoReceitas = 5000; // Exemplo de limite de receita alta
-    $limiteBaixoDespesas = 2000; // Exemplo de limite de despesa baixa
 
-    // Condição se receitas são superiores às despesas
-    if ($totalReceitas > $totalDespesas): ?>
-        <li>Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
-        <li>Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
-        <li>Considere diversificar seus investimentos para reduzir riscos.</li>
-        <li>Acompanhe suas receitas regularmente para identificar fontes adicionais.</li>
-        <?php if ($totalReceitas > $limiteAltoReceitas): ?>
-            <li>Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
-        <?php endif; ?>
-    <?php // Condição se despesas são superiores às receitas
-    elseif ($totalDespesas > $totalReceitas): ?>
-        <li>Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
-        <li>Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
-        <li>Considere estabelecer um limite mensal para despesas variáveis.</li>
-        <li>Se possível, busque formas de aumentar sua renda, como um trabalho extra.</li>
-        <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
-            <li>Suas despesas estão bastante elevadas. Considere reduzir gastos com lazer e alimentação para equilibrar seu orçamento.</li>
-        <?php endif; ?>
-    <?php // Condição se receitas e despesas estão equilibradas
-    else: ?>
-        <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
-        <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
-        <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
-        <li>Considere investir em educação financeira para aprimorar suas habilidades.</li>
-    <?php endif; ?>
-    
-    <li>Recomenda-se revisar seu planejamento financeiro mensalmente para ajustar suas metas.</li>
-</ul>
+                $limiteAltoReceitas = 5000;
+                $limiteBaixoDespesas = 2000;
+
+                // Condição se receitas são superiores às despesas
+                if ($totalReceitas > $totalDespesas): ?>
+                    <li>Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
+                    <li>Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
+                    <li>Considere diversificar seus investimentos para reduzir riscos.</li>
+                    <?php if ($totalReceitas > $limiteAltoReceitas): ?>
+                        <li>Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
+                    <?php endif; ?>
+            </ul>
+        <?php
+                // Condição se despesas são superiores às receitas
+                elseif ($totalDespesas > $totalReceitas): ?>
+            <li>❌ Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
+            <li>Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
+            <li>Considere estabelecer um limite mensal para despesas variáveis.</li>
+            <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
+            <?php endif; ?>
+            <li>⚠️ A categoria onde você mais gasta é <span style="color: darkred;"><?= $categoriaMaiorGasto ?></span> com um total de R$<?= number_format($valorMaiorGasto, 2, ',', '.') ?>.</li>
+            </ul>
+        <?php
+                // Condição se receitas e despesas estão equilibradas
+                else: ?>
+            <ul style="color: orange;">
+                <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
+                <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
+                <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
+                <li>Considere investir em educação financeira para aprimorar suas habilidades.</li>
+            </ul>
+        <?php endif;
+        ?>
+
+        </ul>
         </div>
 
         <script>
-    var options = {
-        chart: {
-            type: 'area'
-        },
-        series: [{
-            name: 'Receitas',
-            data: <?= json_encode($receitas) ?>  
-        }, {
-            name: 'Despesas',
-            data: <?= json_encode($despesas) ?>
-        }],
-        xaxis: {
-            categories: <?= json_encode($interval === 'diario' 
-                ? array_map(function($i) { return "Dia " . ($i + 1); }, range(0, 29)) 
-                : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']) 
-            ?>
-        }
-    };
+            var options = {
+                chart: {
+                    type: 'area',
+                    toolbar: {
+                        show: false // Remove a toolbar
+                    }
+                },
+                series: [{
+                    name: 'Receitas',
+                    data: <?= json_encode($receitas) ?>
+                }, {
+                    name: 'Despesas',
+                    data: <?= json_encode($despesas) ?>
+                }],
+                xaxis: {
+                    categories: <?= json_encode($interval === 'diario'
+                                    ? array_map(function ($i) {
+                                        return "Dia " . ($i + 1);
+                                    }, range(0, 29))
+                                    : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
+                                ?>
+                }
+            };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-</script>
+            var chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+        </script>
 
     </div>
 </body>
+
 </html>

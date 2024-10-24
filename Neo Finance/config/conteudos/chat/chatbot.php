@@ -13,103 +13,134 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->fetch();
     $stmt->close();
 
-    // Respostas com base em palavras-chave
+    // Respostas associadas a comandos
     $responses = [
         'oi' => function () use ($username) {
-            return "Olá, $username! Como posso ajudar você com suas finanças?\n" .
-                "Escolha uma das opções abaixo:\n" .
-                "1. Saldo\n" .
-                "2. Categorias\n" .
-                "3. Dicas de Economia\n" .
-                "4. Dicas de Investimento\n" .
-                "5. Resumo Mensal\n" .
-                "6. Resumo Diário\n" .
-                "7. Histórico de Transações\n" .
-                "8. Análise de Gastos\n" .
-                "9. Exportar Relatório\n" .
-                "10. Previsão Financeira com Base no Histórico\n" .
-                "11.Comparação de Gastos Mensais\n" .
-                "12. Desafios";
+            return gerarRespostaSaudacao($username, 'oi');
         },
+        'ola' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'ola');
+        },
+        'bom dia' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'bom dia');
+        },
+        'boa tarde' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'boa tarde');
+        },
+        'boa noite' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'boa noite');
+        },
+
         'saldo' => function () use ($conn, $userId) {
             return getSaldo($conn, $userId);
         },
         '1' => function () use ($conn, $userId) {
             return getSaldo($conn, $userId);
         },
-        'categorias' => function () use ($conn, $userId) {
-            return getCategorias($conn, $userId);
-        },
-        '2' => function () use ($conn, $userId) {
-            return getCategorias($conn, $userId);
-        },
         'economizar' => function () use ($conn, $userId) {
             return implode("\n", getDicasEconomizar($conn, $userId));
         },
-        '3' => function () use ($conn, $userId) {
+        '2' => function () use ($conn, $userId) {
             return implode("\n", getDicasEconomizar($conn, $userId));
         },
         'investir' => function () use ($conn, $userId) {
             return implode("\n", getDicasInvestir($conn, $userId));
         },
-        '4' => function () use ($conn, $userId) {
+        '3' => function () use ($conn, $userId) {
             return implode("\n", getDicasInvestir($conn, $userId));
         },
         'resumo mensal' => function () use ($conn, $userId) {
             return getResumoMensal($conn, $userId);
         },
-        '5' => function () use ($conn, $userId) {
+        '4' => function () use ($conn, $userId) {
             return getResumoMensal($conn, $userId);
         },
         'resumo diário' => function () use ($conn, $userId) {
             return getResumoDiario($conn, $userId);
         },
-        '6' => function () use ($conn, $userId) {
+        '5' => function () use ($conn, $userId) {
             return getResumoDiario($conn, $userId);
         },
-        'Historico' => function () use ($conn, $userId) {
+        'historico' => function () use ($conn, $userId) {
             return getHistoricoTransacoes($conn, $userId);
+        },
+        '6' => function () use ($conn, $userId) {
+            return getHistoricoTransacoes($conn, $userId);
+        },
+        'análise' => function () use ($conn, $userId) {
+            return getAnaliseGastos($conn, $userId);
         },
         '7' => function () use ($conn, $userId) {
-            return getHistoricoTransacoes($conn, $userId);
-        },
-        'Análise' => function () use ($conn, $userId) {
             return getAnaliseGastos($conn, $userId);
+        },
+        'exportar' => function () use ($conn, $userId) {
+            return exportarRelatorio($conn, $userId);
         },
         '8' => function () use ($conn, $userId) {
-            return getAnaliseGastos($conn, $userId);
-        },
-        'Exportar' => function () use ($conn, $userId) {
             return exportarRelatorio($conn, $userId);
+        },
+        'previsão financeira' => function () use ($conn, $userId) {
+            return previsaoFinanceira($conn, $userId);
         },
         '9' => function () use ($conn, $userId) {
-            return exportarRelatorio($conn, $userId);
-        },
-        'Previsão financeira' => function () use ($conn, $userId) {
             return previsaoFinanceira($conn, $userId);
+        },
+        'comparação' => function () use ($conn, $userId) {
+            return comparacaoGastosMensais($conn, $userId);
         },
         '10' => function () use ($conn, $userId) {
-            return previsaoFinanceira($conn, $userId);
-        },
-        'Comparação' => function () use ($conn, $userId) {
             return comparacaoGastosMensais($conn, $userId);
+        },
+        'desafio' => function () use ($conn, $userId) {
+            return obterDesafioFinanceiroAleatorio($conn, $userId);
         },
         '11' => function () use ($conn, $userId) {
-            return comparacaoGastosMensais($conn, $userId);
-        },
-        'Desafio' => function () use ($conn, $userId) {
             return obterDesafioFinanceiroAleatorio($conn, $userId);
         },
-        '12' => function () use ($conn, $userId) {
-            return obterDesafioFinanceiroAleatorio($conn, $userId);
-        },
-
-
         'obrigado' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'valeu' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'ajuda' => 'Claro! Estou aqui para ajudar com questões financeiras. O que você gostaria de saber?',
         'como funciona' => 'Posso ajudá-lo a entender orçamentos, investimentos e muito mais!',
     ];
+
+    // Função para gerar a resposta de saudação
+    function gerarRespostaSaudacao($username, $saudacao)
+    {
+        // Personaliza a resposta com base na saudação
+        switch (strtolower($saudacao)) {
+            case 'bom dia':
+                $mensagem = "Bom dia, $username! Como posso ajudar você com suas finanças?\n";
+                break;
+            case 'boa tarde':
+                $mensagem = "Boa tarde, $username! Como posso ajudar você com suas finanças?\n";
+                break;
+            case 'boa noite':
+                $mensagem = "Boa noite, $username! Como posso ajudar você com suas finanças?\n";
+                break;
+            case 'oi':
+            case 'ola':
+                $mensagem = "Olá, $username! Como posso ajudar você com suas finanças?\n";
+                break;
+            default:
+                $mensagem = "Olá, $username! Como posso ajudar você com suas finanças?\n";
+                break;
+        }
+
+        // Retorna as opções de ajuda
+        return $mensagem .
+            "Escolha uma das opções abaixo:\n" .
+            "1. Saldo\n" .
+            "2. Dicas de Economia\n" .
+            "3. Dicas de Investimento\n" .
+            "4. Resumo Mensal\n" .
+            "5. Resumo Diário\n" .
+            "6. Histórico de Transações\n" .
+            "7. Análise de Gastos\n" .
+            "8. Exportar Relatório\n" .
+            "9. Previsão Financeira com Base no Histórico\n" .
+            "10. Comparação de Gastos Mensais\n" .
+            "11. Desafios\n";
+    }
 
     // Adicionando sinônimos para as respostas
     $synonyms = [
@@ -201,7 +232,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Função para obter saldo do usuário
-function getSaldo($conn, $userId) {
+function getSaldo($conn, $userId)
+{
+    // Somar receitas
     $stmtReceitas = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'receita'");
     $stmtReceitas->bind_param("i", $userId);
     $stmtReceitas->execute();
@@ -209,6 +242,7 @@ function getSaldo($conn, $userId) {
     $stmtReceitas->fetch();
     $stmtReceitas->close();
 
+    // Somar despesas
     $stmtDespesas = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'despesa'");
     $stmtDespesas->bind_param("i", $userId);
     $stmtDespesas->execute();
@@ -216,43 +250,15 @@ function getSaldo($conn, $userId) {
     $stmtDespesas->fetch();
     $stmtDespesas->close();
 
+    // Calcular saldo
     $saldo = ($totalReceitas ?? 0) - ($totalDespesas ?? 0);
 
+    // Verificando se o saldo é 0
     if ($saldo == 0) {
         return "Parece que você não tem saldo registrado. Que tal adicionar uma receita?";
     }
 
     return "Seu saldo atual é R$ " . number_format($saldo, 2, ',', '.');
-}
-
-// Função para obter categorias e despesas do usuário
-function getCategorias($conn, $userId)
-{
-    // Consulta para obter categorias e suas respectivas despesas
-    $stmt = $conn->prepare("
-        SELECT c.nome, IFNULL(SUM(t.valor), 0) AS total_despesas
-        FROM categorias c
-        LEFT JOIN transacoes t ON c.id = t.categoria_id AND t.usuario_id = ?
-        WHERE c.usuario_id = ?
-        GROUP BY c.id
-    ");
-    $stmt->bind_param("ii", $userId, $userId);
-    $stmt->execute();
-    $stmt->bind_result($nome, $total_despesas);
-    $categorias = [];
-
-    // Montar a lista de categorias com despesas
-    while ($stmt->fetch()) {
-        $categorias[] = "$nome: R$ " . number_format($total_despesas, 2, ',', '.');
-    }
-    $stmt->close();
-
-    // Retornar as categorias com as despesas
-    if (empty($categorias)) {
-        return "Você ainda não possui categorias ou despesas registradas.";
-    }
-
-    return "Suas categorias e despesas são:\n" . implode("\n", $categorias);
 }
 
 // Função para obter dicas de economia com base no saldo do usuário
@@ -413,34 +419,20 @@ function exportarRelatorio($conn, $userId)
         return "Nenhum dado disponível para exportar.";
     }
 
-    // Criar um diretório temporário, se não existir
-    $diretorioTemporario = 'relatorios/';
-    if (!is_dir($diretorioTemporario)) {
-        mkdir($diretorioTemporario, 0755, true);
-    }
+    // Cria um arquivo temporário em memória
+    $tempFile = tempnam(sys_get_temp_dir(), 'relatorio_') . ".txt";
+    file_put_contents($tempFile, $historico);
 
-    // Gerar nome do arquivo
-    $arquivo = $diretorioTemporario . "relatorio_usuario_$username.txt";
+    // Montar a URL completa para download
+    $urlArquivo = "http://localhost/chat/" . basename($tempFile);
 
-    // Salvar o histórico no arquivo
-    if (file_put_contents($arquivo, $historico) === false) {
-        return "Ocorreu um erro ao gerar o relatório.";
-    }
+    // Criar um link para o download
+    $html = "Relatório gerado. Você pode <a href='$urlArquivo' download>baixar aqui</a>.";
 
-    // Verificar se o arquivo foi criado
-    if (file_exists($arquivo)) {
-        // Montar a URL completa para download
-        $urlArquivo = "http://localhost/Tcc-Dg/Tcc-Dg/Neo%20Finance/config/conteudos/chat/$arquivo";
-
-        // Criar um link para o download
-        $html = "Relatório gerado. Você pode <a href='$urlArquivo' download>baixar aqui</a>.";
-
-
-        return $html;
-    } else {
-        return "Ocorreu um erro ao gerar o relatório.";
-    }
+    return $html;
 }
+
+
 
 function previsaoFinanceira($conn, $userId, $meses = 3)
 {
