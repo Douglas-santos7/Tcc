@@ -1,16 +1,23 @@
+function formatCurrency(value) {
+  // Converts to a string and splits the integer and decimal parts
+  const parts = value.toFixed(2).split(".");
+  // Format the integer part with thousands separators
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  // Join the integer and decimal parts with a comma
+  return `R$ ${parts.join(",")}`;
+}
+
 function animateNumber(element, start, end, duration) {
   const range = end - start;
-  const stepTime = Math.abs(Math.floor(duration / range));
-
-  let startTime = performance.now();
+  const startTime = performance.now();
 
   function updateNumber(currentTime) {
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / duration, 1);
     const currentValue = start + Math.round(range * progress);
 
-    // Atualiza o texto do elemento
-    element.textContent = `R$ ${currentValue.toFixed(2).replace(".", ",")}`;
+    // Update the text of the element using the formatted currency
+    element.textContent = formatCurrency(currentValue);
 
     if (progress < 1) {
       requestAnimationFrame(updateNumber);
@@ -33,32 +40,32 @@ function atualizarGrafico() {
       const despesasFiltro = document.querySelector(".despesas--filtro span:last-child");
       const saldoFiltro = document.querySelector(".saldo--filtro span:last-child");
 
-      // Atualiza as larguras dos gráficos
+      // Update the widths of the charts
       graficoReceitas.style.width = `${data.proporcaoReceitas}px`;
       graficoDespesas.style.width = `${data.proporcaoDespesas}px`;
-      graficoBalanco.style.width = `${data.proporcaoBalanco}px`; // Atualiza o gráfico de balanço
+      graficoBalanco.style.width = `${data.proporcaoBalanco}px`; // Update the balance chart
 
-      // Converte as receitas, despesas e saldo para número
-      const newReceitas = parseFloat(data.receitas.replace(",", "."));
-      const newDespesas = parseFloat(data.despesas.replace(",", "."));
-      const newSaldo = parseFloat(data.balanco.replace(",", "."));
+      // Convert the revenues, expenses, and balance to numbers
+      const newReceitas = parseFloat(data.receitas.replace(".", "").replace(",", "."));
+      const newDespesas = parseFloat(data.despesas.replace(".", "").replace(",", "."));
+      const newSaldo = parseFloat(data.balanco.replace(".", "").replace(",", "."));
 
-      // Anima os números
+      // Animate the numbers
       animateNumber(
         receitasFiltro,
-        parseFloat(receitasFiltro.textContent.replace("R$ ", "").replace(",", ".")),
+        parseFloat(receitasFiltro.textContent.replace("R$ ", "").replace(".", "").replace(",", ".")),
         newReceitas,
         500
       );
       animateNumber(
         despesasFiltro,
-        parseFloat(despesasFiltro.textContent.replace("R$ ", "").replace(",", ".")),
+        parseFloat(despesasFiltro.textContent.replace("R$ ", "").replace(".", "").replace(",", ".")),
         newDespesas,
         500
       );
       animateNumber(
         saldoFiltro,
-        parseFloat(saldoFiltro.textContent.replace("R$ ", "").replace(",", ".")),
+        parseFloat(saldoFiltro.textContent.replace("R$ ", "").replace(".", "").replace(",", ".")),
         newSaldo,
         500
       );
