@@ -57,10 +57,10 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
     // Calcular o total de receitas e despesas para a proporção
     $total = $receitas + $despesas + $saldo;
 
-    // Calcular as proporções em pixels (800 é a largura total do gráfico)
-    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 800 : 0; // Largura da barra de receitas
-    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 800 : 0; // Largura da barra de despesas
-    $proporcaoBalanco = ($total > 0) ? (abs($balanco) / $total) * 800 : 0; // Proporção do balanço
+    // Calcular as proporções em pixels (600 é a largura total do gráfico)
+    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 600 : 0; // Largura da barra de receitas
+    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 600 : 0; // Largura da barra de despesas
+    $proporcaoBalanco = ($total > 0) ? (abs($balanco) / $total) * 600 : 0; // Proporção do balanço
 
     return [
         'receitas' => number_format($receitas, 2, ',', '.'), // Formatação de receitas

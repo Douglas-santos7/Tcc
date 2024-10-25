@@ -254,6 +254,7 @@ body {
 .grafico--balanco {
   height: 70px;
   width: 0;
+  max-width: 1000px; /* Aumentando a largura máxima dos gráficos */
   border-radius: 20px;
   transition: width 1s ease-in-out;
 }
@@ -818,6 +819,7 @@ body {
 @media screen and (max-width: 1300px) {
   .cards {
     grid-template-columns: 1fr;
+    min-width: 920px;
   }
 }
 

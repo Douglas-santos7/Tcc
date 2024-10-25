@@ -133,7 +133,7 @@
 .close-btn {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 22px;
   font-size: 24px;
   color: var(--fonte-branco-100);
   cursor: pointer;
