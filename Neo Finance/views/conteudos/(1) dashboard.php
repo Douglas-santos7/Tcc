@@ -107,7 +107,7 @@ $conn->close();
       </div>
 
       <!-- Card Histórico Recente -->
-      <div class="card--historico-recente" >
+      <div class="card--historico-recente">
         <div class="header--card-hr">
           <span>Histórico Recente</span>
           <button id="ver-tudo-btn">Ver tudo</button>
@@ -121,13 +121,13 @@ $conn->close();
       </div>
 
       <!-- Card Receitas x Despesas -->
-      <div class="card--receitasXdespesas" >
+      <div class="card--receitasXdespesas">
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
           <div class="grafico--receitasXdespesas" id="cardReceitasDespesas">
             <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
-            <div class="grafico--balanco" data-largu ra="<?php echo $proporcaoBalanco; ?>"></div> 
+            <div class="grafico--balanco" data-largu ra="<?php echo $proporcaoBalanco; ?>"></div>
           </div>
         </div>
         <div class="infoXfiltro">
@@ -245,11 +245,16 @@ $conn->close();
 
             <input type="hidden" name="categoria" id="categoria-id" required>
 
-            <label for="tipo">Tipo:</label>
-            <select name="tipo" required>
-              <option value="receita">Receita</option>
-              <option value="despesa">Despesa</option>
-            </select>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="receita" required>
+                <span class="receita--radio">Receita</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="despesa">
+                <span class="despesa--radio">Despesa</span>
+              </label>
+            </div>
 
             <button type="submit">Adicionar</button>
           </form>
