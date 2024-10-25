@@ -28,7 +28,7 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
             $dataInicial = date('Y-m-d H:i:s', strtotime('last Monday')); // Última segunda-feira
             break;
         case 'diario':
-            $dataInicial = date('Y-m-d 00:00:00'); // Hoje
+            $dataInicial = date('Y-m-d 00:00:00'); // Primeiro dia do dia atual
             break;
         default:
             return ['error' => 'Período inválido.'];
