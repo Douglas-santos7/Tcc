@@ -240,7 +240,7 @@ $conn->close();
             <label for="valor">Valor:</label>
             <input type="text" id="valor" name="valor" required placeholder="0,00">
 
-            <label for="categoria">Categoria:</label>
+            
             <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
             <input type="hidden" name="categoria" id="categoria-id" required>
