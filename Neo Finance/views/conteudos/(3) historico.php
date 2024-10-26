@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 include '../../config/database/conexao.php';
+include '../../config/conteudos/dashboard/logica_calendario.php';
 
 $user_id = $_SESSION['user_id'];
 
@@ -38,9 +39,28 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param(str_repeat('s', count($params)), ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
+$formStartDate = isset($startDate) ? htmlspecialchars($startDate) : '';
+$formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
 
 if (!$result) {
     echo "Erro ao buscar transações: " . mysqli_error($conn);
+}
+
+if ($startDate && $endDate) {
+    // Ajusta a data de fim para incluir todo o dia
+    $endDate = date('Y-m-d', strtotime($endDate . ' +1 day')); // Adiciona um dia
+
+    // Adiciona a opção de filtrar por mês, se o usuário marcou a caixa de seleção
+    $filterByMonth = isset($_GET['filter_by_month']) ? 1 : 0;
+    if ($filterByMonth) {
+        $query .= " AND MONTH(t.data) BETWEEN MONTH(?) AND MONTH(?)";
+        $params[] = $startDate;
+        $params[] = $endDate;
+    } else {
+        $query .= " AND t.data BETWEEN ? AND ?";
+        $params[] = $startDate;
+        $params[] = $endDate;
+    }
 }
 ?>
 
@@ -66,11 +86,36 @@ if (!$result) {
                 </div>
             </header>
         </div>
+        <div class="filtro--periodo">
+            <form action="" method="GET">
+                <label for="start_date">De:</label>
+                <input type="date" id="start_date" name="start_date" value="<?php echo htmlspecialchars($startDate); ?>" />
+
+                <label for="end_date">Até:</label>
+                <input type="date" id="end_date" name="end_date" value="<?php echo htmlspecialchars($endDate); ?>" />
+
+                <button type="submit">Filtrar</button>
+            </form>
+        </div>
         <div class="conteudo--scroll">
             <div class="container--conteudo">
                 <?php
                 if ($result->num_rows > 0) {
+                    $currentMonth = '';
+
                     while ($row = $result->fetch_assoc()) {
+                        $month = date('F Y', strtotime($row['data']));
+
+                        if ($month !== $currentMonth) {
+                            if ($currentMonth !== '') {
+                                echo '</div>'; // Fecha a div do mês anterior, se houver
+                            }
+
+                            echo '<div class="month--historico">';
+                            echo '<h2>' . mesEmPortugues($row['data']) . ' de ' . date('Y', strtotime($row['data'])) . '</h2>';
+                            echo '<div class="card--historico-group">';
+                        }
+
                         // Define a cor do valor com base no tipo
                         $valorCor = (strtolower($row['tipo']) === 'receita') ? 'green' : 'red'; // Verde para receita, vermelho para despesa
                         echo '<div class="card--historico">';
@@ -97,6 +142,13 @@ if (!$result) {
                         echo '        </div>';
                         echo '    </div>';
                         echo '</div>';
+
+                        $currentMonth = $month;
+                    }
+
+                    if ($currentMonth !== '') {
+                        echo '</div>'; // Fecha a div do grupo de cards do último mês
+                        echo '</div>'; // Fecha a div do último mês
                     }
                 } else {
                     echo "<div>Nenhum lançamento encontrado.</div>";
