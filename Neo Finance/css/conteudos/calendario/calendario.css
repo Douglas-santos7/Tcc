@@ -197,8 +197,13 @@ body {
   white-space: nowrap;
   color: var(--fonte-cards);
 }
+
+.status-pago {
+  background-color: white;
+}
+
 .categoria--receita {
-  background: rgb(39, 39, 161);
+  background: rgb(76, 56, 255);
   border-radius: 12px;
   padding: 5px 20px;
   font-size: 1rem;
@@ -208,7 +213,7 @@ body {
 }
 
 .categoria--despesa {
-  background: #ce170a;
+  background: rgb(247, 69, 69);
   border-radius: 12px;
   padding: 5px 20px;
   font-size: 1rem;

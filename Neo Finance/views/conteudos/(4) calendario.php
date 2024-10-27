@@ -139,7 +139,9 @@ $categorias = buscarCategorias($usuario_id, $conn);
                       <div class="tags--descricao">
                         <span class="categoria--1"><?php echo calcularDiasRestantes($vencimento['data_vencimento']); ?></span>
                         <span class="categoria--2"><?php echo $vencimento['categoria']; ?></span>
-                        <span class="categoria--3"><?php echo $vencimento['status']; ?></span>
+                        <span class="categoria--3 <?php echo ($vencimento['status'] === 'Pago') ? 'status-pago' : ''; ?>">
+                          <?php echo $vencimento['status']; ?>
+                        </span>
                         <?php if (isset($vencimento) && isset($vencimento['tipo_transacao'])): ?>
                           <span class="<?php echo strtolower(trim($vencimento['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
                             <?php echo htmlspecialchars($vencimento['tipo_transacao']); ?>
