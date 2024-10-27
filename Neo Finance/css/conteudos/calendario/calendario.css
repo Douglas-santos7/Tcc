@@ -357,6 +357,14 @@ body {
   margin: 0px 5px;
 }
 
+.filtro--mes option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  text-align: start;
+}
+
 .filtro--mes select:focus,
 .filtro--mes select:hover {
   border-color: #00ff6e;
