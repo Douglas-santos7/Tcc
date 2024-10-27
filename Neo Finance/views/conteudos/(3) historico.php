@@ -1,51 +1,30 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login/login.php');
-    exit;
-}
 
+
+// Verifica se o usuário está logado, caso contrário, redireciona para a página de login
+include '../../config/conteudos/login/verifica_login.php';
+
+// Inclui o arquivo de configuração do banco de dados e a lógica do calendário
 include '../../config/database/conexao.php';
 include '../../config/conteudos/dashboard/logica_calendario.php';
 
+// Obtém o ID do usuário da sessão
 $user_id = $_SESSION['user_id'];
 
 // Inicializa as variáveis de filtragem usando $_GET
 $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
 $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
-// Construir a query básica
+// Construir a query básica para buscar as transações do usuário
 $query = "SELECT t.id, t.nome AS descricao, c.nome AS categoria, c.icone AS icone, t.valor, t.data, t.tipo , t.criado_em
-          FROM transacoes t 
-          JOIN categorias c ON t.categoria_id = c.id 
+          FROM transacoes t
+          JOIN categorias c ON t.categoria_id = c.id
           WHERE t.usuario_id = ?";
 
-// Adiciona filtros conforme os dados inseridos
+// Adiciona parâmetros para a consulta
 $params = [$user_id]; // Inicializa o array de parâmetros
 
-if ($startDate && $endDate) {
-    // Ajusta a data de fim para incluir todo o dia
-    $endDate = date('Y-m-d', strtotime($endDate . ' +1 day')); // Adiciona um dia
-    $query .= " AND t.data BETWEEN ? AND ?";
-    $params[] = $startDate;
-    $params[] = $endDate;
-}
-
-// Adiciona a ordenação para do mais recente para o mais antigo
-$query .= " ORDER BY t.criado_em DESC";
-
-// Prepara e executa a consulta
-$stmt = $conn->prepare($query);
-$stmt->bind_param(str_repeat('s', count($params)), ...$params);
-$stmt->execute();
-$result = $stmt->get_result();
-$formStartDate = isset($startDate) ? htmlspecialchars($startDate) : '';
-$formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
-
-if (!$result) {
-    echo "Erro ao buscar transações: " . mysqli_error($conn);
-}
-
+// Adiciona filtros de data à query, se startDate e endDate estiverem definidos
 if ($startDate && $endDate) {
     // Ajusta a data de fim para incluir todo o dia
     $endDate = date('Y-m-d', strtotime($endDate . ' +1 day')); // Adiciona um dia
@@ -62,18 +41,29 @@ if ($startDate && $endDate) {
         $params[] = $endDate;
     }
 }
+
+// Adiciona a ordenação para do mais recente para o mais antigo
+$query .= " ORDER BY t.criado_em DESC";
+
+// Prepara e executa a consulta
+$stmt = $conn->prepare($query);
+$stmt->bind_param(str_repeat('s', count($params)), ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Obtém os valores de startDate e endDate para preencher os campos do formulário
+$formStartDate = isset($startDate) ? htmlspecialchars($startDate) : '';
+$formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Finance - Histórico</title>
     <link rel="stylesheet" href="../../css/conteudos/historico/historico.css">
 </head>
-
 <body>
     <div class="containter">
         <div class="container--header">
@@ -89,10 +79,10 @@ if ($startDate && $endDate) {
         <div class="filtro--periodo">
             <form action="" method="GET">
                 <label for="start_date">De:</label>
-                <input type="date" id="start_date" name="start_date" value="<?php echo htmlspecialchars($startDate); ?>" />
+                <input type="date" id="start_date" name="start_date" value="<?php echo $formStartDate; ?>" />
 
                 <label for="end_date">Até:</label>
-                <input type="date" id="end_date" name="end_date" value="<?php echo htmlspecialchars($endDate); ?>" />
+                <input type="date" id="end_date" name="end_date" value="<?php echo $formEndDate; ?>" />
 
                 <button type="submit">Filtrar</button>
             </form>
@@ -100,12 +90,15 @@ if ($startDate && $endDate) {
         <div class="conteudo--scroll">
             <div class="container--conteudo">
                 <?php
+                // Verifica se há resultados da consulta
                 if ($result->num_rows > 0) {
                     $currentMonth = '';
 
+                    // Itera sobre os resultados e exibe cada transação em um card
                     while ($row = $result->fetch_assoc()) {
                         $month = date('F Y', strtotime($row['data']));
 
+                        // Verifica se é um novo mês e, se for, fecha a div do mês anterior e abre uma nova
                         if ($month !== $currentMonth) {
                             if ($currentMonth !== '') {
                                 echo '</div>'; // Fecha a div do mês anterior, se houver
@@ -116,8 +109,10 @@ if ($startDate && $endDate) {
                             echo '<div class="card--historico-group">';
                         }
 
-                        // Define a cor do valor com base no tipo
+                        // Define a cor do valor com base no tipo (receita ou despesa)
                         $valorCor = (strtolower($row['tipo']) === 'receita') ? 'green' : 'red'; // Verde para receita, vermelho para despesa
+
+                        // Exibe o card da transação com a descrição, categoria, data, valor e ícone correspondentes
                         echo '<div class="card--historico">';
                         echo '    <div class="parte1--card">';
                         echo '        <div class="icone--card">';
@@ -146,11 +141,13 @@ if ($startDate && $endDate) {
                         $currentMonth = $month;
                     }
 
+                    // Fecha a div do grupo de cards do último mês e a div do último mês, se houver
                     if ($currentMonth !== '') {
                         echo '</div>'; // Fecha a div do grupo de cards do último mês
                         echo '</div>'; // Fecha a div do último mês
                     }
                 } else {
+                    // Exibe uma mensagem caso não haja transações encontradas
                     echo "<div>Nenhum lançamento encontrado.</div>";
                 }
                 ?>
@@ -158,5 +155,4 @@ if ($startDate && $endDate) {
         </div>
     </div>
 </body>
-
 </html>
