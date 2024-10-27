@@ -247,11 +247,11 @@ $conn->close();
 
             <div class="radio-group">
               <label class="radio-label">
-                <input type="radio" name="tipo" value="receita" required>
+                <input type="radio" name="tipo" value="Receita" required>
                 <span class="receita--radio">Receita</span>
               </label>
               <label class="radio-label">
-                <input type="radio" name="tipo" value="despesa">
+                <input type="radio" name="tipo" value="Despesa">
                 <span class="despesa--radio">Despesa</span>
               </label>
             </div>

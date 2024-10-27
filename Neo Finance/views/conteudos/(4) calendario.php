@@ -21,18 +21,6 @@ if (isset($_POST['adicionarVencimento'])) {
     echo "Por favor, selecione o tipo de transação.";
   } else {
     $vencimentoAdicionado = adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $tipo_transacao, $conn);
-  }
-}
-
-// Lógica ao adicionar vencimento
-if (isset($_POST['adicionarVencimento'])) {
-  $descricao = $_POST['descricao'];
-  $data_vencimento = $_POST['data_vencimento'];
-  $valor = $_POST['valor'];
-  $categoria = $_POST['categoria'];
-  $tipo_transacao = $_POST['tipo_transacao'];
-
-  if (adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $tipo_transacao, $conn)) {
     echo "<script>
               window.onload = function() {
                   var modalSucesso = document.getElementById('modalSucesso');
@@ -43,10 +31,9 @@ if (isset($_POST['adicionarVencimento'])) {
                   }
               };
             </script>";
-  } else {
-    echo "<script>alert('Erro ao adicionar o vencimento.');</script>";
   }
 }
+
 
 if (isset($_POST['confirmarPagamento'])) {
   $vencimento_id = $_POST['vencimento_id'];

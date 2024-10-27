@@ -9,7 +9,7 @@ function consultarHistorico($conn, $userId)
       FROM transacoes t
       JOIN categorias c ON t.categoria_id = c.id
       WHERE t.usuario_id = ?
-      ORDER BY t.criado_em DESC
+      ORDER BY t.id DESC
       LIMIT 5";
 
   // Preparando a consulta
@@ -45,7 +45,7 @@ function consultarHistorico($conn, $userId)
               </div>
               <div class="parte--dois-info">
                   <span class="data--historico">' . date('d/m/Y', strtotime($row['criado_em'])) . '</span> <!-- Exibe a data -->
-                  <span class="valor--historico" style="color: ' . ($row['tipo'] === 'receita' ? 'green' : 'red') . ';">
+                  <span class="valor--historico" style="color: ' . ($row['tipo'] === 'Receita' ? 'green' : 'red') . ';">
                       R$ ' . number_format($row['valor'], 2, ',', '.') . ' <!-- Exibe o valor -->
                   </span>
               </div>

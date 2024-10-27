@@ -3,10 +3,10 @@ include("../config/database/conexao.php");
 include("../config/conteudos/login/verifica_login.php");
 
 // Obtém o saldo inicial do usuário
-$user_id = $_SESSION['user_id'];
+$userId = $_SESSION['user_id'];
 $query = "SELECT saldo_inicial_adicionado, saldo FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
-$stmt->bind_param('i', $user_id);
+$stmt->bind_param('i', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Atualiza o saldo do usuário
         $query = "UPDATE users SET saldo = saldo + ?, saldo_inicial_adicionado = 1 WHERE id = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param('di', $saldo_inicial, $user_id); // 'd' para decimal, 'i' para integer
+        $stmt->bind_param('di', $saldo_inicial, $userId); // 'd' para decimal, 'i' para integer
         $stmt->execute();
 
         // Atualiza a sessão com o novo saldo (opcional)
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Atualiza o campo saldo_inicial_adicionado para 1
         $query = "UPDATE users SET saldo_inicial_adicionado = 1 WHERE id = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param('i', $user_id);
+        $stmt->bind_param('i', $userId);
         $stmt->execute();
 
         // Redireciona após atualizar o campo
