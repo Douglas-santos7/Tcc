@@ -1,10 +1,5 @@
 function formatCurrency(value) {
-  // Converts to a string and splits the integer and decimal parts
-  const parts = value.toFixed(2).split(".");
-  // Format the integer part with thousands separators
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  // Join the integer and decimal parts with a comma
-  return `R$ ${parts.join(",")}`;
+  return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 }
 
 function animateNumber(element, start, end, duration) {
@@ -14,7 +9,7 @@ function animateNumber(element, start, end, duration) {
   function updateNumber(currentTime) {
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / duration, 1);
-    const currentValue = start + Math.round(range * progress);
+    const currentValue = start + range * progress;
 
     // Update the text of the element using the formatted currency
     element.textContent = formatCurrency(currentValue);
