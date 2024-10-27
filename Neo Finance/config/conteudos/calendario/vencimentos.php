@@ -14,7 +14,7 @@ function buscarVencimentos($mesSelecionado, $conn)
     JOIN categorias c ON v.categoria = c.nome
     WHERE MONTH(v.data_vencimento) = ? AND v.usuario_id = ?
     GROUP BY v.id
-    ORDER BY status DESC";
+    ORDER BY v.id DESC";
 
     // Usa prepared statements
     if ($stmt = mysqli_prepare($conn, $query)) {
@@ -65,7 +65,7 @@ function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $
         die('Erro na conexão com o banco de dados.');
     }
 
-    // Monta a query SQL de inserção, agora incluindo o tipo de transação
+    // Monta a query SQL de inserção
     $query = "INSERT INTO vencimentos (descricao, data_vencimento, valor, categoria, status, usuario_id, tipo_transacao)
               VALUES (?, ?, ?, ?, 'Pendente', ?, ?)";
 
@@ -76,17 +76,18 @@ function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $
 
         // Executa a consulta
         if (mysqli_stmt_execute($stmt)) {
-            echo "Vencimento adicionado com sucesso!";
+            // Fecha a declaração
+            mysqli_stmt_close($stmt);
+            return true; // Sucesso
         } else {
-            echo "Erro: " . mysqli_error($conn);
+            mysqli_stmt_close($stmt);
+            return false; // Falha
         }
-
-        // Fecha a declaração
-        mysqli_stmt_close($stmt);
     } else {
-        echo "Erro ao preparar a consulta: " . mysqli_error($conn);
+        return false; // Falha na preparação
     }
 }
+
 
 // Função para confirmar o pagamento de um vencimento
 function confirmarPagamento($vencimento_id, $conn)
@@ -105,6 +106,7 @@ function confirmarPagamento($vencimento_id, $conn)
         // Insere a transação na tabela de transações
         $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
         $usuario_id = $vencimento['usuario_id'];
         $tipo_transacao = $vencimento['tipo_transacao'];
         $categoria_id = $vencimento['categoria_id'];
@@ -118,23 +120,14 @@ function confirmarPagamento($vencimento_id, $conn)
         $stmt->bind_param("isssdsss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
         $stmt->execute();
 
+        // Atualiza o status do vencimento para 'Pago'
+        $stmt = $conn->prepare("UPDATE vencimentos SET status = 'Pago' WHERE id = ?");
+        $stmt->bind_param("i", $vencimento_id);
+        $stmt->execute();
+
         return true;
     } else {
         return false;
     }
 }
 
-
-
-// Verifica se o formulário de confirmação de pagamento foi submetido
-if (isset($_POST['confirmarPagamento'])) {
-    $vencimento_id = $_POST['vencimento_id'];
-
-    // Chama a função para confirmar o pagamento
-    if (confirmarPagamento($vencimento_id, $conn)) {
-        // Exibe o modal de sucesso
-        echo "<script>document.getElementById('modalSucesso').style.display = 'flex';</script>";
-    } else {
-        echo "<script>alert('Erro ao confirmar o pagamento.');</script>";
-    }
-}

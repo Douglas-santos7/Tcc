@@ -14,15 +14,58 @@ if (isset($_POST['adicionarVencimento'])) {
   $valor = str_replace('.', '', $_POST['valor']);
   $valor = str_replace(',', '.', $valor);
   $categoria = $_POST['categoria'];
-
-  // Verifica se o tipo_transacao foi definido
   $tipo_transacao = isset($_POST['tipo_transacao']) ? $_POST['tipo_transacao'] : null;
 
-  // Se o tipo_transacao não estiver definido, exibe uma mensagem de erro
+  // Verifica se o tipo_transacao foi definido
   if ($tipo_transacao === null) {
     echo "Por favor, selecione o tipo de transação.";
   } else {
     $vencimentoAdicionado = adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $tipo_transacao, $conn);
+  }
+}
+
+// Lógica ao adicionar vencimento
+if (isset($_POST['adicionarVencimento'])) {
+  $descricao = $_POST['descricao'];
+  $data_vencimento = $_POST['data_vencimento'];
+  $valor = $_POST['valor'];
+  $categoria = $_POST['categoria'];
+  $tipo_transacao = $_POST['tipo_transacao'];
+
+  if (adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $tipo_transacao, $conn)) {
+    echo "<script>
+              window.onload = function() {
+                  var modalSucesso = document.getElementById('modalSucesso');
+                  if (modalSucesso) {
+                      modalSucesso.style.display = 'flex';
+                  } else {
+                      console.log('Modal Sucesso não encontrado');
+                  }
+              };
+            </script>";
+  } else {
+    echo "<script>alert('Erro ao adicionar o vencimento.');</script>";
+  }
+}
+
+if (isset($_POST['confirmarPagamento'])) {
+  $vencimento_id = $_POST['vencimento_id'];
+
+  // Chama a função para confirmar o pagamento
+  if (confirmarPagamento($vencimento_id, $conn)) {
+    // Exibe o modal de sucesso
+    echo "<script>
+              window.onload = function() {
+                  var modalSucessoPagamento = document.getElementById('modalSucessoPagamento');
+                  if (modalSucessoPagamento) {
+                      modalSucessoPagamento.style.display = 'flex';
+                  } else {
+                      console.log('Modal Sucesso do Pagamento não encontrado');
+                  }
+              };
+            </script>";
+  } else {
+    echo "<script>alert('Erro ao confirmar o pagamento.');</script>";
   }
 }
 
@@ -42,6 +85,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neo Finance - Calendário</title>
   <link rel="stylesheet" href="../../css/conteudos/calendario/calendario.css" />
+  <script src="../../js/conteudos/calendario/calendario.js" defer></script>
 </head>
 
 <body>
@@ -195,108 +239,35 @@ $categorias = buscarCategorias($usuario_id, $conn);
       </div>
 
       <!-- Modal de Sucesso -->
-      <div id="modalSucesso" class="modal">
+      <div id="modalSucesso" class="modal" style="display: none;">
         <div class="modal-content">
-          <span class="fechar--modal" onclick="fecharModalSucesso()">&times;</span>
           <h2>Sucesso!</h2>
           <p>Vencimento adicionado com sucesso.</p>
           <button id="btn-ok" onclick="fecharModalSucesso()">OK</button>
         </div>
       </div>
 
-      <!-- Modal de Confirmação de Pagamento -->
+      <!-- Modal de Sucesso do Pagamento -->
+      <div id="modalSucessoPagamento" class="modal" style="display: none;">
+        <div class="modal-content">
+          <h2>Sucesso!</h2>
+          <p>Pagamento confirmado com sucesso.</p>
+          <button id="btn-ok" onclick="fecharModalSucessoPagamento()">OK</button>
+        </div>
+      </div>
+
+      <!-- Modal para Confirmar Pagamento -->
       <div id="modalConfirmarPagamento" class="modal">
         <div class="modal-content">
           <span class="fechar--modal" onclick="fecharModalConfirmarPagamento()">&times;</span>
           <h2>Confirmar Pagamento</h2>
           <p>Você tem certeza que deseja confirmar o pagamento deste vencimento?</p>
-          <form id="formConfirmarPagamento" method="POST" onsubmit="return confirmarPagamento(event)">
+          <form id="formConfirmarPagamento" method="POST">
             <input type="hidden" id="vencimento_id" name="vencimento_id" value="">
-            <button type="submit" name="confirmarPagamento"></button>
+            <button type="submit" name="confirmarPagamento">Confirmar</button>
           </form>
         </div>
       </div>
-
-      <script>
-        // Função para abrir o modal de adicionar vencimento
-        function abrirModalAdicionar() {
-          document.getElementById('modalAdicionar').style.display = 'flex';
-        }
-
-        // Função para fechar o modal de adicionar vencimento
-        function fecharModalAdicionar() {
-          document.getElementById("modalAdicionar").style.display = "none";
-        }
-
-        // Função para fechar o modal de sucesso
-        function fecharModalSucesso() {
-          document.getElementById('modalSucesso').style.display = 'none';
-        }
-
-        // Função para validar o formulário antes do envio
-        function validarFormulario(event) {
-          const valorInput = document.querySelector('input[name="valor"]');
-          const dataInput = document.getElementById('data_vencimento');
-          if (valorInput.value < 0) {
-            alert("O valor não pode ser negativo.");
-            return false;
-          }
-          const dataSelecionada = new Date(dataInput.value);
-          const hoje = new Date();
-          hoje.setHours(0, 0, 0, 0); // Zera as horas da data de hoje
-          if (dataSelecionada < hoje) {
-            document.getElementById('modalConfirmacao').style.display = 'flex';
-            return false;
-          }
-          return true;
-        }
-
-        // Função para formatar o valor do input
-        function formatarValor(input) {
-          let valor = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-          valor = (valor / 100).toFixed(2); // Converte para um número com duas casas decimais
-
-          // Separa a parte inteira da parte decimal
-          let partes = valor.split('.');
-          let inteiro = partes[0];
-          let decimal = partes[1];
-
-          // Adiciona pontos como separadores de milhar
-          inteiro = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-          // Combina a parte inteira com a parte decimal
-          valor = inteiro + ',' + decimal;
-
-          input.value = valor;
-        }
-
-        // Adiciona o evento de clique no botão de OK do modal de confirmação
-        document.getElementById("btn-ok").onclick = function() {
-          document.getElementById('modalConfirmacao').style.display = 'none';
-        }
-
-        // Exibe o modal de sucesso se o vencimento for adicionado
-        <?php if (isset($vencimentoAdicionado) && $vencimentoAdicionado): ?>
-          document.getElementById('modalSucesso').style.display = 'flex';
-        <?php endif; ?>
-
-        // Função para abrir o modal de confirmação de pagamento
-        function abrirModalConfirmarPagamento(vencimentoId) {
-          document.getElementById('vencimento_id').value = vencimentoId;
-          document.getElementById('modalConfirmarPagamento').style.display = 'flex';
-        }
-
-        // Função para fechar o modal de confirmação de pagamento
-        function fecharModalConfirmarPagamento() {
-          document.getElementById('modalConfirmarPagamento').style.display = 'none';
-        }
-
-        // Função para confirmar o pagamento
-        function confirmarPagamento(event) {
-          event.preventDefault();
-          document.getElementById('formConfirmarPagamento').submit();
-        }
-      </script>
     </div>
   </div>
 </body>
