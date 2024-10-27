@@ -340,35 +340,53 @@ body {
 .filtro--mes {
   margin-bottom: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
 }
 
 .filtro--mes select {
-  padding: 10px;
-  font-size: 1.5rem;
+  padding: 8px 15px;
+  font-size: 1.2rem;
   text-align: center;
   border-radius: 8px;
+  border: 2px solid transparent;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #f8f8f8;
+  border-color: #00e060;
+  margin: 0px 5px;
 }
 
-.filtro--mes select:focus {
-  border-color: #4caf50;
+.filtro--mes select:focus,
+.filtro--mes select:hover {
+  border-color: #00ff6e;
+  box-shadow: 0px 4px 8px rgba(0, 224, 96, 0.2);
 }
 
 .filtro--mes button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  background-color: #5cb85c;
-  color: white;
+  outline: 2px solid var(--cor--destaque-verde);
+  border: none;
+  padding: 8px 30px;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
+  font-size: 1.2rem;
+  transition: transform 0.5s ease-in;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .filtro--mes button:hover {
-  background-color: #4cae4f;
-  transform: translateY(-2px); /* Levanta o botão ao passar o mouse */
+  background-color: var(--cor--destaque-verde);
+  outline: 2px solid black;
+  transition: outline 0.5s ease;
+  box-shadow: 0px 8px 12px rgba(0, 224, 96, 0.2);
+}
+
+.filtro--mes button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-in;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* =====================================
@@ -376,14 +394,13 @@ body {
    ===================================== */
 .conteudo--card-vencimentos::-webkit-scrollbar {
   width: 0px;
-  background: transparent; 
+  background: transparent;
 }
 
 .conteudo--card-vencimentos {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
 
 .confirmar-pagamento {
   display: flex;
@@ -400,11 +417,11 @@ body {
   cursor: pointer;
 }
 
-.confirmar-pagamento img{
- width: 70px;
- height: 70px;
- outline: none;
- background-color: var(--background--icon);
- border-radius: 50%;
- padding: 10px;
+.confirmar-pagamento img {
+  width: 70px;
+  height: 70px;
+  outline: none;
+  background-color: var(--background--icon);
+  border-radius: 50%;
+  padding: 10px;
 }
