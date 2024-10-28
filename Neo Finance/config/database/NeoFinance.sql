@@ -112,6 +112,18 @@ CREATE TABLE vencimentos (
     FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+-- Criação da tabela de Metas
+CREATE TABLE metas (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nome_meta VARCHAR(255) NOT NULL,
+    valor_alvo DECIMAL(10, 2) NOT NULL,
+    valor_atual DECIMAL(10, 2) DEFAULT 0.00,  -- Valor atual economizado
+    data_limite DATE,  -- Data limite para atingir a meta
+    criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
 -- Criação do Trigger para inserir categorias predefinidas para novos usuários
 DELIMITER //
 

@@ -1,0 +1,196 @@
+@import url(../../../css/root.css);
+
+/* Estilos Gerais */
+body {
+    font-family: var(--fonte-principal);
+    background-color: var(--background);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Adicionado para alinhar conteúdo verticalmente */
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* Adicionado para garantir que os itens fiquem em colunas */
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    margin-bottom: 20px; /* Espaço entre os cards e a navegação */
+}
+
+/* Menu Lateral */
+.menu-lateral {
+    background-color: #003617;
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 22px;
+    top: 20px;
+    height: 90%;
+    width: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-lateral:hover {
+    background-color: var(--cor--destaque-verde);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Container dos Cards */
+.container-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    gap: 30px; /* Espaçamento entre os cards */
+    flex-grow: 1;
+    padding: 0 20px;
+    margin-left: 130px; /* Espaço ajustado para o menu lateral */
+    width: calc(100% - 150px); /* Ajusta a largura para não sobrepor a barra lateral */
+    margin-bottom: 20px; /* Espaço entre os cards e a navegação */
+    margin-top: 40px; /* Aumenta o espaçamento no topo */
+}
+
+
+/* Estilos dos Cards de Metas */
+.card-meta {
+    background-color: #f1eeff;
+    border-radius: 15px;
+    padding: 30px; /* Aumenta o padding para mais espaçamento interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 350px; /* Aumenta a altura mínima dos cards */
+    width: 90%; /* Permite que o card ocupe a largura completa da coluna */
+    margin-bottom: 20px; /* Espaçamento extra entre os cards na vertical */
+}
+
+.titulo-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Aumenta o espaçamento entre o título e o conteúdo */
+    font-size: 24px; /* Aumenta o tamanho da fonte dos títulos */
+}
+
+.titulo-card img {
+    width: 32px; /* Aumenta o tamanho do ícone */
+    height: 32px;
+}
+.progresso-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Espaço entre a barra e a mensagem */
+}
+
+.barra-progresso {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px; /* Espaço entre a barra e os textos */
+}
+
+.barra-progresso-preenchida {
+    height: 100%;
+    background-color: #28a745; /* Verde para indicar progresso */
+    border-radius: 10px 0 0 10px;
+}
+
+.mensagem-meta-alcancada {
+    font-size: 18px;
+    color: #28a745; /* Verde de sucesso */
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: left; /* Garante que a mensagem fique alinhada à esquerda */
+    width: 100%; /* Garante que a mensagem ocupe toda a linha */
+}
+
+.progresso-meta span {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+
+/* Estilos para botões */
+.botoes-meta {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.icone-lixeira {
+    background: none; /* Remove o background */
+    border: none; /* Remove a borda */
+    color: red; /* Define o ícone como vermelho */
+    cursor: pointer;
+    font-size: 24px; /* Aumenta o tamanho do ícone */
+    transition: transform 0.3s ease;
+}
+
+.icone-lixeira:hover {
+    transform: scale(1.05); /* Efeito de aumentar ligeiramente ao passar o mouse */
+}
+
+
+.btn-depositar,
+.btn-historico,
+.btn-resgatar {
+    background-color: #003617;
+    color: #fff;
+    border: none;
+    padding: 12px 18px; /* Aumenta o padding dos botões */
+    border-radius: 10px; /* Aumenta o arredondamento dos botões */
+    font-size: 16px; /* Aumenta o tamanho da fonte dos botões */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-depositar:hover,
+.btn-historico:hover,
+.btn-resgatar:hover {
+    background-color: var(--cor--destaque-verde);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/*======================
+Gráficos CSS
+========================*/
+
+  /* Estilo geral para os gráficos */
+  .grafico {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px; /* Espaçamento interno */
+    border-radius: 15px; /* Bordas arredondadas */
+    transition: transform 0.3s ease; /* Transição suave para hover */
+  }
+
+  .grafico:hover {
+    transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+  }
+
+  /* Estilo dos rótulos dos gráficos */
+  .apexcharts-datalabels {
+    font-family: 'Arial', sans-serif; /* Fonte mais moderna */
+    font-weight: bold; /* Texto em negrito */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Sombra do texto */
+  }

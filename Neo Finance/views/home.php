@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <img class="icon--li" src="../assets/icons/home--sidebar/categorias--icon.svg" />
                         <span>Categorias</span>
                     </li>
-                    <li class="Item7" data-src="./conteudos/(7) teste.html" data-title="Metas">
+                    <li class="Item7" data-src="./conteudos/(7) metas.php" data-title="Metas">
                         <div class="barra--icon"></div>
                         <img class="icon--li" src="../assets/icons/home--sidebar/metas--icon.svg" />
                         <span>Metas</span>
