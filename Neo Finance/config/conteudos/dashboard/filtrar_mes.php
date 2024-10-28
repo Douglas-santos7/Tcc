@@ -5,7 +5,7 @@ include("../../database/conexao.php");
 // Iniciando a sessão
 session_start();
 // Obtendo o ID do usuário da sessão
-$userId = $_SESSION['user_id'] ?? null; // Usar um valor padrão se o usuário não estiver autenticado
+$userId = $_SESSION['user_id'] ?? null;
 
 // Obtendo o período da requisição (GET)
 $periodo = $_GET['periodo'] ?? 'diario'; // Define 'diario' como padrão
@@ -35,21 +35,30 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
     }
 
     // Consultar receitas e despesas com base no período
-    $queryReceitas = "SELECT SUM(valor) AS totalReceitas FROM transacoes WHERE tipo = 'receita' AND usuario_id = $userId AND data >= '$dataInicial' AND data <= '$dataFinal'";
-    $queryDespesas = "SELECT SUM(valor) AS totalDespesas FROM transacoes WHERE tipo = 'despesa' AND usuario_id = $userId AND data >= '$dataInicial' AND data <= '$dataFinal'";
+    $queryReceitas = "SELECT SUM(valor) AS totalReceitas FROM transacoes WHERE tipo = 'receita' AND usuario_id = ? AND data >= ? AND data <= ?";
+    $queryDespesas = "SELECT SUM(valor) AS totalDespesas FROM transacoes WHERE tipo = 'despesa' AND usuario_id = ? AND data >= ? AND data <= ?";
+    $querySaldo = "SELECT saldo FROM users WHERE id = ?";
 
-    // Executar consultas
-    $resultReceitas = mysqli_query($conn, $queryReceitas);
-    $resultDespesas = mysqli_query($conn, $queryDespesas);
+    // Preparar e executar a consulta para receitas
+    $stmt = $conn->prepare($queryReceitas);
+    $stmt->bind_param("iss", $userId, $dataInicial, $dataFinal);
+    $stmt->execute();
+    $resultReceitas = $stmt->get_result();
+    $receitas = $resultReceitas->fetch_assoc()['totalReceitas'] ?? 0;
 
-    // Consultar saldo do usuário
-    $querySaldo = "SELECT saldo FROM users WHERE id = $userId";
-    $resultSaldo = mysqli_query($conn, $querySaldo);
-    $saldo = mysqli_fetch_assoc($resultSaldo)['saldo'] ?? 0;
+    // Preparar e executar a consulta para despesas
+    $stmt = $conn->prepare($queryDespesas);
+    $stmt->bind_param("iss", $userId, $dataInicial, $dataFinal);
+    $stmt->execute();
+    $resultDespesas = $stmt->get_result();
+    $despesas = $resultDespesas->fetch_assoc()['totalDespesas'] ?? 0;
 
-    // Extrair valores de receitas e despesas
-    $receitas = mysqli_fetch_assoc($resultReceitas)['totalReceitas'] ?? 0;
-    $despesas = mysqli_fetch_assoc($resultDespesas)['totalDespesas'] ?? 0;
+    // Preparar e executar a consulta para saldo
+    $stmt = $conn->prepare($querySaldo);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $resultSaldo = $stmt->get_result();
+    $saldo = $resultSaldo->fetch_assoc()['saldo'] ?? 0;
 
     // Calcular o balanço
     $balanco = $receitas - $despesas + $saldo;
@@ -58,18 +67,18 @@ function calcularBalancoFiltrado($conn, $userId, $periodo)
     $total = $receitas + $despesas + $saldo;
 
     // Calcular as proporções em pixels (600 é a largura total do gráfico)
-    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 600 : 0; // Largura da barra de receitas
-    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 600 : 0; // Largura da barra de despesas
-    $proporcaoBalanco = ($total > 0) ? (abs($balanco) / $total) * 600 : 0; // Proporção do balanço
+    $proporcaoReceitas = ($total > 0) ? ($receitas / $total) * 600 : 0;
+    $proporcaoDespesas = ($total > 0) ? ($despesas / $total) * 600 : 0;
+    $proporcaoBalanco = ($total > 0) ? (abs($balanco) / $total) * 600 : 0;
 
     return [
-        'receitas' => number_format($receitas, 2, ',', '.'), // Formatação de receitas
-        'despesas' => number_format($despesas, 2, ',', '.'), // Formatação de despesas
-        'saldo' => number_format($saldo, 2, ',', '.'), // Formatação do saldo
-        'balanco' => number_format($balanco, 2, ',', '.'), // Formatação do balanço
-        'proporcaoReceitas' => $proporcaoReceitas,  // Proporção de receitas no gráfico
-        'proporcaoDespesas' => $proporcaoDespesas,  // Proporção de despesas no gráfico
-        'proporcaoBalanco' => $proporcaoBalanco,    // Proporção do balanço no gráfico
+        'receitas' => number_format($receitas, 2, ',', '.'),
+        'despesas' => number_format($despesas, 2, ',', '.'),
+        'saldo' => number_format($saldo, 2, ',', '.'),
+        'balanco' => number_format($balanco, 2, ',', '.'),
+        'proporcaoReceitas' => $proporcaoReceitas,
+        'proporcaoDespesas' => $proporcaoDespesas,
+        'proporcaoBalanco' => $proporcaoBalanco,
     ];
 }
 
