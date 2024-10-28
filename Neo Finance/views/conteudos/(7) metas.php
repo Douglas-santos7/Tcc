@@ -188,7 +188,7 @@ include("../../config/conteudos/metas/navegacao.php");
     <!-- Menu Lateral -->
     <div class="menu-lateral" onclick="abrirModalAdicionar()">
       <div class="adicionar--btn">
-        <img src="../../assets/icons/icon--add--btn.png" alt="add--btn">
+        <img src="../../assets/icons/add--icon.svg" alt="add--btn">
       </div>
     </div>
 
