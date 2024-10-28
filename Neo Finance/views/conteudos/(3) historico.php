@@ -43,7 +43,7 @@ if ($startDate && $endDate) {
 }
 
 // Adiciona a ordenação para do mais recente para o mais antigo
-$query .= " ORDER BY t.id DESC";
+$query .= " ORDER BY t.id ASC";
 
 // Prepara e executa a consulta
 $stmt = $conn->prepare($query);
