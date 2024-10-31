@@ -2,7 +2,7 @@
 session_start();
 include '../../config/database/conexao.php'; // Conexão com o banco de dados
 
-// Gerar um token CSRF se não existir
+// Verificar se o token CSRF já existe, se não, gerar um novo
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -152,11 +152,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="submit" class="login-btn">Registrar</button>
                 </form>
 
-                <div class="message">
+                <div class="message-container">
                     <?php
-                    if (isset($_SESSION['signup_message'])) {
-                        echo '<p style="color: red;">' . $_SESSION['signup_message'] . '</p>';
-                        unset($_SESSION['signup_message']);
+                    if (isset($_SESSION['login_message'])) {
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
+                        unset($_SESSION['login_message']);
+                    }
+                    if (isset($_SESSION['reset_message'])) {
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
+                        unset($_SESSION['reset_message']);
                     }
                     ?>
                 </div>
@@ -231,10 +235,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function togglePasswordVisibility(inputId, icon) {
             const input = document.getElementById(inputId);
-            const iconClass = icon.classList.contains('fa-eye') ? 'fa-eye-slash' : 'fa-eye';
-            input.type = input.type === 'password' ? 'text' : 'password';
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle(iconClass);
+            const isPassword = input.type === 'password';
+
+            input.type = isPassword ? 'text' : 'password';
+
+            // Troca as classes do ícone
+            icon.classList.toggle('fa-eye', isPassword);
+            icon.classList.toggle('fa-eye-slash', !isPassword);
         }
 
         function checkPasswordStrength() {
