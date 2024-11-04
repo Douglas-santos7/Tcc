@@ -207,7 +207,7 @@ body {
 }
 
 /* Animação de hover */
-.botao--adicionar img:hover {
+.botão--adicionar img:hover {
   transform: scale(1.1);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -254,7 +254,7 @@ body {
 .grafico--balanco {
   height: 70px;
   width: 0;
-  max-width: 1000px; /* Aumentando a largura máxima dos gráficos */
+  max-width: 1000px;
   border-radius: 20px;
   transition: width 1s ease-in-out;
 }
@@ -599,6 +599,7 @@ body {
   color: var(--fonte-cards);
 }
 
+/* Informações dos Vencimentos */
 .info--descricao {
   display: flex;
   flex-direction: row;
@@ -606,15 +607,7 @@ body {
   justify-content: center;
 }
 
-/* Informações dos Vencimentos */
-.info--vencimentos {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.info--vencimentos .data--vencimento {
+.info--descricao .data--vencimento {
   display: flex;
   align-items: center;
   justify-content: center;

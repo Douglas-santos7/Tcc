@@ -11,7 +11,8 @@ include("../../config/conteudos/dashboard/consulta_historico.php");
 include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
 
-$userId = $_SESSION['user_id']; // ID do usuário logado
+// ID do usuário logado
+$userId = $_SESSION['user_id'];
 
 // Obter dados do balanço
 $balancoData = calcularBalanco($conn, $userId);
@@ -43,7 +44,7 @@ $historicoItems = consultarHistorico($conn, $userId);
 // Obter saudação
 $saudacao = obterSaudacao();
 
-// Fecha a conexão
+// Fecha a conexão com o banco de dados
 $conn->close();
 ?>
 
@@ -127,7 +128,7 @@ $conn->close();
           <div class="grafico--receitasXdespesas" id="cardReceitasDespesas">
             <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
-            <div class="grafico--balanco" data-largu ra="<?php echo $proporcaoBalanco; ?>"></div>
+            <div class="grafico--balanco" data-largura="<?php echo $proporcaoBalanco; ?>"></div>
           </div>
         </div>
         <div class="infoXfiltro">
@@ -212,7 +213,7 @@ $conn->close();
             </div>
             <div class="status--info">
               <span>Em aberto</span>
-              <form method="POST" action="">
+              <form method="POST" action="" onsubmit="exibirModalConfirmacao()">
                 <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
                 <input type="hidden" name="confirmar_pagamento" value="1">
                 <input type="checkbox" name="status--checkbox" onchange="if(this.checked){ this.form.submit(); }" />
@@ -240,7 +241,6 @@ $conn->close();
             <label for="valor">Valor:</label>
             <input type="text" id="valor" name="valor" required placeholder="0,00">
 
-            
             <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
             <input type="hidden" name="categoria" id="categoria-id" required>
@@ -290,6 +290,12 @@ $conn->close();
           </ul>
         </div>
       </div>
+      <div id="modalConfirmacao" class="modal" style="display: none;">
+        <div class="modal-content">
+          <p>Pagamento confirmado com sucesso!</p>
+          <button class="modal-close" onclick="fecharModalConfirmacao()">Ok, entendi </button>
+        </div>
+      </div>
 
       <script src="../../js/conteudos/dashboard/popup.js"></script>
       <script src="../../js/conteudos/dashboard/categorias.js"></script>
@@ -309,6 +315,12 @@ $conn->close();
 
           atualizarGrafico();
         }
+      </script>
+      <script>
+        // Verifica se a variável PHP para exibir o modal está definida
+        <?php if ($mostrarModalConfirmacao): ?>
+          exibirModalConfirmacao();
+        <?php endif; ?>
       </script>
 </body>
 

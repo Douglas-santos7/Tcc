@@ -83,16 +83,18 @@ function confirmarPagamento($conn, $vencimentoId)
 }
 
 // Verifica se o formulário de confirmação foi enviado
+$mostrarModalConfirmacao = false;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_pagamento'])) {
   $vencimentoId = $_POST['vencimento_id']; // ID do vencimento a ser atualizado
   if (confirmarPagamento($conn, $vencimentoId)) {
-    echo "<script>alert('Pagamento confirmado com sucesso!');</script>";
+    $mostrarModalConfirmacao = true; // Define que o modal deve ser exibido
   } else {
     echo "<script>alert('Erro ao confirmar o pagamento.');</script>";
   }
 }
 
+
 // Obtém o ID do usuário logado
 $userId = $_SESSION['user_id'];
 $proximoVencimento = obterProximoVencimento($conn, $userId);
-
