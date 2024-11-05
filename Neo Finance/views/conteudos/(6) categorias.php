@@ -30,152 +30,239 @@ $result = $stmt->get_result();
   <title>Neo Finance - Categorias</title>
   <link rel="stylesheet" href="../../css/conteudos/categorias/categorias.css">
   <style>
-    /* Estilo geral do modal */
     .modal {
       display: none;
-      /* Inicialmente oculto */
+      /* Garante que os modais estejam ocultos ao carregar a página */
       position: fixed;
-      /* Fica fixo na tela */
-      z-index: 1000;
-      /* Fica acima de outros elementos */
+      z-index: 1;
       left: 0;
       top: 0;
       width: 100%;
-      /* Largura total da tela */
       height: 100%;
-      /* Altura total da tela */
       overflow: auto;
-      /* Habilita rolagem se necessário */
-      background-color: rgba(0, 0, 0, 0.5);
-      /* Fundo semitransparente */
+      background-color: rgba(0, 0, 0, 0.6);
     }
 
-    /* Estilo do conteúdo do modal */
     .modal-conteudo {
-      background-color: #ffffff;
-      /* Fundo branco para o modal */
-      margin: 10% auto;
-      /* Centraliza o modal verticalmente */
-      padding: 30px;
-      /* Ajustado para mais espaçamento */
-      border: 1px solid #ccc;
-      /* Borda cinza clara */
-      border-radius: 12px;
-      /* Bordas mais arredondadas */
+      background-color: var(--verde--vidro);
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
       width: 80%;
-      /* Largura do modal */
+      font-family: var(--fonte-principal);
+      backdrop-filter: blur(80px);
+      border: 2px solid var(--cor--destaque-verde);
+      animation: fadeIn 0.3s;
       max-width: 600px;
-      /* Largura máxima do modal */
-      display: flex;
-      /* Usar flexbox para organização */
-      flex-direction: column;
-      /* Organiza os itens em coluna */
-      align-items: center;
-      /* Centraliza o conteúdo horizontalmente */
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      /* Sombra leve para destaque */
+      max-height: 80%;
+      overflow-y: auto;
+      /* Permite rolagem se o conteúdo for muito grande */
+      position: absolute;
+      /* Altera de relative para absolute */
+      top: 50%;
+      /* Move o modal para o meio da tela */
+      left: 50%;
+      /* Move o modal para o meio da tela */
+      transform: translate(-50%, -50%);
+      /* Centraliza o modal */
     }
 
-    /* Estilo do título do modal */
-    .modal-conteudo h2 {
-      margin-bottom: 20px;
-      /* Espaçamento inferior */
-      text-align: center;
-      /* Centraliza o texto */
-      font-size: 24px;
-      /* Tamanho da fonte maior para o título */
-      color: #333;
-      /* Cor do texto do título */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
-    /* Estilo dos botões de fechar e confirmar */
-    .fechar,
-    .botoes-excluir button {
-      display: flex;
-      cursor: pointer;
-      /* Muda o cursor para indicar que é clicável */
-      background-color: #4CAF50;
-      /* Cor do botão */
+    .modal-conteudo label {
+      font-size: 1rem;
       color: white;
-      /* Texto branco */
-      padding: 10px 20px;
-      /* Espaçamento interno do botão */
-      border: none;
-      /* Sem borda */
-      border-radius: 5px;
-      /* Bordas arredondadas */
-      margin: 5px;
-      /* Espaçamento entre os botões */
-      transition: background-color 0.3s;
-      /* Transição suave na cor */
     }
 
-    /* Estilo do botão ao passar o mouse */
-    .botoes-excluir button:hover,
-    .fechar:hover {
-      background-color: #45a049;
-      /* Cor ao passar o mouse */
-    }
-
-    /* Estilo dos inputs */
-    input[type="text"],
-    input[type="radio"] {
-      width: 100%;
-      /* Largura total do input */
-      padding: 10px;
-      /* Espaçamento interno */
-      margin-bottom: 15px;
-      /* Maior espaçamento inferior */
-      border: 1px solid #ccc;
-      /* Borda cinza clara */
-      border-radius: 5px;
-      /* Bordas arredondadas */
-    }
-
-    /* Estilo do container de ícones */
-    .container--icones {
-      display: flex;
-      /* Usar flexbox para organizar os ícones */
-      flex-wrap: wrap;
-      /* Permitir que os ícones quebrem para a próxima linha */
-      justify-content: center;
-      /* Centraliza os ícones horizontalmente */
-      margin-bottom: 20px;
-      /* Espaçamento inferior */
-    }
-
-    /* Estilo de cada ícone */
-    .icon {
-      display: grid;
-      /* Usar flexbox para centralizar o ícone */
-      flex-direction: column;
-      /* Organiza ícone e label em coluna */
-      align-items: center;
-      /* Centraliza horizontalmente */
-      margin: 10px;
-      /* Espaçamento entre os ícones */
-    }
-
-    .icon label {
-      cursor: pointer;
-      /* Indica que é clicável */
-    }
-
-    .mensagem {
-      padding: 10px;
-      margin: 20px 0;
-      border-radius: 5px;
+    .modal-conteudo h2 {
       text-align: center;
+      margin-top: 30px;
+      color: white;
+      font-weight: bold;
     }
 
-    .sucesso {
-      background-color: #dff0d8;
-      color: #3c763d;
+    .modal-conteudo h3 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-top: 30px;
+      color: red;
+      border-radius: 12px;
+      background-color: white;
+      padding: 5px 15px;
+      font-weight: bold;
     }
 
-    .erro {
-      background-color: #f2dede;
-      color: #a94442;
+    .modal-conteudo p {
+      font-size: 1.4rem;
+      text-align: center;
+      color: white;
+    }
+
+    .modal-conteudo .fechar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .modal-conteudo .fechar:hover,
+    .modal-conteudo .fechar:focus {
+      color: red;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-conteudo form {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+    }
+
+    .modal-conteudo label {
+      margin-bottom: 5px;
+    }
+
+    .modal-conteudo input[type="text"],
+    .modal-conteudo input[type="radio"] {
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 10px 5px;
+      font-size: 1.1rem;
+      outline: none;
+      background-color: white;
+      border: 2px solid var(--cor--destaque-verde);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .espacamento {
+      margin: 20px 0px;
+    }
+
+    .modal-conteudo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .modal-conteudo button {
+      padding: 15px;
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: var(--fonte-principal);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .modal-conteudo button:hover {
+      background-color: #4cae4f;
+      transform: translateY(-2px);
+    }
+
+    .modal-conteudo button:disabled,
+    .modal-conteudo button:disabled:hover {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .modal-conteudo .container--icones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow-y: auto;
+      /* Permite rolagem vertical na lista de ícones */
+      max-height: 200px;
+      /* Define uma altura máxima para a lista de ícones */
+    }
+
+    .modal-conteudo .icon {
+      margin: 5px;
+    }
+
+    .modal-conteudo .icon input[type="radio"] {
+      display: none;
+    }
+
+    .modal-conteudo .icon label {
+      display: inline-block;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-conteudo .icon input[type="radio"]:checked+label {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .modal-conteudo .mensagem-sucesso,
+    .modal-conteudo .mensagem-erro {
+      margin-top: 10px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .modal-conteudo .mensagem-sucesso {
+      background-color: #d1fae5;
+      color: #4CAF50;
+    }
+
+    .modal-conteudo .mensagem-erro {
+      background-color: #f8d7da;
+      color: #dc3545;
+    }
+
+    .excluir {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: auto;
+    }
+
+    .excluir button {
+      padding: 15px;
+      width: 100%;
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: var(--fonte-principal);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .excluir button:hover {
+      background-color: white;
+      color: red;
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -241,7 +328,7 @@ $result = $stmt->get_result();
 
 
   <!-- Modal de Adicionar Categoria -->
-  <div id="modalAdicionar" class="modal">
+  <div id="modalAdicionar" class="modal" style="display: none;">
     <div class="modal-conteudo">
       <span class="fechar" onclick="fecharModal('modalAdicionar')">&times;</span>
       <h2>Adicionar Categoria</h2>
@@ -249,93 +336,98 @@ $result = $stmt->get_result();
         <label for="nomeAdicionar">Nome da Categoria:</label>
         <input type="text" id="nomeAdicionar" name="nome" required>
 
-        <label for="iconeAdicionar">Ícone da Categoria:</label>
+        <div class="espacamento"></div>
         <button type="button" id="botaoSelecionarIcone" onclick="toggleListaIcones()">Selecionar Ícone</button>
         <div id="listaIcones" class="container--icones" style="display: none;">
           <!-- Seus ícones vão aqui -->
           <div class="container--icones">
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-scissors" id="icon1" required>
+              <input type="radio" name="icone" value="fi-br-scissors" id="icon1">
               <label for="icon1"><i class="fi fi-br-scissors"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-home" id="icon2" required>
+              <input type="radio" name="icone" value="fi-sr-home" id="icon2">
               <label for="icon2"><i class="fi fi-sr-home"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-smartphone" id="icon3" required>
+              <input type="radio" name="icone" value="fi-br-smartphone" id="icon3">
               <label for="icon3"><i class="fi fi-br-smartphone"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-file-invoice-dollar" id="icon4" required>
+              <input type="radio" name="icone" value="fi-sr-file-invoice-dollar" id="icon4">
               <label for="icon4"><i class="fi fi-sr-file-invoice-dollar"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-money-coin-transfer" id="icon5" required>
+              <input type="radio" name="icone" value="fi-br-money-coin-transfer" id="icon5">
               <label for="icon5"><i class="fi fi-br-money-coin-transfer"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-plane-alt" id="icon6" required>
+              <input type="radio" name="icone" value="fi-ss-plane-alt" id="icon6">
               <label for="icon6"><i class="fi fi-ss-plane-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-bus-alt" id="icon7" required>
+              <input type="radio" name="icone" value="fi-ss-bus-alt" id="icon7">
               <label for="icon7"><i class="fi fi-ss-bus-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-wrench-alt" id="icon8" required>
+              <input type="radio" name="icone" value="fi-ss-wrench-alt" id="icon8">
               <label for="icon8"><i class="fi fi-ss-wrench-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-car-mechanic" id="icon9" required>
+              <input type="radio" name="icone" value="fi-ss-car-mechanic" id="icon9">
               <label for="icon9"><i class="fi fi-ss-car-mechanic"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-shopping-cart" id="icon10" required>
+              <input type="radio" name="icone" value="fi-sr-shopping-cart" id="icon10">
               <label for="icon10"><i class="fi fi-sr-shopping-cart"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-wallet" id="icon11" required>
+              <input type="radio" name="icone" value="fi-sr-wallet" id="icon11">
               <label for="icon11"><i class="fi fi-sr-wallet"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-gamepad" id="icon12" required>
+              <input type="radio" name="icone" value="fi-sr-gamepad" id="icon12">
               <label for="icon12"><i class="fi fi-sr-gamepad"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-hotdog" id="icon13" required>
+              <input type="radio" name="icone" value="fi-ss-hotdog" id="icon13">
               <label for="icon13"><i class="fi fi-ss-hotdog"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-user-md" id="icon14" required>
+              <input type="radio" name="icone" value="fi-sr-user-md" id="icon14">
               <label for="icon14"><i class="fi fi-sr-user-md"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-dog-leashed" id="icon15" required>
+              <input type="radio" name="icone" value="fi-sr-dog-leashed" id="icon15">
               <label for="icon15"><i class="fi fi-sr-dog-leashed"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-bone" id="icon16" required>
+              <input type="radio" name="icone" value="fi-sr-bone" id="icon16">
               <label for="icon16"><i class="fi fi-sr-bone"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-cat" id="icon17" required>
+              <input type="radio" name="icone" value="fi-sr-cat" id="icon17">
               <label for="icon17"><i class="fi fi-sr-cat"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-devices" id="icon18" required>
+              <input type="radio" name="icone" value="fi-sr-devices" id="icon18">
               <label for="icon18"><i class="fi fi-sr-devices"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-book-alt" id="icon19" required>
+              <input type="radio" name="icone" value="fi-ss-book-alt" id="icon19">
               <label for="icon19"><i class="fi fi-ss-book-alt"></i></label>
             </div>
+            <!-- Adicione mais ícones aqui -->
           </div>
-          <!-- Adicione mais ícones conforme necessário -->
         </div>
-
         <button type="submit">Adicionar</button>
       </form>
+      <div id="mensagemSucesso" class="mensagem-sucesso" style="display: none;">
+        Categoria adicionada com sucesso!
+      </div>
+      <div id="mensagemErro" class="mensagem-erro" style="display: none;">
+        Ocorreu um erro ao adicionar a categoria. Por favor, tente novamente.
+      </div>
     </div>
   </div>
 
@@ -347,6 +439,7 @@ $result = $stmt->get_result();
         <input type="hidden" name="id_categoria" id="id_categoria" required>
         <label for="nomeEditar">Nome da Categoria:</label>
         <input type="text" id="nomeEditar" name="nome" required>
+        <div class="espacamento"></div>
         <label for="iconeEditar">Ícone da Categoria (opcional):</label>
         <button type="button" id="botaoSelecionarIconeEditar" onclick="toggleListaIconesEditar()">Selecionar Ícone</button>
         <input type="hidden" name="icone" id="iconeSelecionadoEditar">
@@ -442,13 +535,12 @@ $result = $stmt->get_result();
   <div id="modalExcluir" class="modal">
     <div class="modal-conteudo">
       <span class="fechar" onclick="fecharModal('modalExcluir')">&times;</span>
-      <h2>Excluir Categoria</h2>
+      <h2>Excluir Categoria !!!</h2>
       <p>Você tem certeza de que deseja excluir esta categoria?</p>
-      <p><strong id="nomeCategoriaExcluir">Nome da Categoria</strong></p> <!-- Nome da categoria a ser excluída -->
+      <h3><strong id="nomeCategoriaExcluir">Nome da Categoria</strong></h3> <!-- Nome da categoria a ser excluída -->
       <form id="formExcluir" method="POST" action="../../config/conteudos/categorias/excluir_categoria.php">
         <input type="hidden" name="id_categoria" id="id_categoria_excluir" required>
-        <div class="botoes-excluir">
-          <button type="button" class="fechar" onclick="fecharModal('modalExcluir')">Cancelar</button>
+        <div class="excluir">
           <button type="submit">Excluir</button>
         </div>
       </form>
@@ -499,7 +591,6 @@ $result = $stmt->get_result();
       window.location.href = '../../config/conteudos/categorias/excluir_categoria.php?id=' + categoriaId;
     }
   </script>
-
 </body>
 
 </html>
