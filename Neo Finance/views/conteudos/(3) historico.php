@@ -69,7 +69,7 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
         <div class="container--header">
             <header class="banner">
                 <div class="titulo--banner">
-                    <h1>Histórico</h1>
+                    <h1 id="bloquear-selecao">Histórico</h1>
                 </div>
                 <div class="notificacao--usuario">
                     <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />

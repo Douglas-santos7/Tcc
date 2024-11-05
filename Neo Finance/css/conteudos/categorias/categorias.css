@@ -60,9 +60,30 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--card-categorias);
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  backdrop-filter: blur(80px);
   border-radius: 12px;
   min-width: 100px;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.adicionar--btn:hover {
+  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
+    0 0 5px var(--cor--destaque-verde);
+  scale: 1.01;
+}
+
+.adicionar--btn:hover img {
+  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde), 0 0 30px var(--cor--destaque-verde),
+    0 0 40px var(--cor--destaque-verde);
+  scale: 1.1;
+}
+
+.adicionar--btn img {
+  border-radius: 16px;
+  transition: all 0.1s ease-in-out;
 }
 
 /* Cards de Categorias */
@@ -84,7 +105,14 @@ body {
   border-radius: 12px;
   padding: 10px;
   margin: 12px auto;
+  cursor: default;
+  transition: all 0.3s ease-in-out;
 }
+.card--categoria:hover {
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
 
 /* Lado Esquerdo do Card */
 .lado--esquerdo-card {
@@ -104,10 +132,10 @@ body {
   border-radius: 50%;
   width: 100px;
   height: 100px;
+
 }
 
 .icon--categoria i {
-  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,6 +169,7 @@ body {
   border-radius: 50%;
   width: 80px;
   height: 80px;
+  cursor: pointer;
 }
 
 .icon--apagar img {
@@ -157,16 +186,16 @@ body {
   border-radius: 50%;
   width: 80px;
   height: 80px;
+  cursor: pointer;
 }
 
 .icon--editar img {
   width: 40px;
   height: 40px;
 }
-.scroll--categorias{
+.scroll--categorias {
   height: 800px;
   overflow: auto;
- 
 }
 /* =====================================
    OCULTAR BARRA DE ROOLAGEM
@@ -179,4 +208,7 @@ body {
 .scroll--categorias {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+#bloquear-selecao {
+  user-select: none;
 }

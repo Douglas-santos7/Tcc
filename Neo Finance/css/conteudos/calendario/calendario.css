@@ -64,9 +64,30 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--background--cards);
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  backdrop-filter: blur(80px);
   border-radius: 12px;
   min-width: 100px;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.adicionar--btn:hover {
+  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
+    0 0 5px var(--cor--destaque-verde);
+  scale: 1.01;
+}
+
+.adicionar--btn:hover img {
+  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde), 0 0 30px var(--cor--destaque-verde),
+    0 0 40px var(--cor--destaque-verde);
+  scale: 1.1;
+}
+
+.adicionar--btn img {
+  border-radius: 16px;
+  transition: all 0.1s ease-in-out;
 }
 
 /* =====================================
@@ -75,7 +96,9 @@ body {
 .cards--vencimentos {
   display: flex;
   flex-direction: column;
-  background: var(--background--cards);
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  backdrop-filter: blur(80px);
   border-radius: 12px;
 }
 
@@ -88,6 +111,7 @@ body {
 
 .header--card-vencimentos span:nth-child(1) {
   font-size: 2.5rem;
+  color: white;
 }
 .header--card-vencimentos span:nth-child(2) {
   font-size: 2.5rem;
@@ -112,6 +136,7 @@ body {
 .scroll-card {
   display: flex;
   flex-direction: column;
+  margin: 5px 0px;
   gap: 15px;
 }
 
@@ -119,14 +144,20 @@ body {
    CARD
    ===================================== */
 .card {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--card);
+  background: var(--background--cards);
   width: auto;
   min-height: 160px;
   border-radius: 12px;
   padding: 10px 30px;
+  transition: all 0.3s ease-in-out;
+}
+.card:hover {
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 .lado--esquerdo--card,
@@ -271,15 +302,51 @@ body {
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease;
+  color: white;
 }
 
 .modal-content {
+  position: relative;
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   width: 400px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s;
+  backdrop-filter: blur(80px);
+  border: 2px solid var(--cor--destaque-verde);
+  background-color: var(--verde--vidro);
+}
+
+.modal-content h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.modal-content p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: justify;
+  font-size: 1.2rem;
+}
+
+#fechar-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 10px;
+}
+
+#fechar-modal:hover {
+  background-color: red;
 }
 
 @keyframes fadeIn {
@@ -294,7 +361,7 @@ body {
 }
 
 .close {
-  float: right;
+  display: flex;
   font-size: 28px;
   color: #333;
   cursor: pointer;
@@ -437,4 +504,61 @@ body {
   background-color: var(--background--icon);
   border-radius: 50%;
   padding: 10px;
+}
+#bloquear-selecao {
+  user-select: none;
+}
+.radio-group {
+  display: flex;
+  gap: 15px 20px;
+  justify-content: center;
+  margin: 15px 0px;
+}
+
+.radio-label {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+}
+
+.receita--radio {
+  color: green;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.despesa--radio {
+  color: red;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.radio-label input[type="radio"]:checked + span {
+  padding: 0px 60px;
+  font-size: 1.1rem;
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+}
+
+.radio-label:hover {
+  background-color: white;
+  transform: scale(1.05);
+}
+
+.radio-label input[type="radio"] {
+  display: none;
+}
+#btn-ok {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.2rem;
 }

@@ -82,10 +82,10 @@ $categorias = buscarCategorias($usuario_id, $conn);
       <header class="banner">
         <div class="titulo--banner">
           <img src="../../assets/icons/icon--calendario.svg" alt="calendario--icon" />
-          <h1>Calendário</h1>
+          <h1 id="bloquear-selecao">Calendário</h1>
         </div>
         <div class="notificacao--usuario">
-          <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
+          <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" id="bloquear-selecao" />
         </div>
       </header>
     </div>
@@ -94,14 +94,14 @@ $categorias = buscarCategorias($usuario_id, $conn);
     <!-- Início Conteúdo -->
     <div class="container--conteudo">
       <!-- Botão Adicionar Vencimento -->
-      <div class="adicionar--btn">
-        <img src="../../assets/icons/add--icon.svg" alt="adicionar--btn" onclick="abrirModalAdicionar()" />
+      <div class="adicionar--btn" onclick="abrirModalAdicionar()">
+        <img src=" ../../assets/icons/add--icon.svg" alt="adicionar--btn" />
       </div>
 
       <!-- Cards de Vencimentos -->
-      <div class="cards--vencimentos">
+      <div class=" cards--vencimentos">
         <div class="header--card-vencimentos">
-          <span class="titulo--card">Próximos pagamentos</span>
+          <span class="titulo--card" id="bloquear-selecao">Próximos pagamentos</span>
           <div class="filtro--mes">
             <form method="POST">
               <select name="mes">
@@ -202,12 +202,14 @@ $categorias = buscarCategorias($usuario_id, $conn);
             </select>
 
             <!-- Opções de Tipo de Transação -->
-            <div class="tipo-transacao">
-              <label>
-                <input type="radio" name="tipo_transacao" value="receita" required /> Receita
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="Receita" required>
+                <span class="receita--radio">Receita</span>
               </label>
-              <label>
-                <input type="radio" name="tipo_transacao" value="despesa" required /> Despesa
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="Despesa">
+                <span class="despesa--radio">Despesa</span>
               </label>
             </div>
 
@@ -218,46 +220,45 @@ $categorias = buscarCategorias($usuario_id, $conn);
       </div>
 
       <!-- Modal de Confirmação -->
-      <div id="modalConfirmacao" class="modal">
-        <div class="modal-content">
-          <span class="fechar--modal-confirmacao" onclick="fecharModal()">&times;</span>
-          <h2>Aviso</h2>
-          <p>Datas anteriores ao dia de hoje não são válidas, pois se referem a pagamentos que já deveriam ter sido feitos.</p>
-          <button id="btn-ok">OK</button>
-        </div>
-      </div>
-
-      <!-- Modal de Sucesso -->
-      <div id="modalSucesso" class="modal" style="display: none;">
-        <div class="modal-content">
-          <h2>Sucesso!</h2>
-          <p>Vencimento adicionado com sucesso.</p>
-          <button id="btn-ok" onclick="fecharModalSucesso()">OK</button>
-        </div>
-      </div>
-
-      <!-- Modal de Sucesso do Pagamento -->
-      <div id="modalSucessoPagamento" class="modal" style="display: none;">
-        <div class="modal-content">
-          <h2>Sucesso!</h2>
-          <p>Pagamento confirmado com sucesso.</p>
-          <button id="btn-ok" onclick="fecharModalSucessoPagamento()">OK</button>
-        </div>
-      </div>
-
-      <!-- Modal para Confirmar Pagamento -->
-      <div id="modalConfirmarPagamento" class="modal">
-        <div class="modal-content">
-          <span class="fechar--modal" onclick="fecharModalConfirmarPagamento()">&times;</span>
-          <h2>Confirmar Pagamento</h2>
-          <p>Você tem certeza que deseja confirmar o pagamento deste vencimento?</p>
-          <form id="formConfirmarPagamento" method="POST">
-            <input type="hidden" id="vencimento_id" name="vencimento_id" value="">
-            <button type="submit" name="confirmarPagamento">Confirmar</button>
-          </form>
-        </div>
+      <div id="modalConfirmacao" class="modal" ">
+        <div class=" modal-content">
+        <h2>Atenção !!!</h2>
+        <p>Datas anteriores ao dia de hoje não são válidas, pois se referem a pagamentos que já deveriam ter sido feitos.</p>
+        <button id="btn-ok">Ok, entendi</button>
       </div>
     </div>
+
+    <!-- Modal de Sucesso -->
+    <div id="modalSucesso" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h2>Sucesso !!!</h2>
+        <p>Vencimento adicionado com sucesso.</p>
+        <button id="btn-ok" onclick="fecharModalSucesso()">OK</button>
+      </div>
+    </div>
+
+    <!-- Modal de Sucesso do Pagamento -->
+    <div id="modalSucessoPagamento" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h2>Sucesso!</h2>
+        <p>Pagamento confirmado com sucesso.</p>
+        <button id="btn-ok" onclick="fecharModalSucessoPagamento()">OK</button>
+      </div>
+    </div>
+
+    <!-- Modal para Confirmar Pagamento -->
+    <div id="modalConfirmarPagamento" class="modal">
+      <div class="modal-content">
+        <span class="fechar--modal" onclick="fecharModalConfirmarPagamento()">&times;</span>
+        <h2>Confirmar Pagamento</h2>
+        <p>Você tem certeza que deseja confirmar o pagamento deste vencimento?</p>
+        <form id="formConfirmarPagamento" method="POST">
+          <input type="hidden" id="vencimento_id" name="vencimento_id" value="">
+          <button type="submit" name="confirmarPagamento">Confirmar</button>
+        </form>
+      </div>
+    </div>
+  </div>
   </div>
 </body>
 

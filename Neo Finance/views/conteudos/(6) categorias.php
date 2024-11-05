@@ -186,7 +186,7 @@ $result = $stmt->get_result();
     <header class="banner">
       <div class="titulo--banner">
         <img src="../../assets/icons/categoria--icon.svg" alt="categoria--icon" />
-        <h1>Categorias</h1>
+        <h1 id="bloquear-selecao">Categorias</h1>
       </div>
     </header>
   </div>
