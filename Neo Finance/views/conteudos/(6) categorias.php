@@ -337,87 +337,85 @@ $result = $stmt->get_result();
         <input type="text" id="nomeAdicionar" name="nome" required>
 
         <div class="espacamento"></div>
-        <button type="button" id="botaoSelecionarIcone" onclick="toggleListaIcones()">Selecionar Ícone</button>
-        <div id="listaIcones" class="container--icones" style="display: none;">
-          <!-- Seus ícones vão aqui -->
+        <button type="button" id="botaoSelecionarIcone" onclick="toggleListaIconesAdicionar()">Selecionar Ícone</button>
+        <div id="listaIconesAdicionar" class="container--icones lista-icones-adicionar" style="display: none;">
           <div class="container--icones">
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-scissors" id="icon1">
-              <label for="icon1"><i class="fi fi-br-scissors"></i></label>
+              <input type="radio" name="icone" value="fi-br-scissors" id="icon1Adicionar" required>
+              <label for="icon1Adicionar"><i class="fi fi-br-scissors"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-home" id="icon2">
-              <label for="icon2"><i class="fi fi-sr-home"></i></label>
+              <input type="radio" name="icone" value="fi-sr-home" id="icon2Adicionar" required>
+              <label for="icon2Adicionar"><i class="fi fi-sr-home"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-smartphone" id="icon3">
-              <label for="icon3"><i class="fi fi-br-smartphone"></i></label>
+              <input type="radio" name="icone" value="fi-br-smartphone" id="icon3Adicionar" required>
+              <label for="icon3Adicionar"><i class="fi fi-br-smartphone"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-file-invoice-dollar" id="icon4">
-              <label for="icon4"><i class="fi fi-sr-file-invoice-dollar"></i></label>
+              <input type="radio" name="icone" value="fi-sr-file-invoice-dollar" id="icon4Adicionar" required>
+              <label for="icon4Adicionar"><i class="fi fi-sr-file-invoice-dollar"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-br-money-coin-transfer" id="icon5">
-              <label for="icon5"><i class="fi fi-br-money-coin-transfer"></i></label>
+              <input type="radio" name="icone" value="fi-br-money-coin-transfer" id="icon5Adicionar" required>
+              <label for="icon5Adicionar"><i class="fi fi-br-money-coin-transfer"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-plane-alt" id="icon6">
-              <label for="icon6"><i class="fi fi-ss-plane-alt"></i></label>
+              <input type="radio" name="icone" value="fi-ss-plane-alt" id="icon6Adicionar" required>
+              <label for="icon6Adicionar"><i class="fi fi-ss-plane-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-bus-alt" id="icon7">
-              <label for="icon7"><i class="fi fi-ss-bus-alt"></i></label>
+              <input type="radio" name="icone" value="fi-ss-bus-alt" id="icon7Adicionar" required>
+              <label for="icon7Adicionar"><i class="fi fi-ss-bus-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-wrench-alt" id="icon8">
-              <label for="icon8"><i class="fi fi-ss-wrench-alt"></i></label>
+              <input type="radio" name="icone" value="fi-ss-wrench-alt" id="icon8Adicionar" required>
+              <label for="icon8Adicionar"><i class="fi fi-ss-wrench-alt"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-car-mechanic" id="icon9">
-              <label for="icon9"><i class="fi fi-ss-car-mechanic"></i></label>
+              <input type="radio" name="icone" value="fi-ss-car-mechanic" id="icon9Adicionar" required>
+              <label for="icon9Adicionar"><i class="fi fi-ss-car-mechanic"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-shopping-cart" id="icon10">
-              <label for="icon10"><i class="fi fi-sr-shopping-cart"></i></label>
+              <input type="radio" name="icone" value="fi-sr-shopping-cart" id="icon10Adicionar" required>
+              <label for="icon10Adicionar"><i class="fi fi-sr-shopping-cart"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-wallet" id="icon11">
-              <label for="icon11"><i class="fi fi-sr-wallet"></i></label>
+              <input type="radio" name="icone" value="fi-sr-wallet" id="icon11Adicionar" required>
+              <label for="icon11Adicionar"><i class="fi fi-sr-wallet"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-gamepad" id="icon12">
-              <label for="icon12"><i class="fi fi-sr-gamepad"></i></label>
+              <input type="radio" name="icone" value="fi-sr-gamepad" id="icon12Adicionar" required>
+              <label for="icon12Adicionar"><i class="fi fi-sr-gamepad"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-hotdog" id="icon13">
-              <label for="icon13"><i class="fi fi-ss-hotdog"></i></label>
+              <input type="radio" name="icone" value="fi-ss-hotdog" id="icon13Adicionar" required>
+              <label for="icon13Adicionar"><i class="fi fi-ss-hotdog"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-user-md" id="icon14">
-              <label for="icon14"><i class="fi fi-sr-user-md"></i></label>
+              <input type="radio" name="icone" value="fi-sr-user-md" id="icon14Adicionar" required>
+              <label for="icon14Adicionar"><i class="fi fi-sr-user-md"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-dog-leashed" id="icon15">
-              <label for="icon15"><i class="fi fi-sr-dog-leashed"></i></label>
+              <input type="radio" name="icone" value="fi-sr-dog-leashed" id="icon15Adicionar" required>
+              <label for="icon15Adicionar"><i class="fi fi-sr-dog-leashed"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-bone" id="icon16">
-              <label for="icon16"><i class="fi fi-sr-bone"></i></label>
+              <input type="radio" name="icone" value="fi-sr-bone" id="icon16Adicionar" required>
+              <label for="icon16Adicionar"><i class="fi fi-sr-bone"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-cat" id="icon17">
-              <label for="icon17"><i class="fi fi-sr-cat"></i></label>
+              <input type="radio" name="icone" value="fi-sr-cat" id="icon17Adicionar" required>
+              <label for="icon17Adicionar"><i class="fi fi-sr-cat"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-sr-devices" id="icon18">
-              <label for="icon18"><i class="fi fi-sr-devices"></i></label>
+              <input type="radio" name="icone" value="fi-sr-devices" id="icon18Adicionar" required>
+              <label for="icon18Adicionar"><i class="fi fi-sr-devices"></i></label>
             </div>
             <div class="icon">
-              <input type="radio" name="icone" value="fi-ss-book-alt" id="icon19">
-              <label for="icon19"><i class="fi fi-ss-book-alt"></i></label>
+              <input type="radio" name="icone" value="fi-ss-book-alt" id="icon19Adicionar" required>
+              <label for="icon19Adicionar"><i class="fi fi-ss-book-alt"></i></label>
             </div>
-            <!-- Adicione mais ícones aqui -->
           </div>
         </div>
         <button type="submit">Adicionar</button>
@@ -525,6 +523,7 @@ $result = $stmt->get_result();
           </div>
           <!-- Adicione mais ícones conforme necessário -->
         </div>
+
         <button type="submit">Salvar</button>
       </form>
     </div>
@@ -565,14 +564,16 @@ $result = $stmt->get_result();
       document.getElementById(modalId).style.display = 'none';
     }
 
-    function toggleListaIcones() {
-      var listaIcones = document.getElementById('listaIcones');
-      listaIcones.style.display = (listaIcones.style.display === 'none' || listaIcones.style.display === '') ? 'block' : 'none';
+    // Função para exibir/ocultar a lista de ícones no modal de adição
+    function toggleListaIconesAdicionar() {
+      var listaIconesAdicionar = document.getElementById('listaIconesAdicionar');
+      listaIconesAdicionar.style.display = (listaIconesAdicionar.style.display === 'none' || listaIconesAdicionar.style.display === '') ? 'block' : 'none';
     }
 
+    // Função para exibir/ocultar a lista de ícones no modal de edição
     function toggleListaIconesEditar() {
-      var listaIcones = document.getElementById('listaIconesEditar');
-      listaIcones.style.display = (listaIcones.style.display === 'none' || listaIcones.style.display === '') ? 'block' : 'none';
+      var listaIconesEditar = document.getElementById('listaIconesEditar');
+      listaIconesEditar.style.display = (listaIconesEditar.style.display === 'none' || listaIconesEditar.style.display === '') ? 'block' : 'none';
     }
 
     function abrirModalExcluir(nome, id) {
