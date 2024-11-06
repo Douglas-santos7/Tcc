@@ -1,8 +1,6 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
+<?php if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 include '../../config/database/conexao.php';
 require '../../vendor/autoload.php';
 
@@ -10,11 +8,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Verifica se o usuário está logado e o ID está na sessão
+    // Verifica se o usuário está logado e o ID está na sessão 
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
 
-        // Busca o e-mail e o nome do usuário no banco de dados
+        // Busca o e-mail e o nome do usuário no banco de dados 
         $stmt = $conn->prepare("SELECT email, username FROM users WHERE id = ?");
         $stmt->bind_param('i', $userId);
         $stmt->execute();
@@ -39,45 +37,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mail = new PHPMailer(true);
 
     try {
-        // Configurações SMTP
+        // Configurações SMTP 
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'neo.finance.contato@gmail.com';
-        $mail->Password = 'dkdq fcrd ojkf vbxd';  // Insira a senha do app aqui
+        $mail->Password = 'dkdq fcrd ojkf vbxd';  // Insira a senha do app aqui 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        // Define o remetente como o e-mail do usuário logado
+        // Define o remetente como o e-mail do usuário logado 
         $mail->setFrom($email, $name);
-        $mail->addAddress('neo.finance.contato@gmail.com'); // E-mail de suporte da Neo Finance
+        $mail->addAddress('neo.finance.contato@gmail.com'); // E-mail de suporte da Neo Finance 
 
-        // Título do suporte
+        // Título do suporte 
         $mail->Subject = "Novo Ticket de Suporte de $name";
 
-        // Formata a mensagem
+        // Formata a mensagem 
         $mail->Body = "Nome: $name\nE-mail: $email\nTipo de Suporte: $subject\n\nMensagem: $message";
 
-        // Verifica se há arquivos anexados
+        // Verifica se há arquivos anexados 
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-            // Obtém o conteúdo do arquivo
+            // Obtém o conteúdo do arquivo 
             $fileContent = file_get_contents($_FILES['attachment']['tmp_name']);
-            // Gera um nome único para o arquivo para evitar conflitos
+            // Gera um nome único para o arquivo para evitar conflitos 
             $uniqueName = uniqid() . '_' . basename($_FILES['attachment']['name']);
-            // Adiciona o anexo usando o conteúdo do arquivo
+            // Adiciona o anexo usando o conteúdo do arquivo 
             $mail->addStringAttachment($fileContent, $uniqueName);
         }
 
-        // Envia o e-mail
+        // Envia o e-mail 
         $mail->send();
         echo "<script>alert('Sua dúvida foi enviada com sucesso!');</script>";
     } catch (Exception $e) {
         echo "<script>alert('Erro ao enviar e-mail: {$mail->ErrorInfo}');</script>";
     }
-}
-?>
-
-
+} ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -85,88 +80,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suporte - Controle de Finanças</title>
-    <style>
-        :root {
-            --primary-color: #4caf50;
-            --secondary-color: #f5f5f5;
-            --text-color: #333;
-            --font: 'Kodchasan', sans-serif;
-        }
-
-        body {
-            font-family: var(--font);
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        input,
-        textarea,
-        button,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #388e3c;
-        }
-
-        .faq {
-            margin-top: 40px;
-        }
-
-        .faq h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .faq-item {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .faq-item h3 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .faq-item p {
-            margin: 5px 0 0 0;
-        }
-    </style>
+    <title>Neo Finance - Suporte</title>
+    <link rel="stylesheet" href="../../css/suporte/suporte.css">
 </head>
 
 <body>
+
     <div class="container">
+        <div class="container--intro">
+            <div class="titulo">
+                <h1>Suporte Neo</h1>
+            </div>
+            <div class="texto--intro">
+                <h2>Precisa de ajuda? Nossa FAQ tem as respostas que você procura – basta digitar!</h2>
+            </div>
+        </div>
+        <!-- Barra de Pesquisa -->
+        <div class="search-bar">
+            <!-- <img src="../../assets/icons/icon--conversa--neo.svg" alt="icon--conversa"> -->
+            <input type="text" id="faq-search" placeholder="Digite sua dúvida...">
+        </div>
+
         <!-- Seção de FAQ -->
         <div class="faq">
             <h2>Perguntas Frequentes (FAQ)</h2>
-
             <div class="faq-item">
                 <h3>1. Como posso recuperar minha senha?</h3>
                 <p>Para recuperar sua senha, clique na opção "Esqueci minha senha" na tela de login e siga as instruções enviadas para o seu e-mail.</p>
@@ -188,9 +125,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-        <h1>Suporte - Controle de Finanças</h1>
-        <form action="" method="POST" enctype="multipart/form-data">
+        <!-- Link para entrar em contato -->
+        <div class="contact-link" id="contact-link">
+            Não encontrou o que procurava? <strong><a href="#">Entre em contato conosco</a></strong>
+        </div>
 
+        <form action="" method="POST" enctype="multipart/form-data" id="support-form" style="display:none;">
+            <h1>Entre em Contato</h1>
             <select name="subject" required>
                 <option value="" disabled selected>Escolha o assunto</option>
                 <option value="Dúvida">Dúvida</option>
@@ -203,6 +144,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit">Enviar</button>
         </form>
     </div>
+    <script>
+        const searchInput = document.getElementById("faq-search");
+        const faqItems = document.querySelectorAll(".faq-item");
+        const contactLink = document.getElementById("contact-link");
+        const supportForm = document.getElementById("support-form");
+
+        // Função para atualizar a visibilidade das perguntas de acordo com a pesquisa
+        function updateFAQVisibility(query) {
+            let found = false;
+
+            faqItems.forEach(item => {
+                const question = item.querySelector("h3").innerText.toLowerCase();
+                const answer = item.querySelector("p").innerText.toLowerCase();
+
+                if (query === "") {
+                    // Se a pesquisa estiver vazia, mostramos todas as perguntas.
+                    item.style.display = "none"; // Esconde todas as perguntas
+                } else {
+                    if (question.includes(query) || answer.includes(query)) {
+                        // Se houver correspondência com a pesquisa, mostramos a pergunta
+                        item.style.display = "block";
+                        found = true;
+                    } else {
+                        // Caso contrário, escondemos a pergunta
+                        item.style.display = "none";
+                    }
+                }
+            });
+
+            // O link de contato sempre deve aparecer
+            contactLink.style.display = "block";
+        }
+
+        // Atualiza a visibilidade do FAQ sempre que a pesquisa mudar
+        searchInput.addEventListener("input", function() {
+            const query = searchInput.value.toLowerCase().trim();
+
+            // Verifica se o formulário de suporte está visível
+            if (supportForm.style.display === "block") {
+                // Se estiver visível, escondemos o formulário e mostramos as perguntas novamente
+                supportForm.style.display = "none";
+                contactLink.style.display = "block"; // Reexibe o link de contato
+            }
+
+            // Atualiza as perguntas conforme a pesquisa
+            updateFAQVisibility(query);
+        });
+
+        // Mostrar o formulário de contato quando o link for clicado
+        contactLink.addEventListener("click", function() {
+            // Limpa o campo de pesquisa
+            searchInput.value = "";
+
+            // Oculta todas as perguntas do FAQ quando clicar em "Entrar em contato"
+            faqItems.forEach(item => {
+                item.style.display = "none"; // Esconde todas as perguntas
+            });
+
+            // Exibe o formulário de contato
+            supportForm.style.display = "block";
+
+            // (Opcional) Esconde o link de contato após clicar
+            contactLink.style.display = "none";
+        });
+    </script>
+
+
+
+
+
+
+
 </body>
 
 </html>
