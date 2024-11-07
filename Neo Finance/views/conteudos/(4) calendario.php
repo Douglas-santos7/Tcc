@@ -142,12 +142,19 @@ $categorias = buscarCategorias($usuario_id, $conn);
                         <span class="categoria--3 <?php echo ($vencimento['status'] === 'Pago') ? 'status-pago' : ''; ?>">
                           <?php echo $vencimento['status']; ?>
                         </span>
+
                         <?php if (isset($vencimento) && isset($vencimento['tipo_transacao'])): ?>
                           <span class="<?php echo strtolower(trim($vencimento['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
                             <?php echo htmlspecialchars($vencimento['tipo_transacao']); ?>
                           </span>
                         <?php else: ?>
                           <span class="categoria--despesa">Tipo de transação não definido</span>
+                        <?php endif; ?>
+                        <?php if ($vencimento['status'] !== 'Pago'): ?>
+                          <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">
+                            <img src="../../assets/icons/pagamento--icon.svg" class="icon">
+                            <span class="texto-botao">Confirmar Pagamento</span>
+                          </button>
                         <?php endif; ?>
                       </div>
                       <div class="descricao--v">
@@ -156,12 +163,6 @@ $categorias = buscarCategorias($usuario_id, $conn);
                     </div>
                   </div>
                   <div class="lado--direito--card">
-                    <?php if ($vencimento['status'] !== 'Pago'): ?>
-                      <button class="confirmar-pagamento" onclick="abrirModalConfirmarPagamento(<?php echo $vencimento['id']; ?>)">
-                        <img src="../../assets/icons/pagamento--icon.svg" class="icon">
-                        Confirmar Pagamento
-                      </button>
-                    <?php endif; ?>
                     <div class="data--X--valor-v">
                       <div class="data--completa-v">
                         <span><?php echo date('d M, Y', strtotime($vencimento['data_vencimento'])); ?></span>
@@ -204,12 +205,12 @@ $categorias = buscarCategorias($usuario_id, $conn);
             <!-- Opções de Tipo de Transação -->
             <div class="radio-group">
               <label class="radio-label">
-                <input type="radio" name="tipo" value="Receita" required>
-                <span class="receita--radio">Receita</span>
+                <input type="radio" name="tipo_transacao" value="Receita" required>
+                <span class="receita--radio" type="radio" name="tipo_transacao" value="Receita" required>Receita</span>
               </label>
               <label class="radio-label">
-                <input type="radio" name="tipo" value="Despesa">
-                <span class="despesa--radio">Despesa</span>
+                <input type="radio" name="tipo_transacao" value="Despesa">
+                <span class="despesa--radio" type="radio" name="tipo_transacao" value="Despesa">Despesa</span>
               </label>
             </div>
 

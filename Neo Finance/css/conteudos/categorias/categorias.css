@@ -113,7 +113,6 @@ body {
   transform: translateY(-5px);
 }
 
-
 /* Lado Esquerdo do Card */
 .lado--esquerdo-card {
   display: flex;
@@ -132,7 +131,6 @@ body {
   border-radius: 50%;
   width: 100px;
   height: 100px;
-
 }
 
 .icon--categoria i {
@@ -145,7 +143,11 @@ body {
 
 /* Descrição da Categoria */
 .descricao--categoria {
+  width: 300px;
+  text-overflow: ellipsis;
   font-size: 2rem;
+  text-wrap: nowrap;
+  overflow: hidden;
   background: var(--card);
   border-radius: 90px;
   padding: 10px 20px;
@@ -211,4 +213,9 @@ body {
 }
 #bloquear-selecao {
   user-select: none;
+}
+@media screen and (max-width: 1300px) {
+  .card--categoria {
+    min-width: 750px;
+  }
 }

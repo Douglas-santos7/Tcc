@@ -137,6 +137,7 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                         echo '        </div>';
                         echo '    </div>';
                         echo '</div>';
+                        echo '</div>';
 
                         $currentMonth = $month;
                     }

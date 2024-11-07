@@ -227,6 +227,7 @@ body {
   font-weight: bold;
   white-space: nowrap;
   color: var(--fonte-cards);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .status-pago {
@@ -316,7 +317,7 @@ body {
   backdrop-filter: blur(80px);
   border: 2px solid var(--cor--destaque-verde);
   background-color: var(--verde--vidro);
-  transform: scale(1)
+  transform: scale(1);
 }
 
 .modal-content h2 {
@@ -333,7 +334,9 @@ body {
   font-size: 1.2rem;
 }
 
-#fechar-modal {
+/* Botão de Fechar Modal (geral) */
+#fechar-modal,
+.fechar--modal {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -343,11 +346,25 @@ body {
   color: white;
   font-size: 1.5rem;
   font-weight: bold;
-  padding: 5px 10px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.3s ease;
 }
 
-#fechar-modal:hover {
-  background-color: red;
+#fechar-modal:hover,
+.fechar--modal:hover {
+  color: #ff0000;
+  transition: color 0.3s ease;
+}
+
+#fechar-modal,
+.fechar--modal {
+  line-height: 0;
+  text-align: center;
 }
 
 @keyframes fadeIn {
@@ -485,24 +502,46 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   background: none;
   outline: none;
   border: none;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  font-family: var(--fonte-principal);
-  margin: 0px 100px;
   cursor: pointer;
+  background: var(--background);
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  gap: 0px 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--fonte-cards);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.confirmar-pagamento:hover {
+  background-color: white;
+  padding: 2.5px 20px;
+}
+.confirmar-pagamento:hover img {
+  background-color: var(--cor--destaque-verde);
+  padding: 3px;
+}
+.confirmar-pagamento:hover span {
+  color: var(--cor--destaque-verde);
+}
+/* Animação ao clicar no botão */
+.confirmar-pagamento:active {
+  transform: scale(0.95);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Reduz o sombreado para simular o pressionamento */
+  transition: transform 0.1s ease, box-shadow 0.1s ease; /* Animação rápida de pressionamento */
 }
 
 .confirmar-pagamento img {
-  width: 70px;
-  height: 70px;
+  width: 20px;
+  height: 20px;
   outline: none;
-  background-color: var(--background--icon);
+  transition: all 0.3s ease-in-out;
   border-radius: 50%;
-  padding: 10px;
 }
 #bloquear-selecao {
   user-select: none;
@@ -560,4 +599,15 @@ body {
   justify-content: center;
   width: 100%;
   font-size: 1.2rem;
+}
+@media screen and (max-width: 1300px) {
+  .container--conteudo {
+    grid-template-columns: 1fr;
+    min-width: 900px;
+    grid-template-rows: 15vh;
+  }
+  .card {
+    min-width: 1100px;
+    overflow: auto;
+  }
 }

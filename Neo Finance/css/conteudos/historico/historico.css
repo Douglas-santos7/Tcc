@@ -251,3 +251,8 @@ body {
 #bloquear-selecao {
   user-select: none;
 }
+@media screen and (max-width: 1300px) {
+  .container--conteudo {
+    min-width: 400px;
+  }
+}
