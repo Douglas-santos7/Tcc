@@ -126,7 +126,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
         <div class="conteudo--card-vencimentos">
           <div class="scroll-card">
             <?php if (empty($vencimentos)): ?>
-              <p>Nenhum vencimento encontrado para este mês.</p>
+              <p class="mensagem--nao-v">Nenhum vencimento encontrado para este mês.</p>
             <?php else: ?>
               <?php foreach ($vencimentos as $vencimento): ?>
                 <div class="card">

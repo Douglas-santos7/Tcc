@@ -242,6 +242,7 @@ body {
   font-weight: bold;
   white-space: nowrap;
   color: white;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .categoria--despesa {
@@ -264,6 +265,19 @@ body {
   font-size: 3.5rem;
   font-weight: bold;
   color: var(--fonte-cards);
+}
+.mensagem--nao-v {
+  margin: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--cor--destaque-verde);
+  padding: 15px;
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 12px;
+  color: var(--cor--destaque-verde);
 }
 
 /* =====================================
