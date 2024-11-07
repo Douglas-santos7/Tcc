@@ -89,54 +89,44 @@ function adicionarVencimento($descricao, $data_vencimento, $valor, $categoria, $
 }
 
 
-function confirmarPagamento($conn, $vencimentoId)
+// Função para confirmar o pagamento de um vencimento
+function confirmarPagamento($vencimento_id, $conn)
 {
-  // Inicia uma transação
-  mysqli_begin_transaction($conn);
-
-  // Busca os detalhes do vencimento
-  $stmt = $conn->prepare("SELECT v.*, c.id AS categoria_id, c.icone
+    // Busca os detalhes do vencimento
+    $stmt = $conn->prepare("SELECT v.*, c.id AS categoria_id, c.icone
                             FROM vencimentos v
                             JOIN categorias c ON v.categoria = c.nome
                             WHERE v.id = ?");
-  $stmt->bind_param("i", $vencimentoId);
-  $stmt->execute();
-  $vencimento = $stmt->get_result()->fetch_assoc();
+    $stmt->bind_param("i", $vencimento_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $vencimento = $result->fetch_assoc();
 
-  if ($vencimento) {
-    // Insere a transação na tabela de transações
-    $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $usuario_id = $vencimento['usuario_id']; // Certifique-se que esta chave está correta
-    $tipo_transacao = $vencimento['tipo_transacao']; // Certifique-se que esta chave está correta
-    $categoria_id = $vencimento['categoria_id']; // Certifique-se que esta chave está correta
-    $nome = $vencimento['descricao'];
-    $valor = $vencimento['valor'];
-    $data = $vencimento['data_vencimento'];
-    $criado_em = date('Y-m-d H:i:s');
-    $icone = $vencimento['icone']; // Certifique-se que esta chave está correta
+    if ($vencimento) {
+        // Insere a transação na tabela de transações
+        $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, categoria_id, nome, valor, data, criado_em, icone) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-    // Use 'isssssss' se estiver vinculando 8 parâmetros
-    $stmt->bind_param("isssssss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
+        $usuario_id = $vencimento['usuario_id'];
+        $tipo_transacao = $vencimento['tipo_transacao'];
+        $categoria_id = $vencimento['categoria_id'];
+        $nome = $vencimento['descricao'];
+        $valor = $vencimento['valor']; // Valor decimal
+        $data = $vencimento['data_vencimento'];
+        $criado_em = date('Y-m-d H:i:s');
+        $icone = $vencimento['icone'];
 
-    if ($stmt->execute()) {
-      // Marca o vencimento como pago
-      $stmt = $conn->prepare("UPDATE vencimentos SET status = 'Pago' WHERE id = ?");
-      $stmt->bind_param("i", $vencimentoId);
-      $stmt->execute();
+        // O tipo do parâmetro 'valor' deve ser 'd' (decimal), não 's' (string)
+        $stmt->bind_param("isssdsss", $usuario_id, $tipo_transacao, $categoria_id, $nome, $valor, $data, $criado_em, $icone);
+        $stmt->execute();
 
-      // Confirma a transação
-      mysqli_commit($conn);
-      return true;
+        // Atualiza o status do vencimento para 'Pago'
+        $stmt = $conn->prepare("UPDATE vencimentos SET status = 'Pago' WHERE id = ?");
+        $stmt->bind_param("i", $vencimento_id);
+        $stmt->execute();
+
+        return true;
     } else {
-      // Se a inserção falhar, reverte a transação
-      mysqli_rollback($conn);
-      return false;
+        return false;
     }
-  }
-
-  // Se o vencimento não existir, reverte a transação
-  mysqli_rollback($conn);
-  return false;
 }
-
