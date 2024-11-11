@@ -199,6 +199,240 @@ body {
   height: 800px;
   overflow: auto;
 }
+.modal {
+  display: none;
+  /* Garante que os modais estejam ocultos ao carregar a página */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-conteudo {
+  background-color: var(--verde--vidro);
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  width: 80%;
+  font-family: var(--fonte-principal);
+  backdrop-filter: blur(80px);
+  border: 2px solid var(--cor--destaque-verde);
+  animation: fadeIn 0.3s;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  /* Permite rolagem se o conteúdo for muito grande */
+  position: absolute;
+  /* Altera de relative para absolute */
+  top: 50%;
+  /* Move o modal para o meio da tela */
+  left: 50%;
+  /* Move o modal para o meio da tela */
+  transform: translate(-50%, -50%);
+  /* Centraliza o modal */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-conteudo label {
+  font-size: 1rem;
+  color: white;
+}
+
+.modal-conteudo h2 {
+  text-align: center;
+  margin-top: 30px;
+  color: white;
+  font-weight: bold;
+}
+
+.modal-conteudo h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 30px;
+  color: red;
+  border-radius: 12px;
+  background-color: white;
+  padding: 5px 15px;
+  font-weight: bold;
+}
+
+.modal-conteudo p {
+  font-size: 1.4rem;
+  text-align: center;
+  color: white;
+}
+
+.modal-conteudo .fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.modal-conteudo .fechar:hover,
+.modal-conteudo .fechar:focus {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-conteudo form {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.modal-conteudo label {
+  margin-bottom: 5px;
+}
+
+.modal-conteudo input[type="text"],
+.modal-conteudo input[type="radio"] {
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px 5px;
+  font-size: 1.1rem;
+  outline: none;
+  background-color: white;
+  border: 2px solid var(--cor--destaque-verde);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.espacamento {
+  margin: 20px 0px;
+}
+
+.modal-conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.modal-conteudo button {
+  padding: 15px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--fonte-principal);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.modal-conteudo button:hover {
+  background-color: #4cae4f;
+  transform: translateY(-2px);
+}
+
+.modal-conteudo button:disabled,
+.modal-conteudo button:disabled:hover {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.modal-conteudo .container--icones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow-y: auto;
+  /* Permite rolagem vertical na lista de ícones */
+  max-height: 200px;
+  /* Define uma altura máxima para a lista de ícones */
+}
+
+.modal-conteudo .icon {
+  margin: 5px;
+}
+
+.modal-conteudo .icon input[type="radio"] {
+  display: none;
+}
+
+.modal-conteudo .icon label {
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-conteudo .icon input[type="radio"]:checked + label {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-conteudo .mensagem-sucesso,
+.modal-conteudo .mensagem-erro {
+  margin-top: 10px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.modal-conteudo .mensagem-sucesso {
+  background-color: #d1fae5;
+  color: #4caf50;
+}
+
+.modal-conteudo .mensagem-erro {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+.excluir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: auto;
+}
+
+.excluir button {
+  padding: 15px;
+  width: 100%;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--fonte-principal);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.excluir button:hover {
+  background-color: white;
+  color: red;
+  transform: translateY(-2px);
+}
 /* =====================================
    OCULTAR BARRA DE ROOLAGEM
    ===================================== */
