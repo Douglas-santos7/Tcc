@@ -1,3 +1,4 @@
+-- Active: 1727735728578@@127.0.0.1@3306@finance
 -- Criação do banco de dados
 CREATE DATABASE finance;
 
@@ -101,17 +102,29 @@ CREATE TABLE
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     );
 
-CREATE TABLE
-    metas (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        usuario_id INT NOT NULL,
+    -- Tabela para armazenar metas dos usuários
+    CREATE TABLE IF NOT EXISTS metas_usuario (
+        id_meta INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT NOT NULL,
         nome_meta VARCHAR(255) NOT NULL,
         valor_alvo DECIMAL(10, 2) NOT NULL,
-        valor_atual DECIMAL(10, 2) DEFAULT 0.00, -- Valor atual economizado
-        data_limite DATE, -- Data limite para atingir a meta
-        criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (usuario_id) REFERENCES users (id) ON DELETE CASCADE UNIQUE (usuario_id, nome_meta)
+        valor_atual DECIMAL(10, 2) NOT NULL DEFAULT 0,
+        prazo DATE NOT NULL,
+        data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_usuario) REFERENCES users(id) ON DELETE CASCADE
     );
+
+    -- Tabela historico_transacoes
+CREATE TABLE IF NOT EXISTS historico_transacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_meta INT NOT NULL,
+  id_usuario INT NOT NULL,
+  tipo_transacao ENUM('deposito', 'resgate') NOT NULL,
+  valor DECIMAL(10, 2) NOT NULL,
+  data_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_meta) REFERENCES metas_usuario(id_meta) ON DELETE CASCADE,
+  FOREIGN KEY (id_usuario) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- Trigger para inserir categorias predefinidas para novos usuários
 DELIMITER / / CREATE TRIGGER after_user_insert AFTER INSERT ON users FOR EACH ROW BEGIN
