@@ -25,150 +25,47 @@ if ($stmt_check_user->num_rows == 0) {
 }
 $stmt_check_user->close();
 
-/* ================================
-ENVIO DE FORMULARIO DA META CRIADA
-===================================*/
-// Verifique se o formulário foi enviado para criação de meta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['goal_name']) && isset($_POST['target_amount']) && isset($_POST['deadline'])) {
-  $goalName = $_POST['goal_name'];
-  $targetAmount = $_POST['target_amount'];
-  $deadline = $_POST['deadline'];
+// Consulta para obter as metas do usuário
+$sql_metas = "SELECT id_meta, nome_meta, valor_alvo, valor_atual, prazo FROM metas_usuario WHERE id_usuario = ?";
+$stmt_metas = $conn->prepare($sql_metas);
+$stmt_metas->bind_param("i", $userId);
+$stmt_metas->execute();
+$result = $stmt_metas->get_result();
 
-  // Inserção de dados na tabela 'metas_usuario'
-  $sql = "INSERT INTO metas_usuario (id_usuario, nome_meta, valor_alvo, prazo) VALUES (?, ?, ?, ?)";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("isds", $userId, $goalName, $targetAmount, $deadline);
-
-  if ($stmt->execute()) {
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-  } else {
-    echo "Erro: " . $sql . "<br>" . $conn->error;
-  }
-  $stmt->close();
-}
-
-/* ================================
-LÓGICA DE DEPÓSITO
-===================================*/
-// Processar o depósito
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['depositar'])) {
-  $depositValue = $_POST['deposit_value'];
-  $goalId = $_POST['goal_id'];
-
-  if ($depositValue > 0) {
-    // Atualizar o valor atual da meta
-    $sql = "UPDATE metas_usuario SET valor_atual = valor_atual + ? WHERE id_meta = ? AND id_usuario = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("dii", $depositValue, $goalId, $userId);
-
-    if ($stmt->execute()) {
-      // Registrar a transação no histórico
-      $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, 'deposito', ?)";
-      $stmt_history = $conn->prepare($sql_history);
-      $stmt_history->bind_param("iid", $goalId, $userId, $depositValue);
-      $stmt_history->execute();
-      
-      header("Location: " . $_SERVER['PHP_SELF']);
-      exit();
-    } else {
-      echo "Erro: " . $stmt->error;
-    }
-    $stmt->close();
-  } else {
-    echo "Erro: O valor do depósito não pode ser negativo.";
-  }
-}
-
-/* ================================
-LÓGICA DE RESGATE
-===================================*/
-// Processar o resgatar
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resgatar'])) {
-  $withdrawValue = $_POST['withdraw_value'];
-  $goalId = $_POST['goal_id'];
-
-  if ($withdrawValue > 0) {
-    // Buscar o valor atual da meta
-    $sql = "SELECT valor_atual FROM metas_usuario WHERE id_meta = ? AND id_usuario = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $goalId, $userId);
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($currentValue);
-    $stmt->fetch();
-    $stmt->close();
-
-    if ($currentValue >= $withdrawValue) {
-      // Atualizar o valor atual da meta
-      $sql = "UPDATE metas_usuario SET valor_atual = valor_atual - ? WHERE id_meta = ? AND id_usuario = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("dii", $withdrawValue, $goalId, $userId);
-
-      if ($stmt->execute()) {
-        // Registrar a transação no histórico
-        $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, 'resgato', ?)";
-        $stmt_history = $conn->prepare($sql_history);
-        $stmt_history->bind_param("iid", $goalId, $userId, $withdrawValue);
-        $stmt_history->execute();
-        
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-      } else {
-        echo "Erro: " . $stmt->error;
-      }
-      $stmt->close();
-    } else {
-      echo "Erro: O valor a ser resgatado não pode ser maior que o valor atual da meta.";
-    }
-  } else {
-    echo "Erro: O valor do resgate não pode ser negativo.";
-  }
-}
-
-/* ================================
-LÓGICA DE EXCLUSÃO DE META
-===================================*/
-// Processar a exclusão da meta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_goal_id'])) {
-  $goalIdToDelete = $_POST['delete_goal_id'];
-
-  // Excluir a meta
-  $sql_delete = "DELETE FROM metas_usuario WHERE id_meta = ? AND id_usuario = ?";
-  $stmt_delete = $conn->prepare($sql_delete);
-  $stmt_delete->bind_param("ii", $goalIdToDelete, $userId);
-
-  if ($stmt_delete->execute()) {
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-  } else {
-    echo "Erro ao excluir a meta: " . $stmt_delete->error;
-  }
-  $stmt_delete->close();
-}
-
-// Seleção de metas para exibição
-$sql = "SELECT * FROM metas_usuario WHERE id_usuario = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
+// Controllers de metas
+include('../../config/conteudos/metas/adicionar_meta.php');
+include('../../config/conteudos/metas/logica_metas.php');
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Minhas Metas - Neo Finance</title>
   <link rel="stylesheet" href="../../css/conteudos/metas/metas.css">
+  <link rel="stylesheet" href="../../css/conteudos/metas/popUpMetas.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
+
 <body>
-  <h1>Minhas Metas</h1>
+  <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
+
+  <div class="container--add--metas">
+    <!-- Botão de Adicionar -->
+    <div class="adicionar--btn" id="adicionarBtn">
+      <img src="../../assets/icons/add--icon.svg" alt="add--btn">
+    </div>
+  </div>
+
   <div class="container">
-    <div class="menu-criar-meta">
+
+    <div class="menu-criar-meta" id="menuCriarMeta">
       <!-- Formulário para criação de meta -->
       <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <span class="close-btn">&times;</span>
         <label for="goal_name">Nome da Meta:</label>
         <input type="text" id="goal_name" name="goal_name" required><br><br>
         <label for="target_amount">Valor Alvo:</label>
@@ -180,13 +77,14 @@ $result = $stmt->get_result();
     </div>
 
     <div class="container-cards">
-      <?php while ($row = $result->fetch_assoc()) : 
+      <?php while ($row = $result->fetch_assoc()):
         $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
-      ?>
+        $deadline = date('d/m/Y', strtotime($row['prazo'])); // Formata a data de prazo
+        ?>
         <div class="card-meta">
           <div class="titulo-card">
-             <!-- Ícone de exclusão -->
-             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
+            <!-- Ícone de exclusão -->
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
               <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
               <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">
                 <i class="fas fa-trash"></i> Excluir
@@ -197,16 +95,98 @@ $result = $stmt->get_result();
           <div class="progresso-meta">
             <span>Progresso:</span>
             <div class="barra-progresso">
-              <div class="barra-progresso-preenchida" style="width: <?php echo ($row['valor_atual'] / $row['valor_alvo']) * 100; ?>%;"></div>
+              <div class="barra-progresso-preenchida"
+                style="width: <?php echo ($row['valor_atual'] / $row['valor_alvo']) * 100; ?>%;"></div>
             </div>
             <span>R$ <?php echo $row['valor_atual']; ?> de R$ <?php echo $row['valor_alvo']; ?></span>
-            <?php if ($row['valor_atual'] >= $row['valor_alvo']) : ?>
+            <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
               <div class="mensagem-meta-alcancada">Meta Alcançada!</div>
+              <?php
+              // Verificar se a meta já foi celebrada
+              if (!isset($_SESSION['celebrated_goals']) || !in_array($goalId, $_SESSION['celebrated_goals'])):
+                // Marcar a meta como celebrada
+                $_SESSION['celebrated_goals'][] = $goalId;
+              ?>
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                  var end = Date.now() + (8 * 1000);
+                  var colors = ['#bb0000', '#ffffff'];
+                  (function frame() {
+                    confetti({
+                      particleCount: 2,
+                      angle: 60,
+                      spread: 55,
+                      origin: { x: 0 }
+                    });
+                    confetti({
+                      particleCount: 2,
+                      angle: 120,
+                      spread: 55,
+                      origin: { x: 1 }
+                    });
+                    if (Date.now() < end) {
+                      requestAnimationFrame(frame);
+                    }
+                  }());
+
+                  // Exibir mensagem de parabéns
+                  var congratulationsMessage = document.createElement('div');
+                  congratulationsMessage.className = 'congratulations-message';
+                  congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
+                  document.body.appendChild(congratulationsMessage);
+
+                  setTimeout(function() {
+                    congratulationsMessage.style.display = 'block';
+                  }, 1000);
+
+                  setTimeout(function() {
+                    congratulationsMessage.style.display = 'none';
+                    document.body.removeChild(congratulationsMessage);
+                  }, 8000);
+
+                  // Adicionar emojis animados
+                  var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
+                  var emojiInterval = setInterval(function() {
+                    var emoji = document.createElement('div');
+                    emoji.className = 'emoji';
+                    emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    emoji.style.left = Math.random() * 100 + 'vw';
+                    document.body.appendChild(emoji);
+
+                    setTimeout(function() {
+                      document.body.removeChild(emoji);
+                    }, 8000);
+                  }, 500);
+
+                  setTimeout(function() {
+                    clearInterval(emojiInterval);
+                  }, 8000);
+                });
+              </script>
+              <?php endif; ?>
             <?php endif; ?>
+            <h2>Até <?php echo $deadline; ?></h2> <!-- Exibe a data de prazo aqui -->
+          </div>
+
+          <!-- Elemento para o gráfico -->
+          <div class="grafico" id="chart-<?php echo $goalId; ?>" style="height: 200px; width: 100%;"></div>
+
+          <!-- Botão para selecionar ação -->
+          <button class="selectActionBtn">Selecionar Ação</button>
+
+          <!-- Botões de ação -->
+          <div class="actionButtons" style="display:none;">
+            <button class="actionBtn" data-action="depositar">Depositar<img
+                src="../../assets/icons/icon--depositar--meta.svg" alt=""></button>
+            <button class="actionBtn" data-action="resgatar">Resgatar<img
+                src="../../assets/icons/icon--resgatar--metas.svg" alt=""></button>
+            <button class="actionBtn" data-action="verHistorico">Ver Histórico<img
+                src="../../assets/icons/icon--historico--metas.svg" alt=""></button>
           </div>
 
           <!-- Formulário de resgatar -->
-          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar">
+          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar" style="display:none;">
+            <button type="button" class="back-btn">&lt;</button>
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="withdraw_value">Valor a Resgatar:</label>
             <input type="number" id="withdraw_value" name="withdraw_value" required>
@@ -214,7 +194,8 @@ $result = $stmt->get_result();
           </form>
 
           <!-- Formulário de depósito -->
-          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-depositar">
+          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-depositar" style="display:none;">
+            <button type="button" class="back-btn">&lt;</button>
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="deposit_value">Valor a Depositar:</label>
             <input type="number" id="deposit_value" name="deposit_value" required>
@@ -222,7 +203,8 @@ $result = $stmt->get_result();
           </form>
 
           <!-- Exibição do histórico -->
-          <div class="historico-transacoes">
+          <div class="historico-transacoes" style="display:none;">
+            <button type="button" class="back-btn">&lt;</button>
             <h3>Histórico</h3>
             <table>
               <tr>
@@ -231,15 +213,15 @@ $result = $stmt->get_result();
                 <th>Data</th>
               </tr>
               <?php
-                // Consulta de histórico para a meta específica
-                $sql_history = "SELECT tipo_transacao, valor, data_transacao FROM historico_transacoes WHERE id_usuario = ? AND id_meta = ?";
-                $stmt_history = $conn->prepare($sql_history);
-                $stmt_history->bind_param("ii", $userId, $goalId);  // Passando o ID da meta
-                $stmt_history->execute();
-                $history_result = $stmt_history->get_result();
-                
-                while ($history = $history_result->fetch_assoc()) : 
-              ?>
+              // Consulta de histórico para a meta específica
+              $sql_history = "SELECT tipo_transacao, valor, data_transacao FROM historico_transacoes WHERE id_usuario = ? AND id_meta = ?";
+              $stmt_history = $conn->prepare($sql_history);
+              $stmt_history->bind_param("ii", $userId, $goalId);  // Passando o ID da meta
+              $stmt_history->execute();
+              $history_result = $stmt_history->get_result();
+
+              while ($history = $history_result->fetch_assoc()):
+                ?>
                 <tr>
                   <td><?php echo ucfirst($history['tipo_transacao']); ?></td>
                   <td>R$ <?php echo number_format($history['valor'], 2, ',', '.'); ?></td>
@@ -248,11 +230,85 @@ $result = $stmt->get_result();
               <?php endwhile; ?>
             </table>
           </div>
+
+          <!-- Botão para finalizar meta -->
+          <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
+              <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
+              <button type="submit" class="finalizar-meta-btn">
+                <i class="fas fa-check"></i> Finalizar Meta
+              </button>
+            </form>
+          <?php endif; ?>
         </div>
       <?php endwhile; ?>
     </div>
   </div>
-</body>
-</html>
 
+  <script src="../../js/conteudos/metas/abrirModais.js"></script>
+  <script src="../../js/conteudos/metas/dataAtual.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gráfico de progresso das metas
+      <?php foreach ($result as $meta) { ?>
+        var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%
+
+        var chartOptions<?php echo $meta['id_meta']; ?> = {
+          series: [progresso], // Passa o valor limitado
+          chart: {
+            height: 200,
+            type: 'radialBar',
+            offsetY: 0,
+            sparkline: {
+              enabled: false
+            }
+          },
+          plotOptions: {
+            radialBar: {
+              startAngle: -90, // Começa o gráfico no topo
+              endAngle: 90, // Termina o gráfico no topo
+              hollow: {
+                size: '50%',
+              },
+              track: {
+                background: '#f0f0f0', // Fundo da trilha
+                strokeWidth: '70%',
+              },
+              dataLabels: {
+                show: true,
+                name: {
+                  offsetY: -5,
+                  color: '#333',
+                  fontSize: '14px'
+                },
+                value: {
+                  formatter: function (val) {
+                    return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
+                  },
+                  color: '#28a745', // Cor do valor
+                  fontSize: '22px',
+                  show: true,
+                }
+              }
+            },
+          },
+          fill: {
+            colors: ['#28a745'], // Cor verde para todos os gráficos
+          },
+          stroke: {
+            lineCap: 'round'
+          },
+          labels: ['Progresso'],
+        };
+
+        var chart<?php echo $meta['id_meta']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id_meta']; ?>"), chartOptions<?php echo $meta['id_meta']; ?>);
+        chart<?php echo $meta['id_meta']; ?>.render();
+      <?php } ?>
+    });
+  </script>
+
+</body>
+
+</html>
 <?php $conn->close(); ?>

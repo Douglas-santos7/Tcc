@@ -90,7 +90,6 @@ if (isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,25 +97,25 @@ if (isset($_SESSION['error'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redefinir Senha</title>
-    <link rel="stylesheet" href="../../css/login/telaCadastro.css">
+    <link rel="stylesheet" href="../../css/login/resetSenha.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 </head>
 
 <body>
     <div class="main-container">
         <div class="image-container">
-            <div class="carousel">
-                <div class="carousel-images" id="carousel-images">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <video src="../../assets/img/carrosel--logjn/Iphon.mp4" loop muted autoplay></video>
-                </div>
-                <div class="carousel-dots">
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                    <span class="dot" onclick="currentSlide(4)"></span>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
+                    <div class="swiper-slide">
+                        <video src="../../assets/img/carrosel--logjn/Iphon.mp4" muted autoplay></video>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,12 +127,15 @@ if (isset($_SESSION['error'])) {
                 <div class="title">Redefinir Senha</div>
                 <form method="POST" action="./reset_senha.php">
                     <div class="field">
-                        <input type="password" id="new-password" name="new-password" placeholder=" " required>
+                        <input type="password" id="new-password" name="new-password" required placeholder=" " autocomplete="on" oninput="checkPasswordStrength()">
                         <label for="new-password">Nova Senha</label>
                         <i class="fa fa-lock"></i>
                         <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('new-password', this)"></i>
-                    </div>
 
+                    </div>
+                    <div class="forca--senha">
+                        <span id="password-strength"></span>
+                    </div>
                     <div class="field">
                         <input type="password" id="confirm-new-password" name="confirm-new-password" placeholder=" " required>
                         <label for="confirm-new-password">Confirme a Nova Senha</label>
@@ -144,10 +146,17 @@ if (isset($_SESSION['error'])) {
                     <button type="submit" class="login-btn">Redefinir Senha</button>
                 </form>
 
-                <div class="messages <?php echo $errorMessage ? 'show' : ''; ?>">
-                    <?php if ($errorMessage): ?>
-                        <p class="error"><?php echo $errorMessage; ?></p>
-                    <?php endif; ?>
+                <div class="message-container">
+                    <?php
+                    if (isset($_SESSION['login_message'])) {
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
+                        unset($_SESSION['login_message']);
+                    }
+                    if (isset($_SESSION['reset_message'])) {
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
+                        unset($_SESSION['reset_message']);
+                    }
+                    ?>
                 </div>
 
                 <div class="bottom">
@@ -156,54 +165,72 @@ if (isset($_SESSION['error'])) {
             </div>
         </div>
     </div>
-
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        function togglePasswordVisibility(inputId, eyeIcon) {
-            const inputField = document.getElementById(inputId);
-            const isPassword = inputField.type === 'password';
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: false,
+            },
+            autoplay: {
+                delay: 5000,
+            },
+            on: {
+                slideChange: function() {
+                    const videos = document.querySelectorAll('.swiper-slide video');
+                    videos.forEach(video => {
+                        video.pause();
+                        video.currentTime = 0; // Reseta o vídeo
+                    });
+                    const activeSlide = this.slides[this.activeIndex].querySelector('video');
+                    if (activeSlide) {
+                        activeSlide.play();
+                    }
+                },
+            },
+        });
 
-            inputField.type = isPassword ? 'text' : 'password';
-
-            eyeIcon.classList.toggle('fa-eye', !isPassword);
-            eyeIcon.classList.toggle('fa-eye-slash', isPassword);
+        const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
+        if (initialVideo) {
+            initialVideo.play();
         }
 
-        let slideIndex = 1;
-        showSlides(slideIndex);
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const isPassword = input.type === 'password';
 
-        // Mudar o slide a cada 3 segundos
-        setInterval(() => {
-            showSlides(slideIndex += 1);
-        }, 10000); // 3000 milissegundos = 3 segundos
+            input.type = isPassword ? 'text' : 'password';
 
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
+            // Troca as classes do ícone
+            icon.classList.toggle('fa-eye', isPassword);
+            icon.classList.toggle('fa-eye-slash', !isPassword);
         }
 
-        function showSlides(n) {
-            const slides = document.querySelectorAll('.carousel-images img, .carousel-images video');
-            const dots = document.querySelectorAll('.dot');
+        function checkPasswordStrength() {
+            const password = document.getElementById('new-password').value;
+            const strengthText = document.getElementById('password-strength');
 
-            if (n > slides.length) {
-                slideIndex = 1
-            }
-            if (n < 1) {
-                slideIndex = slides.length
+            // Se a senha estiver vazia, esconder a força da senha
+            if (password === '') {
+                strengthText.innerHTML = ''; // Limpa o texto
+                return; // Sai da função
             }
 
-            slides.forEach((slide, index) => {
-                slide.style.display = (index + 1 === slideIndex) ? 'block' : 'none';
-                // Reproduzir o vídeo ativo
-                if (index + 1 === slideIndex && slide.tagName === 'VIDEO') {
-                    slide.play();
-                } else if (slide.tagName === 'VIDEO') {
-                    slide.pause();
+            let strength = 'Fraca';
+            let color = 'red'; // Cor padrão para "Fraca"
+
+            if (password.length >= 8) {
+                if (/[A-Z]/.test(password) && /[0-9]/.test(password) && /[^\w]/.test(password)) {
+                    strength = 'Forte';
+                    color = 'green'; // Cor para "Forte"
+                } else {
+                    strength = 'Média';
+                    color = 'orange'; // Cor para "Média"
                 }
-            });
+            }
 
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index + 1 === slideIndex);
-            });
+            strengthText.innerHTML = `Força da senha: <span style="color: ${color}; font-weight: bold;">${strength}</span>`;
         }
     </script>
 </body>

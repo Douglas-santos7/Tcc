@@ -11,15 +11,17 @@ include("../../config/conteudos/dashboard/consulta_historico.php");
 include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
 
-$userId = $_SESSION['user_id']; // ID do usuário logado
+// ID do usuário logado
+$userId = $_SESSION['user_id'];
 
 // Obter dados do balanço
 $balancoData = calcularBalanco($conn, $userId);
 $receitas = $balancoData['receitas'];
 $despesas = $balancoData['despesas'];
 $balanco = $balancoData['balanco'];
-$proporcaoReceitas = $balancoData['proporcaoReceitas'];
-$proporcaoDespesas = $balancoData['proporcaoDespesas'];
+$proporcaoReceitas = "";
+$proporcaoDespesas = "";
+$proporcaoBalanco = "";
 
 // Obter próximo vencimento
 $vencimentoData = obterProximoVencimento($conn, $userId);
@@ -42,7 +44,7 @@ $historicoItems = consultarHistorico($conn, $userId);
 // Obter saudação
 $saudacao = obterSaudacao();
 
-// Fecha a conexão
+// Fecha a conexão com o banco de dados
 $conn->close();
 ?>
 
@@ -55,6 +57,7 @@ $conn->close();
   <title>Neo Finance - Dashboard</title>
   <link rel="stylesheet" href="../../css/conteudos/dashboard/dashboard.css">
   <link rel="stylesheet" href="../../css/conteudos/dashboard/popUp.css">
+  <script src="../../js/conteudos/dashboard/atualizarGrafico.js"></script>
 </head>
 
 <body>
@@ -122,38 +125,39 @@ $conn->close();
       <div class="card--receitasXdespesas">
         <div class="lado--esquerdo-rd">
           <span>Receitas x Despesas</span>
-          <div class="grafico--receitasXdespesas">
+          <div class="grafico--receitasXdespesas" id="cardReceitasDespesas">
             <div class="grafico--receitas" data-largura="<?php echo $proporcaoReceitas; ?>"></div>
             <div class="grafico--despesas" data-largura="<?php echo $proporcaoDespesas; ?>"></div>
+            <div class="grafico--balanco" data-largura="<?php echo $proporcaoBalanco; ?>"></div>
           </div>
         </div>
         <div class="infoXfiltro">
           <div class="select--filtro">
-            <select name="periodo" id="Filtro--mes">
+            <select name="periodo" id="Filtro--mes" onchange="atualizarGrafico()">
               <option value="mensal">Mensal</option>
               <option value="semanal">Semanal</option>
-              <option value="diario">Diário</option>
+              <option value="diario" selected>Diário</option>
             </select>
           </div>
           <div class="receitas--filtro">
             <div class="icon--verde"></div>
             <div class="info--valores">
               <span>Receitas</span>
-              <span>R$ <?php echo number_format($receitas, 2, ',', '.'); ?></span>
+              <span>R$ 0,00</span>
             </div>
           </div>
           <div class="despesas--filtro">
             <div class="icon--vermelho"></div>
             <div class="info--valores">
               <span>Despesas</span>
-              <span>R$ <?php echo number_format($despesas, 2, ',', '.'); ?></span>
+              <span>R$ 0,00</span>
             </div>
           </div>
           <div class="saldo--filtro">
             <div class="icon--verde-claro"></div>
             <div class="info--valores">
-              <span>Saldo</span>
-              <span>R$ <?php echo number_format($balanco, 2, ',', '.'); ?></span>
+              <span>Balanço</span>
+              <span>R$ 0,00</span>
             </div>
           </div>
         </div>
@@ -188,7 +192,6 @@ $conn->close();
           <span class="valor--vencimento">R$ <?php echo number_format($valor, 2, ',', '.'); ?></span>
         </div>
       </div>
-             
 
       <!-- Card Lembretes -->
       <div class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">
@@ -210,12 +213,12 @@ $conn->close();
             </div>
             <div class="status--info">
               <span>Em aberto</span>
-              <input type="checkbox" name="status--checkbox" />
+              <form method="POST" action="" onsubmit="exibirModalConfirmacao()">
+                <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
+                <input type="hidden" name="confirmar_pagamento" value="1">
+                <input type="checkbox" name="status--checkbox" onchange="if(this.checked){ this.form.submit(); }" />
+              </form>
             </div>
-            <form method="POST" action="">
-              <input type="hidden" name="vencimento_id" value="<?php echo $vencimentoData['id']; ?>">
-              <button type="submit" name="confirmar_pagamento">Confirmar Pagamento</button>
-            </form>
           <?php else: ?>
             <div class="sem-vencimento-info">
               <span class="descricao--info" id="fraseLembrete">Tudo certo por aqui!</span>
@@ -238,16 +241,20 @@ $conn->close();
             <label for="valor">Valor:</label>
             <input type="text" id="valor" name="valor" required placeholder="0,00">
 
-            <label for="categoria">Categoria:</label>
             <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
             <input type="hidden" name="categoria" id="categoria-id" required>
 
-            <label for="tipo">Tipo:</label>
-            <select name="tipo" required>
-              <option value="receita">Receita</option>
-              <option value="despesa">Despesa</option>
-            </select>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="Receita" required>
+                <span class="receita--radio">Receita</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="tipo" value="Despesa">
+                <span class="despesa--radio">Despesa</span>
+              </label>
+            </div>
 
             <button type="submit">Adicionar</button>
           </form>
@@ -283,6 +290,12 @@ $conn->close();
           </ul>
         </div>
       </div>
+      <div id="modalConfirmacao" class="modal" style="display: none;">
+        <div class="modal-content">
+          <p>Pagamento confirmado com sucesso!</p>
+          <button class="modal-close" onclick="fecharModalConfirmacao()">Ok, entendi </button>
+        </div>
+      </div>
 
       <script src="../../js/conteudos/dashboard/popup.js"></script>
       <script src="../../js/conteudos/dashboard/categorias.js"></script>
@@ -293,6 +306,21 @@ $conn->close();
         document.addEventListener('DOMContentLoaded', function() {
           alternarFraseLembrete();
         });
+      </script>
+      <script>
+        // Chamando a função ao carregar a página
+        window.onload = () => {
+          const filtroPeriodo = document.getElementById("Filtro--mes");
+          filtroPeriodo.value = "diario";
+
+          atualizarGrafico();
+        }
+      </script>
+      <script>
+        // Verifica se a variável PHP para exibir o modal está definida
+        <?php if ($mostrarModalConfirmacao): ?>
+          exibirModalConfirmacao();
+        <?php endif; ?>
       </script>
 </body>
 

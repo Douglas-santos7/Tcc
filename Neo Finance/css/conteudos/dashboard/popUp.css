@@ -6,7 +6,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo semitransparente mais escuro para dar destaque ao popup */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,24 +14,24 @@
 }
 
 .popup {
-  background-color: var(--verde--vidro); /* Fundo translúcido com efeito de vidro */
-  padding: 40px; /* Aumentar o padding para maior espaçamento interno */
+  background-color: var(--verde--vidro);
+  padding: 40px;
   border-radius: 12px;
-  width: 600px; /* Aumentar a largura do popup */
+  width: 600px;
   max-width: 90%;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada para profundidade */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   font-family: var(--fonte-principal);
-  position: relative; /* Para o posicionamento do botão 'x' */
-  backdrop-filter: blur(10px); /* Efeito de desfoque no fundo */
-  border: 2px solid var(--cor--destaque-verde); /* Borda verde para destacar */
+  position: relative;
+  backdrop-filter: blur(80px);
+  border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  max-height: 90vh; /* Limitar a altura máxima do popup */
-  overflow-y: auto; /* Adicionar rolagem se o conteúdo for muito alto */
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeIn 0.3s;
 }
 
-
 .popup h2 {
-  color: var(--cor--destaque-verde);
+  color: white;
   margin-bottom: 25px;
   font-size: 26px;
   text-align: center;
@@ -40,7 +40,7 @@
 }
 
 .popup label {
-  color: var(--fonte-branco-50);
+  color: white;
   display: block;
   margin-top: 15px;
   font-size: 15px;
@@ -50,80 +50,70 @@
 
 .popup input,
 .popup select {
-  width: 100%; /* Garantir que todos os inputs ocupem a largura total */
-  padding: 10px; /* Espaço interno uniforme */
-  margin-top: 5px; /* Margem superior uniforme */
-  background-color: var(--verde--vidro); /* Fundo do input */
-  color: var(--fonte-branco-100); /* Cor do texto dentro do input */
+  font-family: var(--fonte-principal);
+  font-size: 1rem;
+  transition: font-size 0.3s ease;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: white;
+  color: black;
   border: none;
-  border-radius: 4px; /* Borda arredondada */
-  box-sizing: border-box; /* Garantir que o padding não exceda a largura total */
-  appearance: none; /* Remove a aparência padrão do select */
+  border-radius: 4px;
+  box-sizing: border-box;
+  appearance: none;
 }
 
-/* Estilo para os selects */
 .popup select {
-  background-color: var(--verde--vidro); /* Fundo do select */
-  color: var(--fonte-branco-100); /* Cor do texto dentro do select */
-  padding: 10px; /* Espaço interno uniforme */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><polygon points="0,0 20,0 10,15" fill="%23ffffff"/></svg>'); /* Adiciona uma seta para baixo */
-  background-repeat: no-repeat; /* Não repetir a imagem de fundo */
-  background-position: right 10px center; /* Posição da seta */
-  background-size: 10px; /* Tamanho da seta */
+  background-color: var(--verde--vidro);
+  color: var(--fonte-branco-100);
+  padding: 10px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><polygon points="0,0 20,0 10,15" fill="%23ffffff"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
 }
 
-/* Estilo das opções dentro do select */
 .popup select option {
-  background-color: var(--verde--vidro); /* Cor do fundo das opções */
-  color: var(--fonte-branco-100); /* Cor do texto das opções */
+  background-color: var(--verde--vidro);
+  color: var(--fonte-branco-100);
 }
 
-/* Hover nas opções */
 .popup select option:hover {
-  background-color: var(--cor--destaque-verde); /* Cor ao passar o mouse */
+  background-color: var(--cor--destaque-verde);
 }
 
-/* Foco no select para mudar a cor */
-.popup select:focus {
-  background-color: var(--cor--verde-datas); /* Cor de fundo ao focar no select */
-}
-
-/* Foco nas opções */
-.popup select option:focus {
-  background-color: var(--cor--verde-datas); /* Cor de fundo ao focar nas opções */
+.popup select:focus,
+.popup input:focus {
+  outline: none;
+  background-color: white;
+  border: 2px solid var(--cor--destaque-verde);
 }
 
 .popup input[type="number"] {
-  padding: 12px 20px; /* Espaçamento interno maior */
-  border-radius: 20px; /* Bordas arredondadas */
-  font-size: 18px; /* Aumentar o tamanho da fonte */
-  font-weight: 600; /* Fonte mais ousada */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
-  transition: all 0.3s ease; /* Transição suave para efeitos */
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
 .popup input[type="number"]:focus {
-  outline: none; /* Remove o contorno padrão */
-  background-color: var(--cor--destaque-verde); /* Cor de fundo ao focar */
-  border: 2px solid var(--cor--destaque-verde); /* Borda verde ao focar */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Sombra mais intensa ao focar */
+  outline: none;
+  background-color: white;
+  border: 2px solid var(--cor--destaque-verde);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 .popup input[type="number"]::placeholder {
-  color: rgba(255, 255, 255, 0.7); /* Cor do placeholder */
-  font-style: italic; /* Estilo itálico para o placeholder */
-}
-
-.popup input:focus,
-.popup select:focus {
-  outline: none;
-  background-color: var(--verde--vidro);
-  border: 2px solid var(--cor--destaque-verde); /* Borda verde ao focar */
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
 }
 
 .popup button {
   background-color: var(--cor--destaque-verde);
-  color: var(--fonte-branco-100);
+  color: black;
   border: none;
   padding: 12px 25px;
   margin-top: 25px;
@@ -137,14 +127,14 @@
 }
 
 .popup button:hover {
-  background-color: var(--hover);
-  transform: scale(1.05); /* Leve efeito de aumento ao passar o mouse */
+  background-color: var(--cor--destaque-verde);
+  transform: scale(1.05);
 }
 
 .close-btn {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 22px;
   font-size: 24px;
   color: var(--fonte-branco-100);
   cursor: pointer;
@@ -157,46 +147,44 @@
 .close-btn:hover {
   color: var(--cor--destaque-verde);
 }
+
 /*============================
 POPUP - SELECIONAR CATEGORIAS
 ==============================*/
 
-/* Popup geral */
 .popup-categorias {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); 
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* Conteúdo do popup */
 .popup-categorias-conteudo {
   background-color: var(--cor-terciaria);
-  padding: 30px; 
-  border-radius: 12px; 
+  padding: 30px;
+  border-radius: 12px;
   text-align: center;
   position: relative;
-  max-width: 500px; 
+  max-width: 500px;
   width: 90%;
   overflow-y: auto;
-  max-height: 85vh; 
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25); 
-  transition: transform 0.3s ease; 
-  transform: scale(1); 
+  max-height: 85vh;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+  transform: scale(1);
 }
 
-/* Botão de fechar do popup */
 .popup-categorias-close-btn {
   position: absolute;
   top: 15px;
   right: 20px;
-  font-size: 20px; 
+  font-size: 20px;
   cursor: pointer;
   color: #fff;
   background: none;
@@ -205,91 +193,213 @@ POPUP - SELECIONAR CATEGORIAS
 }
 
 .popup-categorias-close-btn:hover {
-  transform: scale(1.2); 
+  transform: scale(1.2);
 }
 
-/* Botão de filtragem */
 .btn-filtro-categorias {
-  background: linear-gradient(135deg, var(--cor-destaque-verde) 0%, rgba(0, 255, 96, 0.8) 100%); /* Gradiente padrão */
+  background: linear-gradient(135deg, var(--cor-destaque-verde) 0%, rgba(0, 255, 96, 0.8) 100%);
   color: var(--fonte-branco-100);
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;
-  margin-bottom: 20px; /* Espaçamento inferior */
-  transition: background 0.3s, transform 0.2s; /* Transição suave para o fundo */
+  margin-bottom: 20px;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .btn-filtro-categorias:hover {
-  background: rgba(0, 255, 96, 0.8); /* Efeito hover */
-  transform: scale(1.05); /* Aumenta ligeiramente o botão no hover */
+  background: rgba(0, 255, 96, 0.8);
+  transform: scale(1.05);
 }
 
-
-
-/* Lista de categorias */
 .lista-categorias {
   list-style-type: none;
   padding: 0;
   margin: 0;
-  max-height: 70vh; 
+  max-height: 70vh;
   overflow-y: auto;
-  padding-right: 10px; 
+  padding-right: 10px;
 }
 
-/* Título da categoria */
 .categoria-titulo {
-  font-size: 1.8em; 
-  color: var(--fonte-branco-100); 
+  font-size: 1.8em;
+  color: var(--fonte-branco-100);
   margin-bottom: 20px;
   letter-spacing: 1px;
-  font-weight: bold; 
+  font-weight: bold;
 }
 
-/* Nomes da categoria */
 .categoria-nome {
-  font-size: 1.9em; 
-  color: var(--fonte-cards); 
-  font-weight: bold; 
-  margin-left: 10px; 
+  font-size: 1.9em;
+  color: var(--fonte-cards);
+  font-weight: bold;
+  margin-left: 10px;
 }
 
-/* Estilo dos itens da categoria */
 .categoria-item-unico {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  width: 100%;
-  padding: 16px; 
+  justify-content: space-between;
+  width: 90%;
+  margin: auto;
+  padding: 16px;
   background-color: #b3e8b3;
   border: none;
-  margin-bottom: 8px; 
+  margin-bottom: 8px;
   cursor: pointer;
   text-align: left;
-  border-radius: 8px; 
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
-/* Efeito hover para os itens da categoria */
 .categoria-item-unico:hover {
   background-color: #8fd58f;
-  transform: scale(1.04); 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+  transform: scale(1.04);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Ícone da categoria */
 .categoria-icon {
-  width: auto; 
-  height: auto; 
-  font-size: 30px; 
-  margin-right: 15px; 
-  background-color: var(--cor--destaque-verde); 
-  padding: 10px; 
-  border-radius: 50%; 
+  width: auto;
+  height: auto;
+  font-size: 30px;
+  margin-right: 15px;
+  background-color: var(--cor--destaque-verde);
+  padding: 10px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); 
-  color: var(--cor-terciaria); 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  color: var(--cor-terciaria);
+}
+
+.radio-group {
+  display: flex;
+  gap: 15px 20px;
+  justify-content: center;
+}
+
+.radio-label {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+}
+
+.receita--radio {
+  color: green;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.despesa--radio {
+  color: red;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.radio-label input[type="radio"]:checked + span {
+  padding: 10px 60px;
+  font-size: 1.1rem;
+  transform: scale(1.1);
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+}
+
+.radio-label:hover {
+  background-color: white;
+  transform: scale(1.05);
+}
+
+.radio-label:active {
+  transform: scale(0.95);
+}
+
+.radio-label input[type="radio"] {
+  display: none;
+}
+
+/* Estilos para o Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content {
+  background-color: var(--verde--vidro);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 700px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  font-family: var(--fonte-principal);
+  backdrop-filter: blur(80px);
+  border: 2px solid var(--cor--destaque-verde);
+  animation: fadeIn 0.3s;
+  font-size: 2.3rem;
+  text-wrap: nowrap;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  background-color: var(--cor--destaque-verde);
+  color: black;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 25px;
+  width: 50%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s;
+  letter-spacing: 1px;
+}
+
+.modal-close:hover {
+  background-color: var(--cor--destaque-verde);
+  transform: scale(1.05);
+}
+
+.modal button {
+  padding: 12px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--fonte-principal);
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.modal button:hover {
+  background-color: #4cae4f;
+  transform: translateY(-2px);
 }

@@ -64,9 +64,30 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--background--cards);
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  backdrop-filter: blur(80px);
   border-radius: 12px;
   min-width: 100px;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.adicionar--btn:hover {
+  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
+    0 0 5px var(--cor--destaque-verde);
+  scale: 1.01;
+}
+
+.adicionar--btn:hover img {
+  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde), 0 0 30px var(--cor--destaque-verde),
+    0 0 40px var(--cor--destaque-verde);
+  scale: 1.1;
+}
+
+.adicionar--btn img {
+  border-radius: 16px;
+  transition: all 0.1s ease-in-out;
 }
 
 /* =====================================
@@ -75,7 +96,9 @@ body {
 .cards--vencimentos {
   display: flex;
   flex-direction: column;
-  background: var(--background--cards);
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  backdrop-filter: blur(80px);
   border-radius: 12px;
 }
 
@@ -88,6 +111,7 @@ body {
 
 .header--card-vencimentos span:nth-child(1) {
   font-size: 2.5rem;
+  color: white;
 }
 .header--card-vencimentos span:nth-child(2) {
   font-size: 2.5rem;
@@ -112,6 +136,7 @@ body {
 .scroll-card {
   display: flex;
   flex-direction: column;
+  margin: 5px 0px;
   gap: 15px;
 }
 
@@ -119,14 +144,20 @@ body {
    CARD
    ===================================== */
 .card {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--card);
+  background: var(--background--cards);
   width: auto;
   min-height: 160px;
   border-radius: 12px;
-  padding: 10px;
+  padding: 10px 30px;
+  transition: all 0.3s ease-in-out;
+}
+.card:hover {
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 .lado--esquerdo--card,
@@ -196,19 +227,26 @@ body {
   font-weight: bold;
   white-space: nowrap;
   color: var(--fonte-cards);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
+
+.status-pago {
+  background-color: white;
+}
+
 .categoria--receita {
-  background: rgb(39, 39, 161);
+  background: rgb(76, 56, 255);
   border-radius: 12px;
   padding: 5px 20px;
   font-size: 1rem;
   font-weight: bold;
   white-space: nowrap;
   color: white;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .categoria--despesa {
-  background: #ce170a;
+  background: rgb(247, 69, 69);
   border-radius: 12px;
   padding: 5px 20px;
   font-size: 1rem;
@@ -227,6 +265,19 @@ body {
   font-size: 3.5rem;
   font-weight: bold;
   color: var(--fonte-cards);
+}
+.mensagem--nao-v {
+  margin: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--cor--destaque-verde);
+  padding: 15px;
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 12px;
+  color: var(--cor--destaque-verde);
 }
 
 /* =====================================
@@ -266,30 +317,81 @@ body {
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease;
+  color: white;
 }
 
 .modal-content {
+  position: relative;
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   width: 400px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s;
+  backdrop-filter: blur(80px);
+  border: 2px solid var(--cor--destaque-verde);
+  background-color: var(--verde--vidro);
+  transform: scale(1);
+}
+
+.modal-content h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.modal-content p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: justify;
+  font-size: 1.2rem;
+}
+
+/* Botão de Fechar Modal (geral) */
+#fechar-modal,
+.fechar--modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.3s ease;
+}
+
+#fechar-modal:hover,
+.fechar--modal:hover {
+  color: #ff0000;
+  transition: color 0.3s ease;
+}
+
+#fechar-modal,
+.fechar--modal {
+  line-height: 0;
+  text-align: center;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .close {
-  float: right;
+  display: flex;
   font-size: 28px;
   color: #333;
   cursor: pointer;
@@ -340,35 +442,61 @@ body {
 .filtro--mes {
   margin-bottom: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
 }
 
 .filtro--mes select {
-  padding: 10px;
-  font-size: 1.5rem;
+  padding: 8px 15px;
+  font-size: 1.2rem;
   text-align: center;
   border-radius: 8px;
+  border: 2px solid transparent;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #f8f8f8;
+  border-color: #00e060;
+  margin: 0px 5px;
 }
 
-.filtro--mes select:focus {
-  border-color: #4caf50;
+.filtro--mes option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  text-align: start;
+}
+
+.filtro--mes select:focus,
+.filtro--mes select:hover {
+  border-color: #00ff6e;
+  box-shadow: 0px 4px 8px rgba(0, 224, 96, 0.2);
 }
 
 .filtro--mes button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  background-color: #5cb85c;
-  color: white;
+  outline: 2px solid var(--cor--destaque-verde);
+  border: none;
+  padding: 8px 30px;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
+  font-size: 1.2rem;
+  transition: transform 0.5s ease-in;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .filtro--mes button:hover {
-  background-color: #4cae4f;
-  transform: translateY(-2px); /* Levanta o botão ao passar o mouse */
+  background-color: var(--cor--destaque-verde);
+  outline: 2px solid black;
+  transition: outline 0.5s ease;
+  box-shadow: 0px 8px 12px rgba(0, 224, 96, 0.2);
+}
+
+.filtro--mes button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-in;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* =====================================
@@ -376,10 +504,124 @@ body {
    ===================================== */
 .conteudo--card-vencimentos::-webkit-scrollbar {
   width: 0px;
-  background: transparent; /* Oculta o fundo da scrollbar */
+  background: transparent;
 }
 
 .conteudo--card-vencimentos {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.confirmar-pagamento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  background: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background: var(--background);
+  border-radius: 12px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  gap: 0px 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--fonte-cards);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.confirmar-pagamento:hover {
+  background-color: white;
+  padding: 2.5px 20px;
+}
+.confirmar-pagamento:hover img {
+  background-color: var(--cor--destaque-verde);
+  padding: 3px;
+}
+.confirmar-pagamento:hover span {
+  color: var(--cor--destaque-verde);
+}
+/* Animação ao clicar no botão */
+.confirmar-pagamento:active {
+  transform: scale(0.95);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Reduz o sombreado para simular o pressionamento */
+  transition: transform 0.1s ease, box-shadow 0.1s ease; /* Animação rápida de pressionamento */
+}
+
+.confirmar-pagamento img {
+  width: 20px;
+  height: 20px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  border-radius: 50%;
+}
+#bloquear-selecao {
+  user-select: none;
+}
+.radio-group {
+  display: flex;
+  gap: 15px 20px;
+  justify-content: center;
+  margin: 15px 0px;
+}
+
+.radio-label {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+}
+
+.receita--radio {
+  color: green;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.despesa--radio {
+  color: red;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.radio-label input[type="radio"]:checked + span {
+  padding: 0px 60px;
+  font-size: 1.1rem;
+  transition: padding 0.3s ease-in-out, background-color 0.3s ease, transform 0.3s ease;
+}
+
+.radio-label:hover {
+  background-color: white;
+  transform: scale(1.05);
+}
+
+.radio-label input[type="radio"] {
+  display: none;
+}
+#btn-ok {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.2rem;
+}
+@media screen and (max-width: 1300px) {
+  .container--conteudo {
+    grid-template-columns: 1fr;
+    min-width: 900px;
+    grid-template-rows: 15vh;
+  }
+  .card {
+    min-width: 1100px;
+    overflow: auto;
+  }
 }

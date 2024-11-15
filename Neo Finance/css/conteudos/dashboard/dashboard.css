@@ -1,5 +1,3 @@
-@import url(../../root.css);
-
 /* Reset de Margem e Padding */
 body {
   margin: 0;
@@ -249,13 +247,14 @@ body {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 10px;
-  margin-bottom: 50px;
 }
 
 .grafico--receitas,
-.grafico--despesas {
+.grafico--despesas,
+.grafico--balanco {
   height: 70px;
   width: 0;
+  max-width: 1000px; /* Aumentando a largura máxima dos gráficos */
   border-radius: 20px;
   transition: width 1s ease-in-out;
 }
@@ -266,6 +265,10 @@ body {
 
 .grafico--despesas {
   background-color: red;
+}
+
+.grafico--balanco {
+  background-color: rgba(90, 255, 0, 0.37);
 }
 
 @keyframes expandirGrafico {
@@ -478,6 +481,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 1rem;
+  text-wrap: nowrap;
 }
 
 /* Estilização das partes internas do item */
@@ -497,6 +502,13 @@ body {
   margin-right: 12px;
 }
 
+.img--categoria i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+}
+
 .info--detalhada {
   flex-grow: 1;
 }
@@ -514,7 +526,11 @@ body {
 .nome--historico {
   display: block;
   color: #003115;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
+  max-width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Estilização da segunda parte das informações */
@@ -803,6 +819,7 @@ body {
 @media screen and (max-width: 1300px) {
   .cards {
     grid-template-columns: 1fr;
+    min-width: 920px;
   }
 }
 
@@ -865,10 +882,8 @@ body {
 .card--vencimentos-sem-vencimento .descricao--vencimento span:nth-child(1) {
   display: none;
 }
+
 .card--vencimentos-sem-vencimento .mes--vencimento {
   width: 100%;
   justify-content: end;
 }
-/* ################################################ */
-/* Parte dedicada aos cards vencimentos e lembretes */
-/* ################################################ */

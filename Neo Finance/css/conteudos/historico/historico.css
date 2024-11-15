@@ -1,7 +1,7 @@
 @import url(../../root.css);
 
 /* =====================================
-RESET DE MARGEM E PADDING
+   RESET DE MARGEM E PADDING
 ===================================== */
 body {
   margin: 0;
@@ -11,7 +11,7 @@ body {
 }
 
 /* =====================================
-HEADER
+   HEADER
 ===================================== */
 .container--header {
   display: flex;
@@ -51,14 +51,14 @@ HEADER
 
 /* =====================================
    CONTEÚDO PRINCIPAL
-   ===================================== */
+===================================== */
 .conteudo--scroll {
   height: 75vh;
   overflow: auto;
-  margin: 50px 0px;
+  margin: 50px 0;
 }
+
 .container--conteudo {
- 
   display: grid;
   grid-template-columns: 90%;
   align-content: center;
@@ -74,7 +74,17 @@ HEADER
   background-color: var(--background--cards);
   height: 150px;
   border-radius: 12px;
+  margin: 15px 0;
+  overflow: hidden;
+  min-width: 600px;
+  transition: all 0.3s ease-in-out;
 }
+
+.card--historico:hover{
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
 .parte1--card {
   display: flex;
   align-items: center;
@@ -107,6 +117,7 @@ HEADER
 .descricao--nome {
   font-size: 2rem;
 }
+
 .descricao--categoria {
   font-size: 1.5rem;
 }
@@ -121,21 +132,127 @@ HEADER
 }
 
 .data--card {
-  font-size: 1.5ren;
+  font-size: 1.5rem;
 }
 
 .valor--card {
   font-size: 2.5rem;
 }
+
 /* =====================================
    OCULTAR BARRA DE ROOLAGEM
-   ===================================== */
+===================================== */
 .conteudo--scroll::-webkit-scrollbar {
-  width: 0px;
-  background: transparent; /* Oculta o fundo da scrollbar */
+  width: 0;
+  background: transparent;
 }
 
 .conteudo--scroll {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =====================================
+   FILTRO DE PERÍODO
+===================================== */
+.filtro--periodo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 40%;
+  padding: 10px;
+  margin: auto;
+  background: white;
+  font-size: 1.5rem;
+  border-radius: 12px;
+  outline: 2px solid var(--cor--destaque-verde);
+  overflow: hidden;
+}
+
+.filtro--periodo input[type="date"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.filtro--periodo input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  color: var(--background--icon);
+}
+
+.filtro--periodo input[type="date"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.filtro--periodo button:active {
+  transform: scale(0.95);
+  transition: transform 0.5s ease-in;
+}
+
+.filtro--periodo button {
+  outline: 2px solid var(--cor--destaque-verde);
+  border: none;
+  padding: 5px 30px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-family: var(--fonte-principal);
+  margin: 0 10px;
+  transition: transform 0.5s ease-in;
+}
+
+.filtro--periodo button:hover {
+  background-color: var(--cor--destaque-verde);
+  outline: 2px solid black;
+  transition: outline 0.5s ease;
+}
+
+/* =====================================
+   AJUSTES DE RESPONSIVIDADE
+===================================== */
+@media (max-width: 1450px) {
+  .filtro--periodo {
+    max-width: 60%;
+    font-size: 1.2rem;
+  }
+
+  .filtro--periodo input[type="date"] {
+    font-size: 0.9rem;
+  }
+
+  .filtro--periodo button {
+    padding: 5px 10px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 970px) {
+  .filtro--periodo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 30%;
+    height: 180px;
+  }
+
+  .filtro--periodo input[type="date"] {
+    margin: 5px 0;
+  }
+
+  .filtro--periodo button {
+    padding: 5px 35%;
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+}
+#bloquear-selecao {
+  user-select: none;
+}
+@media screen and (max-width: 1300px) {
+  .container--conteudo {
+    min-width: 400px;
+  }
 }

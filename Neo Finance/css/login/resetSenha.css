@@ -1,0 +1,428 @@
+/* Importação da fonte Kodchasan */
+@import url("https://fonts.googleapis.com/css2?family=Kodchasan:wght@400&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------ */
+/* Estilos Globais */
+body {
+  font-family: "Kodchasan", sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ------------------------------------ */
+/* Container Principal */
+.main-container {
+  display: flex;
+  width: 80%;
+  max-width: 1200px;
+  max-height: 800px;
+  min-height: 680px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* ------------------------------------ */
+/* Layout da Imagem */
+.image-container {
+  flex: 1;
+  background-color: #004d40;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img,
+.image-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------ */
+/* Formulário de cadastro */
+.form-container {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo-container img {
+  max-width: 500px;
+  height: auto;
+}
+
+.signup-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ------------------------------------ */
+/* Estilos do título */
+.title {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin: 50px 0;
+}
+
+/* ------------------------------------ */
+/* Campos de formulário */
+.field {
+  position: relative;
+  margin: 10px;
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 40px 10px 20px; /* espaço interno */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.field label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.3s;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 12px;
+  color: #333;
+}
+
+.forca--senha {
+  margin: 20px 15px;
+  font-size: 14px;
+}
+
+/* Ícones no campo à direita */
+.field i {
+  position: absolute;
+  top: 50%;
+  color: #999;
+  transform: translateY(-50%);
+}
+
+.field i.fa-envelope,
+.field i.fa-user,
+.field i.fa-lock,
+.field i.fa-key {
+  right: 10px;
+}
+
+.toggle-password {
+  right: 30px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* ------------------------------------ */
+/* Botão de registro */
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  margin: 30px auto;
+  padding: 10px;
+  background-color: #003617;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ------------------------------------ */
+/* Estilização para o link "Termos e Condições" */
+section {
+  margin-bottom: 20px;
+}
+
+section a {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+section a:hover {
+  color: #218838;
+}
+
+/* ------------------------------------ */
+/* Ajustes na seção "Já Registrado?" */
+.bottom {
+  margin-top: 20px;
+}
+
+.bottom div {
+  text-align: center;
+}
+
+.bottom a {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.bottom a:hover {
+  color: #218838;
+}
+
+/* ------------------------------------ */
+/* Ajustes no carrossel e imagens */
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-images {
+  display: flex;
+  transition: transform 0.5s ease;
+  height: 100%;
+}
+
+.carousel-images img,
+.carousel-images video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.carousel-images img:first-child,
+.carousel-images video:first-child {
+  display: block;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: #717171;
+}
+
+/* ------------------------------------ */
+/* Estilização do modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 10%;
+  width: 80%;
+  max-width: 600px;
+  height: auto;
+  max-height: 80%;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateX(-50%);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content {
+  padding: 20px;
+  border: none;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ------------------------------------ */
+/* Estilização para o texto abaixo do título "Cadastro" */
+.cadastro-text {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin-top: 20px;
+}
+
+/* ------------------------------------ */
+/* Estilização para o link "Voltar ao Login" */
+.back-to-login a {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: "Kodchasan";
+}
+
+/* ------------------------------------ */
+/* Mensagens de erro */
+/* ------------------------------------ */
+/* Mensagens de Erro */
+.messages {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+}
+
+.messages.show {
+  display: block;
+}
+
+.messages p.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.message-container {
+  margin-bottom: 40px;
+}
+
+.message-container {
+  margin: 20px 0; /* Espaço acima e abaixo da mensagem */
+}
+
+.message {
+  padding: 10px 15px; /* Espaço interno */
+  border-radius: 5px; /* Bordas arredondadas */
+  font-size: 16px; /* Tamanho da fonte */
+  color: #fff; /* Cor do texto */
+}
+
+.error {
+  background-color: #e74c3c; /* Cor de fundo vermelha */
+}
+
+/* ------------------------------------ */
+
+.success {
+  color: green;
+  font-weight: bold;
+}
+
+/* Estilo para o pop-up de agradecimento */
+.thank-you-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.thank-you-popup .popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  width: 400px;
+  height: 200px;
+  margin: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.thank-you-popup h2 {
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.thank-you-popup p {
+  font-size: 16px;
+}
+
+.thank-you-popup button {
+  width: 50%;
+  margin: 30px auto;
+  padding: 10px;
+  background-color: #003617;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* ------------------------------------ */
+/* Responsividade */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .image-container {
+    display: none;
+  }
+
+  .form-container {
+    width: 100%;
+  }
+}
+
+/* ------------------------------------ */

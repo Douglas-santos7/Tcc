@@ -36,3 +36,14 @@ window.onload = function () {
   receitas.style.width = larguraReceitas + "px";
   despesas.style.width = larguraDespesas + "px";
 };
+ // Exibe o modal se o pagamento foi confirmado
+ function exibirModalConfirmacao() {
+  const modal = document.getElementById("modalConfirmacao");
+  modal.style.display = "flex";
+}
+
+function fecharModalConfirmacao() {
+  const modal = document.getElementById("modalConfirmacao");
+  modal.style.display = "none";
+}
+

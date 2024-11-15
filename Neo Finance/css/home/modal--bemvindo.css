@@ -1,0 +1,81 @@
+@import url(../root.css);
+
+body {
+  font-family: var(--fonte-principal);
+}
+
+/* Modal de boas-vindas */
+.welcome-modal {
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background);
+  opacity: 0; /* Começa invisível */
+  transition: opacity 0.5s ease; /* Transição de opacidade */
+  display: none; /* Padrão escondido */
+  pointer-events: none; /* Impede interações quando invisível */
+}
+
+.welcome-modal.show {
+  display: flex; /* Mostra o modal */
+  opacity: 1; /* Torna o modal visível */
+  pointer-events: auto; /* Permite interações quando visível */
+}
+
+.welcome-modal.hide {
+  opacity: 0; /* Transição de saída */
+  pointer-events: none; /* Impede interações enquanto está ocultando */
+}
+
+/* Conteúdo do modal de boas-vindas */
+.welcome-modal-content {
+  font-size: 2.5rem;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+/* Título do modal */
+h2 {
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+
+/* Botões do modal */
+.welcome-button {
+  font-family: var(--fonte-principal);
+  background-color: var(--card);
+  outline: none;
+  border: none;
+  border-radius: 12px;
+  font-size: 2rem;
+  padding: 10px 50px;
+  transition: background-color 0.3s ease;
+}
+
+.welcome-button:hover {
+  background-color: var(--hover);
+}
+
+/* Classe para ocultar elementos */
+.hidden {
+  opacity: 0;
+}
+
+/* Container dos botões do modal */
+#welcomeButtonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  gap: 10px 50px;
+}
+
+#welcomeButtonContainer.visible {
+  opacity: 1; /* Torna o container visível */
+}

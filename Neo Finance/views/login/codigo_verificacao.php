@@ -59,23 +59,23 @@ $conn->close();
     <title>Verificar Código</title>
     <link rel="stylesheet" href="../../css/login/telaCadastro.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 </head>
 
 <body>
     <div class="main-container">
         <div class="image-container">
-            <div class="carousel">
-                <div class="carousel-images">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/2.jpg" alt="">
-                    <img src="../../assets/img/carrosel--logjn/1.jpg" alt="">
-                    <video src="../../assets/img/carrosel--logjn/Iphon.mp4" loop muted autoplay></video>
-                </div>
-                <div class="carousel-dots">
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                    <span class="dot" onclick="currentSlide(4)"></span>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
+                    <div class="swiper-slide">
+                        <video src="../../assets/img/carrosel--logjn/Iphon.mp4" muted autoplay></video>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="../../assets/img/carrosel--logjn/notenook--1.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,44 +107,39 @@ $conn->close();
             </div>
         </div>
     </div>
-
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        let slideIndex = 1;
-        showSlides(slideIndex);
+        // Inicialização do Swiper
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: false,
+            },
+            autoplay: {
+                delay: 5000,
+            },
+            on: {
+                slideChange: function() {
+                    // Pausar todos os vídeos
+                    const videos = document.querySelectorAll('.swiper-slide video');
+                    videos.forEach(video => {
+                        video.pause();
+                        video.currentTime = 0; // Reseta o vídeo
+                    });
+                    // Reproduzir o vídeo do slide ativo, se existir
+                    const activeSlide = this.slides[this.activeIndex].querySelector('video');
+                    if (activeSlide) {
+                        activeSlide.play();
+                    }
+                },
+            },
+        });
 
-        // Mudar o slide a cada 10 segundos
-        setInterval(() => {
-            showSlides(slideIndex += 1);
-        }, 10000);
-
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
-        }
-
-        function showSlides(n) {
-            const slides = document.querySelectorAll('.carousel-images img, .carousel-images video');
-            const dots = document.querySelectorAll('.dot');
-
-            if (n > slides.length) {
-                slideIndex = 1
-            }
-            if (n < 1) {
-                slideIndex = slides.length
-            }
-
-            slides.forEach((slide, index) => {
-                slide.style.display = (index + 1 === slideIndex) ? 'block' : 'none';
-                // Reproduzir o vídeo ativo
-                if (index + 1 === slideIndex && slide.tagName === 'VIDEO') {
-                    slide.play();
-                } else if (slide.tagName === 'VIDEO') {
-                    slide.pause();
-                }
-            });
-
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index + 1 === slideIndex);
-            });
+        // Inicia a reprodução do vídeo no slide inicial, se houver
+        const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
+        if (initialVideo) {
+            initialVideo.play();
         }
     </script>
 </body>
