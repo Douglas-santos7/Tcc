@@ -168,84 +168,60 @@ $conn->close();
 
         <div class="card options-card">
             <h2 class="card-title">Análise dos Dados</h2>
-            <p style="color: green;">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></p>
+            <p style="color: rgb(46, 204, 113);">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></p>
             <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></p>
             <p style="color: orange;">Balanço Total: R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?></p>
-
-            <h3>Dicas:</h3>
-            <ul>
-                <?php
-                $totalReceitas = array_sum($receitas);
-                $totalDespesas = array_sum($despesas);
-                $porcentagemReceitas = ($totalReceitas > 0) ? (($totalReceitas - $totalDespesas) / $totalReceitas) * 100 : 0;
-                $porcentagemDespesas = ($totalDespesas > 0) ? (($totalDespesas - $totalReceitas) / $totalDespesas) * 100 : 0;
-
-
-                $limiteAltoReceitas = 5000;
-                $limiteBaixoDespesas = 2000;
-
-                // Condição se receitas são superiores às despesas
-                if ($totalReceitas > $totalDespesas): ?>
-                    <li>Ótimo trabalho! Suas receitas estão superando suas despesas em <?= number_format($porcentagemReceitas, 2) ?>%. Considere aumentar sua reserva ou investir.</li>
-                    <li>Você está em uma boa situação financeira. Avalie se você pode aumentar suas contribuições para um fundo de emergência.</li>
-                    <li>Considere diversificar seus investimentos para reduzir riscos.</li>
-                    <?php if ($totalReceitas > $limiteAltoReceitas): ?>
-                        <li>Com uma receita tão alta, considere investir em opções de renda fixa ou ações para potencializar seu capital.</li>
-                    <?php endif; ?>
-            </ul>
-        <?php
-                // Condição se despesas são superiores às receitas
-                elseif ($totalDespesas > $totalReceitas): ?>
-            <li>❌ Atenção! Suas despesas estão excedendo suas receitas em <?= number_format(abs($porcentagemDespesas), 2) ?>%. É fundamental tomar medidas para evitar problemas financeiros.</li>
-            <li>Faça uma lista de suas despesas fixas e variáveis para identificar áreas onde você pode cortar gastos.</li>
-            <li>Considere estabelecer um limite mensal para despesas variáveis.</li>
-            <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
-            <?php endif; ?>
-            <li>⚠️ A categoria onde você mais gasta é <span style="color: darkred;"><?= $categoriaMaiorGasto ?></span> com um total de R$<?= number_format($valorMaiorGasto, 2, ',', '.') ?>.</li>
-            </ul>
-        <?php
-                // Condição se receitas e despesas estão equilibradas
-                else: ?>
-            <ul style="color: orange;">
-                <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
-                <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
-                <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
-                <li>Considere investir em educação financeira para aprimorar suas habilidades.</li>
-            </ul>
-        <?php endif;
-        ?>
-
-        </ul>
+            <p style="color: white">Se você precisar de ajuda, clique na imagem abaixo para conversar com o chatbot da Neo:</p>
+            <a href="./(5) chatbot.php" class="chatbot-link">
+            <img src="../../assets/img/fin.png" alt="Chatbot Neo" class="chatbot-image">
+            </a>
         </div>
-
         <script>
-            var options = {
-                chart: {
-                    type: 'area',
-                    toolbar: {
-                        show: false // Remove a toolbar
-                    }
-                },
-                series: [{
-                    name: 'Receitas',
-                    data: <?= json_encode($receitas) ?>
-                }, {
-                    name: 'Despesas',
-                    data: <?= json_encode($despesas) ?>
-                }],
-                xaxis: {
-                    categories: <?= json_encode($interval === 'diario'
-                                    ? array_map(function ($i) {
-                                        return "Dia " . ($i + 1);
-                                    }, range(0, 29))
-                                    : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
-                                ?>
-                }
-            };
+    const receitaColor = '#3498db';  // Azul
+    const despesaColor = '#e74c3c';  // Vermelho
 
-            var chart = new ApexCharts(document.querySelector("#chart"), options);
-            chart.render();
-        </script>
+    var options = {
+        chart: {
+            type: 'area',
+            toolbar: {
+                show: false // Remove a toolbar
+            }
+        },
+        series: [{
+            name: 'Receitas',
+            data: <?= json_encode($receitas) ?>,
+            color: receitaColor  // Define a cor para a série de Receitas
+        }, {
+            name: 'Despesas',
+            data: <?= json_encode($despesas) ?>,
+            color: despesaColor  // Define a cor para a série de Despesas
+        }],
+        xaxis: {
+            categories: <?= json_encode($interval === 'diario'
+                ? array_map(function ($i) {
+                    return "Dia " . ($i + 1);
+                }, range(0, 29))
+                : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
+            ?>,
+            labels: {
+                style: {
+                    colors: '#FFFFFF', // Cor branca para os rótulos do eixo X
+                    fontSize: '14px'   // Tamanho da fonte
+                }
+            }
+        },
+        legend: {
+            labels: {
+                colors: '#FFFFFF',  // Cor branca para as legendas (nomes de 'Receitas' e 'Despesas')
+                fontSize: '14px'     // Tamanho da fonte
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+</script>
+
 
     </div>
 </body>

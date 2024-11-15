@@ -121,6 +121,22 @@ $conn->close();
             </div>
             <div class="signup-form">
                 <div class="title">Recuperar Senha</div>
+
+                <!-- Mensagens de erro ou sucesso -->
+                <div class="message-container">
+                    <?php
+                    if (isset($_SESSION['reset_message'])) {
+                        echo '<div class="message success">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
+                        unset($_SESSION['reset_message']); // Limpa a mensagem após exibir
+                    }
+
+                    if (isset($_SESSION['error_message'])) {
+                        echo '<div class="message error">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+                        unset($_SESSION['error_message']); // Limpa a mensagem após exibir
+                    }
+                    ?>
+                </div>
+
                 <form id="forgot-password-form" method="post" action="./esqueci_senha.php">
                     <div class="field">
                         <input type="email" id="forgot-email" name="forgot-email" placeholder=" " required autocomplete="off">
@@ -133,25 +149,9 @@ $conn->close();
                     <p><a href="login.php">Voltar para Login</a></p>
                 </div>
             </div>
-            <?php
-            if (isset($_SESSION['reset_message'])) {
-                echo '<div class="messages show">
-            <p class="success">' . htmlspecialchars($_SESSION['reset_message']) . '</p>
-          </div>';
-                unset($_SESSION['reset_message']);
-            }
-
-            if (isset($_SESSION['error_message'])) {
-                echo '<div class="messages show">
-            <p class="error">' . htmlspecialchars($_SESSION['error_message']) . '</p>
-          </div>';
-                unset($_SESSION['error_message']);
-            }
-            ?>
         </div>
     </div>
 
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
         const swiper = new Swiper('.swiper-container', {

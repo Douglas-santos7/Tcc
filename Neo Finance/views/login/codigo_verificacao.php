@@ -78,13 +78,25 @@ $conn->close();
                     </div>
                 </div>
             </div>
+            
         </div>
+        
         <div class="form-container">
             <div class="logo-container">
-                <img src="../../assets/img/neofinance--logo.svg" alt="Logo"> <!-- Insira o caminho para a sua logo -->
+                <img src="../../assets/img/neofinance--logo.svg" alt="Logo">
             </div>
             <div class="signup-form">
+                
                 <div class="title">Verificar Código</div>
+                <!-- Mensagem de erro exibida acima do campo de código -->
+    <div class="message-container">
+        <?php
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="message error">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+            unset($_SESSION['error_message']); // Limpa a mensagem após exibir
+        }
+        ?>
+    </div>
                 <form method="POST" action="./codigo_verificacao.php">
                     <div class="field">
                         <input type="text" id="verification-code" name="verification_code" placeholder=" " required>
@@ -93,20 +105,14 @@ $conn->close();
                     </div>
                     <button type="submit" class="login-btn">Verificar Código</button>
                 </form>
-                <div class="messages <?php echo isset($_SESSION['error_message']) ? 'show' : ''; ?>">
-                    <p class="error"><?php echo isset($_SESSION['error_message']) ? htmlspecialchars($_SESSION['error_message']) : ''; ?></p>
-                </div>
-                <?php
-                if (isset($_SESSION['error_message'])) {
-                    unset($_SESSION['error_message']);
-                }
-                ?>
+
                 <div class="bottom">
-                    <span>Não recebeu o código?&nbsp;<a href="./esqueci_senha.php">Reenviar Código</a></span>
+                    <span>Não recebeu o código?&nbsp;<a href="./reenviar_codigo.php">Reenviar Código</a></span>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
         // Inicialização do Swiper
@@ -121,13 +127,11 @@ $conn->close();
             },
             on: {
                 slideChange: function() {
-                    // Pausar todos os vídeos
                     const videos = document.querySelectorAll('.swiper-slide video');
                     videos.forEach(video => {
                         video.pause();
-                        video.currentTime = 0; // Reseta o vídeo
+                        video.currentTime = 0;
                     });
-                    // Reproduzir o vídeo do slide ativo, se existir
                     const activeSlide = this.slides[this.activeIndex].querySelector('video');
                     if (activeSlide) {
                         activeSlide.play();
@@ -136,11 +140,25 @@ $conn->close();
             },
         });
 
-        // Inicia a reprodução do vídeo no slide inicial, se houver
         const initialVideo = swiper.slides[swiper.activeIndex].querySelector('video');
         if (initialVideo) {
             initialVideo.play();
         }
+
+        document.getElementById('resend-code').addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch('./reenviar_codigo.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
     </script>
 </body>
 

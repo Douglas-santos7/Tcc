@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $_SESSION['signup_message'] = "Nome de usuário já está em uso.";
+        $_SESSION['signup_message'] = "O nome de usuário já está em uso.";
         header('Location: ./cadastro.php');
         exit();
     }
@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $_SESSION['signup_message'] = "Email já está em uso.";
+        $_SESSION['signup_message'] = "O email já está em uso.";
         header('Location: ./cadastro.php');
         exit();
     }
@@ -117,6 +117,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="signup-form">
                 <div class="title">CADASTRO</div>
                 <p class="cadastro-text">Seja bem-vindo à Neo finance, efetue o cadastro</p>
+                <div class="message-container">
+        <?php
+        if (isset($_SESSION['signup_message'])) {
+            echo '<div class="message error">' . htmlspecialchars($_SESSION['signup_message']) . '</div>';
+            unset($_SESSION['signup_message']); // Limpa a mensagem após exibir
+        }
+        ?>
+    </div>
                 <form method="POST" action="cadastro.php">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="field">
@@ -153,17 +161,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </form>
 
                 <div class="message-container">
-                    <?php
-                    if (isset($_SESSION['login_message'])) {
-                        echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
-                        unset($_SESSION['login_message']);
-                    }
-                    if (isset($_SESSION['reset_message'])) {
-                        echo '<div class="message error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
-                        unset($_SESSION['reset_message']);
-                    }
-                    ?>
-                </div>
+    <?php
+    if (isset($_SESSION['signup_message'])) {
+        echo '<div class="message error">' . htmlspecialchars($_SESSION['signup_message']) . '</div>';
+        unset($_SESSION['signup_message']); // Limpa a mensagem após exibir
+    }
+    ?>
+</div>
+
 
                 <div class="bottom">
                     <span>Já Registrado?&nbsp;<a href="login.php">Login</a></span>

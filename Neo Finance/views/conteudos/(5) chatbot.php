@@ -1,3 +1,20 @@
+<?php
+include("../../config/database/conexao.php");
+
+session_start();
+$userId = $_SESSION['user_id']; // Garantir que o id do usuário esteja na sessão
+
+// Consultar o nome do usuário
+$sql = "SELECT username FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($userName);
+$stmt->fetch();
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -5,195 +22,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot Financeiro</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-        }
-
-        #chat {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 400px;
-            overflow-y: scroll;
-            background: #fff;
-            margin-bottom: 20px;
-        }
-
-        #message {
-            width: 80%;
-            padding: 10px;
-        }
-
-        button {
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        .user {
-            text-align: right;
-            color: black;
-        }
-
-        .bot {
-            text-align: left;
-            color: red;
-        }
-
-        #historico {
-            max-height: 200px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: auto;
-            background: #fff;
-            margin-bottom: 20px;
-        }
-
-        .limpar-historico {
-            background-color: #ff4c4c;
-            color: white;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .limpar-historico:hover {
-            background-color: #ff1a1a;
-            transform: scale(1.05);
-        }
-
-        .historico-topico {
-            background-color: #e0e0e0;
-            padding: 10px;
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-
-        .historico-mensagens {
-            display: none;
-            padding-left: 10px;
-        }
-
-        .expandido .historico-mensagens {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/conteudos/chat/chat.css">
 </head>
 
 <body>
-
     <h1>Chatbot Financeiro</h1>
     <div id="chat"></div>
 
-    <input type="text" id="message" placeholder="Digite sua mensagem..." />
-    <button onclick="sendMessage()">Enviar</button>
-
-    <h2>Histórico de Tópicos</h2>
-    <div id="historico"></div>
-    <button class="limpar-historico" onclick="clearHistorico()">Limpar Histórico</button>
-
     <script>
-        let topicoAtual = null;
+    const chat = document.getElementById('chat');
+    let currentState = 'main'; // Variável de controle de estado
+    let previousState = null; // Armazena o estado anterior
 
-        // Função para carregar o histórico de tópicos do Local Storage
-        function loadHistorico() {
-            const historico = document.getElementById('historico');
-            const topicos = JSON.parse(localStorage.getItem('historicoTopicos')) || [];
+    // Puxando o nome do usuário do PHP
+const userName = "<?php echo htmlspecialchars($userName); ?>"; // Nome do usuário vindo do banco de dados
 
-            historico.innerHTML = ''; // Limpar a lista de tópicos exibidos antes de carregar
-            topicos.forEach((topico, index) => {
-                historico.innerHTML += `
-                <div class="historico-topico" onclick="toggleTopico(${index})">
-                    ${topico.nome}
-                </div>`;
-            });
-        }
+// Adicionando a imagem e a mensagem
+chat.innerHTML = `
+    <div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">
+        Olá, ${userName}! Sou a Neo, sua assistente virtual dedicada a ajudar você com suas finanças. Estou aqui para oferecer suporte na gestão de seus recursos, na criação de estratégias de investimento e no planejamento para alcançar  seus objetivos financeiros e sucesso econômico. Vamos juntos construir um futuro mais próspero!
+    </div>
+`;
 
-        // Função para alternar a exibição do tópico
-        function toggleTopico(index) {
-            const topicos = document.querySelectorAll('.historico-topico');
-            topicos[index].classList.toggle('expandido');
-            restoreFromLocalStorage(index); // Carregar o histórico de um tópico anterior
-        }
 
-        // Função para enviar a mensagem
-        function sendMessage() {
-            const messageInput = document.getElementById('message');
-            const message = messageInput.value;
 
-            if (message.trim() === "") return;
+    // Função para enviar uma mensagem e exibir animação de "pensando"
+    function sendMessage(mensagem) {
+        if (!mensagem) return;
 
-            // Exibir a mensagem do usuário no chat
-            const chat = document.getElementById('chat');
-            chat.innerHTML += `<div class="user">${message}</div>`;
+        // Exibir mensagem do usuário no chat
+        chat.innerHTML += `<div class="user">${mensagem}</div>`;
+        chat.scrollTop = chat.scrollHeight;
 
-            // Verificar se existe um tópico em andamento
-            if (!topicoAtual) {
-                const now = new Date();
-                const timestamp = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                topicoAtual = {
-                    nome: `Tópico - ${timestamp}`,
-                    mensagens: []
-                };
-            }
+        // Adicionar animação de "pensando"
+        const thinkingMessage = document.createElement('div');
+        thinkingMessage.className = 'bot thinking';
+        thinkingMessage.textContent = "Pensando...";
+        chat.appendChild(thinkingMessage);
 
-            // Adicionar a mensagem ao tópico atual
-            topicoAtual.mensagens.push(`<div class="user">${message}</div>`);
-
-            // Enviar a mensagem para o bot
+        // Simular atraso para resposta do bot
+        setTimeout(() => {
+            thinkingMessage.remove(); // Remover o texto "Pensando..."
             fetch('../../config/conteudos/chat/chatbot.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'message=' + encodeURIComponent(message)
-                })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'message=' + encodeURIComponent(mensagem)
+            })
                 .then(response => response.text())
                 .then(data => {
                     chat.innerHTML += `<div class="bot">${data}</div>`;
-                    topicoAtual.mensagens.push(`<div class="bot">${data}</div>`);
-
-                    saveToLocalStorage(topicoAtual); // Salvar o tópico no Local Storage
-                    messageInput.value = '';
                     chat.scrollTop = chat.scrollHeight; // Rolar para baixo no chat
+                    askIfNeedHelp();
                 });
-        }
+        }, 2000); // 2 segundos para a simulação de "pensando"
+    }
 
-        // Função para salvar tópicos no Local Storage
-        function saveToLocalStorage(topico) {
-            const topicos = JSON.parse(localStorage.getItem('historicoTopicos')) || [];
-            // Atualizar ou adicionar o tópico atual
-            const topicoIndex = topicos.findIndex(t => t.nome === topico.nome);
-            if (topicoIndex >= 0) {
-                topicos[topicoIndex] = topico;
+    // Função para gerar botões dinamicamente
+    function generateButtons(options, callback) {
+        let buttonsHtml = '';
+        options.forEach(option => {
+            buttonsHtml += `<button onclick="sendMessage('${option}')">${option}</button>`;
+        });
+        buttonsHtml += `<button class="back-button" onclick="backToPrevious()">Voltar</button>`;
+        callback(buttonsHtml);
+    }
+
+    // Perguntar se o usuário precisa de mais ajuda
+    function askIfNeedHelp() {
+        const askMessage = `
+            <div class="bot">Posso te ajudar com mais alguma coisa?</div>
+            <div class="options">
+                <button onclick="showOptions()">Sim, mostrar mais opções</button>
+                <button onclick="endChat()">Não, encerrar o chat</button>
+            </div>
+        `;
+        chat.innerHTML += askMessage;
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Encerrar o chat e redirecionar
+    function endChat() {
+        chat.innerHTML += `<div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">O chat está sendo encerrado. Até logo!</div>`;
+        setTimeout(() => {
+            window.location.href = "./(1)dashboard.php"; 
+        }, 3000);
+    }
+
+    // Função para exibir as opções principais
+    function showOptions() {
+        previousState = currentState; // Armazenar o estado atual como anterior
+        currentState = 'main'; // Atualiza o estado para 'main'
+        const opcoes = ` 
+            <div class="bot">Aqui estão algumas opções para você:</div>
+            <div class="options">
+                <button onclick="showConsultas()">Consultas</button>
+                <button onclick="showDicas()">Dicas</button>
+                <button onclick="showPlanejamento()">Planejamento</button>
+                <button onclick="showRelatorios()">Relatórios</button>
+            </div>
+        `;
+        chat.innerHTML += opcoes;
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Exibir opções de Consultas
+    function showConsultas() {
+        previousState = currentState; // Armazenar o estado atual como anterior
+        currentState = 'consultas'; // Atualiza o estado para 'consultas'
+        const consultas = [
+            "Consultar Saldo",
+            "Resumo Mensal",
+            "Resumo Diário",
+            "Histórico de transações"
+        ];
+        generateButtons(consultas, (buttonsHtml) => {
+            chat.innerHTML = `<div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">Você escolheu Consultas</div>` + buttonsHtml;
+
+            chat.scrollTop = chat.scrollHeight;
+        });
+    }
+
+    // Exibir opções de Dicas
+    function showDicas() {
+        previousState = currentState; // Armazenar o estado atual como anterior
+        currentState = 'dicas'; // Atualiza o estado para 'dicas'
+        const dicas = [
+            "Dicas de Economia",
+            "Dicas de Investimento"
+        ];
+        generateButtons(dicas, (buttonsHtml) => {
+            chat.innerHTML = `<div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">Você escolheu dicas</div>` + buttonsHtml;
+            chat.scrollTop = chat.scrollHeight;
+        });
+    }
+    
+    // Exibir opções de Planejamento
+    function showPlanejamento() {
+        previousState = currentState; // Armazenar o estado atual como anterior
+        currentState = 'planejamento'; // Atualiza o estado para 'planejamento'
+        const planejamento = [
+            "Análise de Gastos",
+            "Comparação de Gastos",
+            "Desafios Financeiros"
+        ];
+        generateButtons(planejamento, (buttonsHtml) => {
+            chat.innerHTML = `<div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">Você escolheu Planejamento</div>` + buttonsHtml;
+            chat.scrollTop = chat.scrollHeight;
+        });
+    }
+
+    // Exibir opções de Relatórios
+    function showRelatorios() {
+        previousState = currentState; // Armazenar o estado atual como anterior
+        currentState = 'relatorios'; // Atualiza o estado para 'relatorios'
+        const relatorios = [
+            "Relatório de Gastos"
+        ];
+        generateButtons(relatorios, (buttonsHtml) => {
+            chat.innerHTML = `<div class="bot"><img src="../../assets/img/fin.png" alt="Avatar" class="avatar">Você escolheu Relatórios</div>` + buttonsHtml;
+            chat.scrollTop = chat.scrollHeight;
+        });
+    }
+
+    // Voltar ao estado anterior
+    function backToPrevious() {
+        if (previousState) {
+            currentState = previousState;
+            if (currentState === 'main') {
+                showOptions();
             } else {
-                topicos.push(topico);
-            }
-            localStorage.setItem('historicoTopicos', JSON.stringify(topicos));
-            loadHistorico(); // Recarregar a exibição do histórico
-        }
-
-        // Função para restaurar o histórico de um tópico selecionado
-        function restoreFromLocalStorage(index) {
-            const topicos = JSON.parse(localStorage.getItem('historicoTopicos')) || [];
-            const chat = document.getElementById('chat');
-            if (topicos[index]) {
-                chat.innerHTML = topicos[index].mensagens.join('');
-                topicoAtual = topicos[index];
+                // Voltar para o estado anterior e exibir as opções correspondentes
+                window[currentState]();
             }
         }
+    }
 
-        // Função para limpar o histórico de tópicos
-        function clearHistorico() {
-            localStorage.removeItem('historicoTopicos'); // Limpar o Local Storage
-            document.getElementById('historico').innerHTML = ''; // Limpar a exibição do histórico
-            document.getElementById('chat').innerHTML = ''; // Limpar o chat
-            topicoAtual = null; // Resetar o tópico atual
-        }
+    // Inicializar com as opções principais
+    showOptions();
+</script>
 
-        // Carregar o histórico ao iniciar a página
-        window.onload = loadHistorico;
-    </script>
 </body>
 
 </html>

@@ -1,0 +1,122 @@
+/* =====================================
+   Estilos do Corpo e Fundo
+===================================== */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+/* =====================================
+   Estilos da Área de Chat
+===================================== */
+#chat {
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 400px;
+    overflow-y: scroll;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+/* =====================================
+   Estilos dos Usuários e Bot
+===================================== */
+.user,
+.bot {
+    margin: 5px 0;
+}
+
+.user {
+    text-align: right;
+    color: black;
+}
+
+.bot {
+    text-align: left;
+    color: red;
+}
+
+/* =====================================
+   Estilos da Animação de Pensando
+===================================== */
+.thinking {
+    color: gray;
+    font-style: italic;
+    display: inline;
+    animation: typing 1.5s steps(3) infinite;
+}
+
+@keyframes typing {
+    0% {
+        content: "Pensando";
+    }
+    33% {
+        content: "Pensando.";
+    }
+    66% {
+        content: "Pensando..";
+    }
+    100% {
+        content: "Pensando...";
+    }
+}
+
+/* =====================================
+   Estilos dos Botões
+===================================== */
+button {
+    padding: 12px 18px;
+    margin: 8px 0;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    width: auto;
+    text-align: center;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #003d7a;
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+
+/* =====================================
+   Estilos das Opções e Botão de Voltar
+===================================== */
+.options {
+    margin-top: 20px;
+}
+
+.back-button {
+    background-color: #6c757d;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}
+
+/* =====================================
+   Estilos do Avatar
+===================================== */
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 2px;
+}

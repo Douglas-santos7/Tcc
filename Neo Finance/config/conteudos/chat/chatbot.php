@@ -15,88 +15,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Respostas associadas a comandos
     $responses = [
-        'oi' => function () use ($username) {
-            return gerarRespostaSaudacao($username, 'oi');
-        },
-        'ola' => function () use ($username) {
-            return gerarRespostaSaudacao($username, 'ola');
-        },
-        'bom dia' => function () use ($username) {
-            return gerarRespostaSaudacao($username, 'bom dia');
-        },
-        'boa tarde' => function () use ($username) {
-            return gerarRespostaSaudacao($username, 'boa tarde');
-        },
-        'boa noite' => function () use ($username) {
-            return gerarRespostaSaudacao($username, 'boa noite');
-        },
-
         'saldo' => function () use ($conn, $userId) {
             return getSaldo($conn, $userId);
         },
-        '1' => function () use ($conn, $userId) {
-            return getSaldo($conn, $userId);
-        },
-        'economizar' => function () use ($conn, $userId) {
+
+        'dicas de economia' => function () use ($conn, $userId) {
             return implode("\n", getDicasEconomizar($conn, $userId));
         },
-        '2' => function () use ($conn, $userId) {
-            return implode("\n", getDicasEconomizar($conn, $userId));
-        },
-        'investir' => function () use ($conn, $userId) {
-            return implode("\n", getDicasInvestir($conn, $userId));
-        },
-        '3' => function () use ($conn, $userId) {
+        'dicas de investimento' => function () use ($conn, $userId) {
             return implode("\n", getDicasInvestir($conn, $userId));
         },
         'resumo mensal' => function () use ($conn, $userId) {
             return getResumoMensal($conn, $userId);
         },
-        '4' => function () use ($conn, $userId) {
-            return getResumoMensal($conn, $userId);
-        },
+        
         'resumo diário' => function () use ($conn, $userId) {
             return getResumoDiario($conn, $userId);
         },
-        '5' => function () use ($conn, $userId) {
-            return getResumoDiario($conn, $userId);
-        },
-        'historico' => function () use ($conn, $userId) {
+       
+        'historico de transações' => function () use ($conn, $userId) {
             return getHistoricoTransacoes($conn, $userId);
         },
-        '6' => function () use ($conn, $userId) {
-            return getHistoricoTransacoes($conn, $userId);
-        },
-        'análise' => function () use ($conn, $userId) {
+        
+        'análise de gastos' => function () use ($conn, $userId) {
             return getAnaliseGastos($conn, $userId);
         },
-        '7' => function () use ($conn, $userId) {
-            return getAnaliseGastos($conn, $userId);
-        },
-        'exportar' => function () use ($conn, $userId) {
+       
+        'relatório de gastos' => function () use ($conn, $userId) {
             return exportarRelatorio($conn, $userId);
         },
-        '8' => function () use ($conn, $userId) {
-            return exportarRelatorio($conn, $userId);
-        },
+        
         'previsão financeira' => function () use ($conn, $userId) {
             return previsaoFinanceira($conn, $userId);
         },
-        '9' => function () use ($conn, $userId) {
-            return previsaoFinanceira($conn, $userId);
-        },
-        'comparação' => function () use ($conn, $userId) {
+       
+        'comparação de gastos' => function () use ($conn, $userId) {
             return comparacaoGastosMensais($conn, $userId);
         },
-        '10' => function () use ($conn, $userId) {
-            return comparacaoGastosMensais($conn, $userId);
-        },
-        'desafio' => function () use ($conn, $userId) {
+        
+        'desafios financeiros' => function () use ($conn, $userId) {
             return obterDesafioFinanceiroAleatorio($conn, $userId);
         },
-        '11' => function () use ($conn, $userId) {
-            return obterDesafioFinanceiroAleatorio($conn, $userId);
-        },
+
         'obrigado' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'valeu' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'ajuda' => 'Claro! Estou aqui para ajudar com questões financeiras. O que você gostaria de saber?',
