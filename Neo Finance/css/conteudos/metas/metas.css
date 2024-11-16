@@ -25,39 +25,13 @@ body {
   margin-bottom: 20px;
 }
 
-/* Menu Lateral */
-.menu-lateral {
-  background-color: #003617;
-  padding: 20px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  left: 22px;
-  top: 20px;
-  height: 90%;
-  width: 100px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.menu-lateral:hover {
-  background-color: var(--cor--destaque-verde);
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
 /* Container dos Cards */
 .container-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(300px, 1fr));
-  gap: 30px;
-  flex-grow: 1;
-  padding: 0 20px;
-  margin-left: 130px;
-  width: calc(100% - 150px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Ajustado para reduzir o espaçamento entre os cards */
+  justify-content: center;
+  width: 100%;
   margin-bottom: 20px;
   margin-top: 40px;
 }
@@ -71,7 +45,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 350px;
-  width: 90%;
+  width: calc(50% - 20px); /* Ajustado para garantir que os cards fiquem lado a lado */
   margin-bottom: 20px;
   position: relative; /* Para posicionar o botão de excluir */
 }
@@ -174,27 +148,9 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo geral para os gráficos */
-.grafico {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px;
-  border-radius: 15px;
-  transition: transform 0.3s ease;
-}
-
-.grafico:hover {
-  transform: scale(1.05);
-}
-
-/* Estilo dos rótulos dos gráficos */
-.apexcharts-datalabels {
-  font-family: 'Arial', sans-serif;
-  font-weight: bold;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-}
+/*====-========== =======
+  CSS DOS POPUPS METAS
+ ===== ========= ========*/
 
 .container--add--metas {
   display: grid;
@@ -206,16 +162,21 @@ body {
 
 /* Botão de Adicionar */
 .adicionar--btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: var(--card-categorias);
   border: 2px solid var(--cor--destaque-verde);
-  backdrop-filter: blur(80px);
-  border-radius: 12px;
-  min-width: 100px;
-  transition: all 0.1s ease-in-out;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 22px;
+  top: 20px;
+  height: 90%;
+  width: 100px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .adicionar--btn:hover {
@@ -340,7 +301,7 @@ body {
 /* Estilo para os formulários de resgatar e depositar */
 .form-resgatar, .form-depositar {
   background-color: var(--verde--vidro);
-  padding: 15px;
+  padding: 15px 75px;
   border-radius: 12px;
   margin-bottom: 15px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -384,7 +345,7 @@ body {
 
 /* Estilo para os botões de envio */
 .form-resgatar button, .form-depositar button {
-  background-color: var(--cor--destaque-verde);
+  background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
   padding: 10px;
@@ -405,7 +366,7 @@ body {
 
 /* Estilo para a seção de histórico */
 .historico-transacoes {
-  background-color: var(--verde--vidro);
+  background-color: var(--cor-terciaria);
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 15px;
@@ -445,12 +406,12 @@ body {
 
 /* Estilo para as células da tabela */
 .historico-transacoes td {
-  background-color: var(--verde--vidro);
+  background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
   padding: 10px;
   text-align: left;
   font-size: 12px;
-  border-bottom: 1px solid var(--cor--destaque-verde);
+  border-bottom: 0.5px solid var(--cor--destaque-verde);
 }
 
 /* Estilo para as linhas pares da tabela */
@@ -496,7 +457,7 @@ body {
 
 /* Estilo para o botão de selecionar ação */
 .selectActionBtn {
-  background-color: var(--cor--destaque-verde);
+  background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
   padding: 10px 20px;
@@ -510,13 +471,13 @@ body {
 
 /* Hover no botão de selecionar ação */
 .selectActionBtn:hover {
-  background-color: var(--hover);
+  background-color: #45a049;
   transform: scale(1.05);
 }
 
 /* Estilo para os botões de ação */
 .actionBtn {
-  background-color: var(--cor--destaque-verde);
+  background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
   padding: 10px 20px;
@@ -534,3 +495,49 @@ body {
   transform: scale(1.05);
 }
 
+/*=======================
+ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
+=========================*/
+
+.congratulations-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+  display: none;
+  text-align: center;
+  font-size: 24px;
+}
+.emoji {
+  position: fixed;
+  font-size: 36px;
+  z-index: 1001;
+  animation: moveEmoji 8s linear;
+}
+@keyframes moveEmoji {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100vh);
+  }
+}
+.finalizar-meta-btn {
+  margin-top: 10px;
+  background-color: var(--cor-terciaria);
+  color: white;
+  border: none;
+  padding: 10px 168px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+.finalizar-meta-btn:hover {
+  background-color: #45a049;
+}

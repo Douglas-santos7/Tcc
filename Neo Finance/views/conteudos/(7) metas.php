@@ -47,18 +47,16 @@ include('../../config/conteudos/metas/logica_metas.php');
   <link rel="stylesheet" href="../../css/conteudos/metas/popUpMetas.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>  
 </head>
 
 <body>
+  <div class="titulo-metas">
   <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
-
-  <div class="container--add--metas">
-    <!-- Botão de Adicionar -->
-    <div class="adicionar--btn" id="adicionarBtn">
-      <img src="../../assets/icons/add--icon.svg" alt="add--btn">
-    </div>
   </div>
+  
+
+  
 
   <div class="container">
 
@@ -77,6 +75,14 @@ include('../../config/conteudos/metas/logica_metas.php');
     </div>
 
     <div class="container-cards">
+
+    <div class="container--add--metas">
+    <!-- Botão de Adicionar -->
+    <div class="adicionar--btn" id="adicionarBtn">
+      <img src="../../assets/icons/add--icon.svg" alt="add--btn">
+    </div>
+  </div>
+
       <?php while ($row = $result->fetch_assoc()):
         $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
         $deadline = date('d/m/Y', strtotime($row['prazo'])); // Formata a data de prazo
