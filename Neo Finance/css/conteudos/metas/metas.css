@@ -25,6 +25,17 @@ body {
   margin-bottom: 20px;
 }
 
+.titulo-metas {
+  position: relative; /* Altere para relativo */
+  margin-top: 3px; /* Ajuste o espaçamento para descer o título */
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left; /* Alinhe conforme necessário */
+  left: -600px;
+}
+
+
+
 /* Container dos Cards */
 .container-cards {
   display: flex;
@@ -148,7 +159,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/*====-========== =======
+/*==== ========== =======
   CSS DOS POPUPS METAS
  ===== ========= ========*/
 
@@ -177,6 +188,14 @@ body {
   width: 100px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  
+    position: fixed;
+    left: 22px;
+    top: 100px; /* Ajuste para descer o botão */
+   
+    width: 100px;
+   
+  
 }
 
 .adicionar--btn:hover {

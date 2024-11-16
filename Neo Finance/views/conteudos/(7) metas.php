@@ -51,14 +51,15 @@ include('../../config/conteudos/metas/logica_metas.php');
 </head>
 
 <body>
-  <div class="titulo-metas">
-  <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
-  </div>
+  
   
 
   
 
   <div class="container">
+  <div class="titulo-metas">
+  <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
+  </div>
 
     <div class="menu-criar-meta" id="menuCriarMeta">
       <!-- Formulário para criação de meta -->
