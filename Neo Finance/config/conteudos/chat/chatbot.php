@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->fetch();
     $stmt->close();
 
+        
     // Respostas associadas a comandos
     $responses = [
         'saldo' => function () use ($conn, $userId) {
@@ -194,6 +195,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Função para obter saldo do usuário
 function getSaldo($conn, $userId)
 {
+    // Recupera o saldo inicial do usuário
+    $stmtSaldoInicial = $conn->prepare("SELECT saldo FROM users WHERE id = ?");
+    $stmtSaldoInicial->bind_param("i", $userId);
+    $stmtSaldoInicial->execute();
+    $stmtSaldoInicial->bind_result($saldoInicial);
+    $stmtSaldoInicial->fetch();
+    $stmtSaldoInicial->close();
+
     // Somar receitas
     $stmtReceitas = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'receita'");
     $stmtReceitas->bind_param("i", $userId);
@@ -210,8 +219,8 @@ function getSaldo($conn, $userId)
     $stmtDespesas->fetch();
     $stmtDespesas->close();
 
-    // Calcular saldo
-    $saldo = ($totalReceitas ?? 0) - ($totalDespesas ?? 0);
+    // Calcular saldo total (saldo inicial + receitas - despesas)
+    $saldo = ($totalReceitas ?? 0) - ($totalDespesas ?? 0) + ($saldoInicial ?? 0);
 
     // Verificando se o saldo é 0
     if ($saldo == 0) {
@@ -220,6 +229,7 @@ function getSaldo($conn, $userId)
 
     return "Seu saldo atual é R$ " . number_format($saldo, 2, ',', '.');
 }
+
 
 // Função para obter dicas de economia com base no saldo do usuário
 function getDicasEconomizar($conn, $userId)
@@ -301,6 +311,15 @@ function getDicasInvestir($conn, $userId)
 // Função para obter resumo mensal
 function getResumoMensal($conn, $userId)
 {
+    // Recupera o saldo inicial do usuário
+    $stmt = $conn->prepare("SELECT saldo FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($saldoInicial);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Recupera o total das transações do mês
     $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND MONTH(data) = MONTH(CURRENT_DATE())");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -308,12 +327,25 @@ function getResumoMensal($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
+    // Somar o saldo inicial ao total mensal
+    $totalMensal += $saldoInicial;
+
     return "Seu resumo mensal total é R$ " . number_format($totalMensal, 2, ',', '.');
 }
+
 
 // Função para obter resumo diário
 function getResumoDiario($conn, $userId)
 {
+    // Recupera o saldo inicial do usuário
+    $stmt = $conn->prepare("SELECT saldo FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($saldoInicial);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Recupera o total das transações do dia
     $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND DATE(data) = CURDATE()");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -321,8 +353,12 @@ function getResumoDiario($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
+    // Somar o saldo inicial ao total diário
+    $totalDiario += $saldoInicial;
+
     return "Seu resumo diário total é R$ " . number_format($totalDiario, 2, ',', '.');
 }
+
 
 function getHistoricoTransacoes($conn, $userId)
 {
