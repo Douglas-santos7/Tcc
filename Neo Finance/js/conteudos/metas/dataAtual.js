@@ -1,12 +1,13 @@
-//Função - input data - obter data atual
-  // Obtém a data atual
-  const today = new Date();
-  
-  // Formata a data como 'AAAA-MM-DD' para ser compatível com o valor do input de tipo date
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // meses começam em 0
-  const day = String(today.getDate()).padStart(2, '0');
-  
-  // Define o valor mínimo no input para a data atual
-  const minDate = `${year}-${month}-${day}`;
-  document.getElementById('data_meta').setAttribute('min', minDate);
+ // Função para definir a data mínima do campo de data
+ function setMinDate() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+  var yyyy = today.getFullYear();
+
+  today = yyyy + '-' + mm + '-' + dd;
+  document.getElementById("deadline").setAttribute("min", today);
+}
+
+// Chamar a função quando a página carregar
+window.onload = setMinDate;
