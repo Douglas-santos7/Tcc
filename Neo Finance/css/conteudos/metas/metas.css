@@ -459,7 +459,35 @@ body {
   display: flex;
   gap: 10px;
   animation: fadeIn 0.5s ease-in-out;
+  justify-content: center; /* Centraliza os botões horizontalmente */
 }
+
+.actionButtons button {
+  display: flex; /* Usa flexbox para organizar os elementos internos */
+  flex-direction: column; /* Dispõe os elementos em uma coluna */
+  align-items: center; /* Centraliza os elementos horizontalmente */
+  justify-content: center; /* Centraliza os elementos verticalmente */
+  flex-grow: 1; /* Permite que os botões ocupem o espaço disponível de forma igual */
+  text-align: center; /* Centraliza o texto dentro dos botões */
+  padding: 10px; /* Ajusta o padding para garantir espaço interno */
+  border: none;
+  border-radius: 5px;
+  background-color: var(--cor-terciaria);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.actionButtons button img {
+  margin-top: 10px; /* Adiciona espaço entre o texto e a imagem */
+}
+
+.actionButtons button:hover {
+  background-color: var(--hover);
+  transform: scale(1.05);
+}
+
 
 /* Estilo para o botão de selecionar ação */
 .selectActionBtn {
@@ -532,17 +560,20 @@ body {
     transform: translateY(-100vh);
   }
 }
-
 .finalizar-meta-btn {
   margin-top: 10px;
   background-color: var(--cor-terciaria);
   color: white;
   border: none;
-  padding: 10px 168px;
+  padding: 10px 0; /* Ajusta o padding para 0 nas laterais */
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s;
+  display: block; /* Garante que o botão ocupe toda a largura disponível */
+  margin: 10px auto 0 auto; /* Centraliza o botão horizontalmente */
+  width: 100%; /* Ocupa toda a largura disponível */
+  text-align: center; /* Centraliza o texto dentro do botão */
 }
 
 .finalizar-meta-btn:hover {
