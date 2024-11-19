@@ -47,19 +47,14 @@ include('../../config/conteudos/metas/logica_metas.php');
   <link rel="stylesheet" href="../../css/conteudos/metas/popUpMetas.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body>
-  
-  
-
-  
-
   <div class="container">
-  <div class="titulo-metas">
-  <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
-  </div>
+    <div class="titulo-metas">
+      <h1>Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
+    </div>
 
     <div class="menu-criar-meta" id="menuCriarMeta">
       <!-- Formulário para criação de meta -->
@@ -77,12 +72,12 @@ include('../../config/conteudos/metas/logica_metas.php');
 
     <div class="container-cards">
 
-    <div class="container--add--metas">
-    <!-- Botão de Adicionar -->
-    <div class="adicionar--btn" id="adicionarBtn">
-      <img src="../../assets/icons/add--icon.svg" alt="add--btn">
-    </div>
-  </div>
+      <div class="container--add--metas">
+        <!-- Botão de Adicionar -->
+        <div class="adicionar--btn"  id="adicionarBtn">
+          <img src="../../assets/icons/add--icon.svg" alt="add--btn">
+        </div>
+      </div>
 
       <?php while ($row = $result->fetch_assoc()):
         $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
@@ -113,63 +108,63 @@ include('../../config/conteudos/metas/logica_metas.php');
               if (!isset($_SESSION['celebrated_goals']) || !in_array($goalId, $_SESSION['celebrated_goals'])):
                 // Marcar a meta como celebrada
                 $_SESSION['celebrated_goals'][] = $goalId;
-              ?>
-              <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                  var end = Date.now() + (8 * 1000);
-                  var colors = ['#bb0000', '#ffffff'];
-                  (function frame() {
-                    confetti({
-                      particleCount: 2,
-                      angle: 60,
-                      spread: 55,
-                      origin: { x: 0 }
-                    });
-                    confetti({
-                      particleCount: 2,
-                      angle: 120,
-                      spread: 55,
-                      origin: { x: 1 }
-                    });
-                    if (Date.now() < end) {
-                      requestAnimationFrame(frame);
-                    }
-                  }());
+                ?>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function () {
+                    var end = Date.now() + (8 * 1000);
+                    var colors = ['#bb0000', '#ffffff'];
+                    (function frame() {
+                      confetti({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 }
+                      });
+                      confetti({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 }
+                      });
+                      if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                      }
+                    }());
 
-                  // Exibir mensagem de parabéns
-                  var congratulationsMessage = document.createElement('div');
-                  congratulationsMessage.className = 'congratulations-message';
-                  congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
-                  document.body.appendChild(congratulationsMessage);
+                    // Exibir mensagem de parabéns
+                    var congratulationsMessage = document.createElement('div');
+                    congratulationsMessage.className = 'congratulations-message';
+                    congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
+                    document.body.appendChild(congratulationsMessage);
 
-                  setTimeout(function() {
-                    congratulationsMessage.style.display = 'block';
-                  }, 1000);
+                    setTimeout(function () {
+                      congratulationsMessage.style.display = 'block';
+                    }, 1000);
 
-                  setTimeout(function() {
-                    congratulationsMessage.style.display = 'none';
-                    document.body.removeChild(congratulationsMessage);
-                  }, 8000);
-
-                  // Adicionar emojis animados
-                  var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
-                  var emojiInterval = setInterval(function() {
-                    var emoji = document.createElement('div');
-                    emoji.className = 'emoji';
-                    emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                    emoji.style.left = Math.random() * 100 + 'vw';
-                    document.body.appendChild(emoji);
-
-                    setTimeout(function() {
-                      document.body.removeChild(emoji);
+                    setTimeout(function () {
+                      congratulationsMessage.style.display = 'none';
+                      document.body.removeChild(congratulationsMessage);
                     }, 8000);
-                  }, 500);
 
-                  setTimeout(function() {
-                    clearInterval(emojiInterval);
-                  }, 8000);
-                });
-              </script>
+                    // Adicionar emojis animados
+                    var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
+                    var emojiInterval = setInterval(function () {
+                      var emoji = document.createElement('div');
+                      emoji.className = 'emoji';
+                      emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                      emoji.style.left = Math.random() * 100 + 'vw';
+                      document.body.appendChild(emoji);
+
+                      setTimeout(function () {
+                        document.body.removeChild(emoji);
+                      }, 8000);
+                    }, 500);
+
+                    setTimeout(function () {
+                      clearInterval(emojiInterval);
+                    }, 8000);
+                  });
+                </script>
               <?php endif; ?>
             <?php endif; ?>
             <h2>Até <?php echo $deadline; ?></h2> <!-- Exibe a data de prazo aqui -->
@@ -256,7 +251,7 @@ include('../../config/conteudos/metas/logica_metas.php');
   <script src="../../js/conteudos/metas/dataAtual.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Gráfico de progresso das metas
       <?php foreach ($result as $meta) { ?>
         var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%

@@ -7,41 +7,81 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   height: 100vh;
 }
 
+/* Container Principal */
 .container {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
   max-width: 1200px;
   padding: 20px;
-  margin-bottom: 20px;
 }
 
-.titulo-metas {
-  position: relative; /* Altere para relativo */
-  margin-top: 3px; /* Ajuste o espaçamento para descer o título */
-  font-size: 14px;
-  font-weight: bold;
-  text-align: left; /* Alinhe conforme necessário */
-  left: -600px;
+.titulo-metas h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+.titulo-metas h1 img {
+  height: 24px;
+  width: auto;
+}
 
+/* Botão Adicionar */
+.container--add--metas {
+  position: fixed;
+  left: 20px;
+  top: 55%;
+  transform: translateY(-50%);
+  height: 90%;
+  display: flex;
+  align-items: center;
+}
+
+.adicionar--btn {
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  width: 100px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.adicionar--btn:hover {
+  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
+    0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde);
+  scale: 1.01;
+}
+
+.adicionar--btn img {
+  border-radius: 16px;
+  transition: all 0.1s ease-in-out;
+}
+
+.adicionar--btn:hover img {
+  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde),
+    0 0 30px var(--cor--destaque-verde), 0 0 40px var(--cor--destaque-verde);
+  scale: 1.1;
+}
 
 /* Container dos Cards */
 .container-cards {
+  margin-left: 140px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* Ajustado para reduzir o espaçamento entre os cards */
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
   width: 100%;
   margin-bottom: 20px;
   margin-top: 40px;
@@ -56,9 +96,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 350px;
-  width: calc(50% - 20px); /* Ajustado para garantir que os cards fiquem lado a lado */
-  margin-bottom: 20px;
-  position: relative; /* Para posicionar o botão de excluir */
+  min-width: 800px;
 }
 
 .titulo-card {
@@ -90,7 +128,7 @@ body {
 
 .icone-lixeira:hover {
   transform: scale(1.2);
-  color: darkred; /* Altera a cor ao passar o mouse */
+  color: darkred;
 }
 
 /* Barra de Progresso */
@@ -107,8 +145,7 @@ body {
   background-color: #e0e0e0;
   border-radius: 10px;
   overflow: hidden;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 .barra-progresso-preenchida {
@@ -159,62 +196,6 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/*==== ========== =======
-  CSS DOS POPUPS METAS
- ===== ========= ========*/
-
-.container--add--metas {
-  display: grid;
-  grid-template-columns: 1fr 30fr;
-  grid-template-rows: 85vh;
-  padding: 10px 20px;
-  gap: 20px;
-}
-
-/* Botão de Adicionar */
-.adicionar--btn {
-  background-color: var(--card-categorias);
-  border: 2px solid var(--cor--destaque-verde);
-  padding: 20px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  left: 22px;
-  top: 20px;
-  height: 90%;
-  width: 100px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  
-    position: fixed;
-    left: 22px;
-    top: 100px; /* Ajuste para descer o botão */
-   
-    width: 100px;
-   
-  
-}
-
-.adicionar--btn:hover {
-  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
-    0 0 5px var(--cor--destaque-verde);
-  scale: 1.01;
-}
-
-.adicionar--btn:hover img {
-  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde), 0 0 30px var(--cor--destaque-verde),
-    0 0 40px var(--cor--destaque-verde);
-  scale: 1.1;
-}
-
-.adicionar--btn img {
-  border-radius: 16px;
-  transition: all 0.1s ease-in-out;
-}
-
 /* Estilo para o container do formulário */
 .menu-criar-meta {
   position: fixed;
@@ -225,9 +206,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro com opacidade */
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: 9999;
-  display: none; /* Inicialmente oculto */
+  display: none;
 }
 
 /* Estilo para o formulário */
@@ -243,7 +224,7 @@ body {
   color: var(--fonte-branco-100);
   max-height: 90vh;
   overflow-y: auto;
-  position: relative; /* Adicionado para posicionar o botão de fechar */
+  position: relative;
 }
 
 /* Estilo para o botão de fechar */
@@ -318,7 +299,8 @@ body {
 }
 
 /* Estilo para os formulários de resgatar e depositar */
-.form-resgatar, .form-depositar {
+.form-resgatar,
+.form-depositar {
   background-color: var(--verde--vidro);
   padding: 15px 75px;
   border-radius: 12px;
@@ -334,7 +316,8 @@ body {
 }
 
 /* Estilo para os rótulos dos formulários */
-.form-resgatar label, .form-depositar label {
+.form-resgatar label,
+.form-depositar label {
   color: white;
   display: block;
   margin-top: 10px;
@@ -343,7 +326,8 @@ body {
 }
 
 /* Estilo para os inputs de número */
-.form-resgatar input[type="number"], .form-depositar input[type="number"] {
+.form-resgatar input[type="number"],
+.form-depositar input[type="number"] {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
@@ -356,14 +340,16 @@ body {
 }
 
 /* Foco nos inputs */
-.form-resgatar input[type="number"]:focus, .form-depositar input[type="number"]:focus {
+.form-resgatar input[type="number"]:focus,
+.form-depositar input[type="number"]:focus {
   outline: none;
   background-color: var(--cor--destaque-verde);
   border: 2px solid var(--cor--destaque-verde);
 }
 
 /* Estilo para os botões de envio */
-.form-resgatar button, .form-depositar button {
+.form-resgatar button,
+.form-depositar button {
   background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
@@ -378,7 +364,8 @@ body {
 }
 
 /* Hover nos botões de envio */
-.form-resgatar button:hover, .form-depositar button:hover {
+.form-resgatar button:hover,
+.form-depositar button:hover {
   background-color: var(--hover);
   transform: scale(1.05);
 }
@@ -514,10 +501,7 @@ body {
   transform: scale(1.05);
 }
 
-/*=======================
-ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
-=========================*/
-
+/* Estilo para a mensagem de parabenização */
 .congratulations-message {
   position: fixed;
   top: 50%;
@@ -532,12 +516,14 @@ ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
   text-align: center;
   font-size: 24px;
 }
+
 .emoji {
   position: fixed;
   font-size: 36px;
   z-index: 1001;
   animation: moveEmoji 8s linear;
 }
+
 @keyframes moveEmoji {
   0% {
     transform: translateY(0);
@@ -546,6 +532,7 @@ ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
     transform: translateY(-100vh);
   }
 }
+
 .finalizar-meta-btn {
   margin-top: 10px;
   background-color: var(--cor-terciaria);
@@ -557,6 +544,7 @@ ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
   font-size: 16px;
   transition: background-color 0.3s;
 }
+
 .finalizar-meta-btn:hover {
   background-color: #45a049;
 }

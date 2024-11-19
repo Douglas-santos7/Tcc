@@ -79,7 +79,7 @@ $conn->close();
   <div class="container--dashboard">
     <div class="cards">
       <!-- Card Balanço Total -->
-      <div class="card--balanco">
+      <div class="card--balanco"  data-intro="Aqui você pode ver seu balanço total de receitas e despesas." data-step="1">
         <div class="lado--esquerdo-bt">
           <span>Balanço Total</span>
           <h1 id="balanco--valor--total">R$ <?php echo number_format($balanco, 2, ',', '.'); ?></h1>
@@ -108,7 +108,7 @@ $conn->close();
       </div>
 
       <!-- Card Histórico Recente -->
-      <div class="card--historico-recente">
+      <div class="card--historico-recente" data-intro="No histórico recente, você pode ver os seus últimos lançamentos." data-step="2">
         <div class="header--card-hr">
           <span>Histórico Recente</span>
           <button id="ver-tudo-btn">Ver tudo</button>
@@ -164,7 +164,8 @@ $conn->close();
       </div>
 
       <!-- Card Vencimentos -->
-      <div class="card--vencimentos <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'card--vencimentos-sem-vencimento' : ''; ?>">
+      <div
+        class="card--vencimentos <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'card--vencimentos-sem-vencimento' : ''; ?>">
         <div class="header--card-v">
           <div class="titulo--header-v">
             <img src="../../assets/icons/icon--calendario.svg" alt="icon--calendario" />
@@ -194,12 +195,14 @@ $conn->close();
       </div>
 
       <!-- Card Lembretes -->
-      <div class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">
+      <div
+        class="card--lembretes <?php echo ($valor == 0 && $descricao == 'Sem vencimentos pendentes') ? 'sem-vencimento' : ''; ?>">
         <div class="header--card-l">
           <span class="titulo">Lembretes</span>
           <!-- Apenas mostra o tipo_transacao se não estiver "Sem vencimentos pendentes" -->
           <?php if (!($valor == 0 && $descricao == 'Sem vencimentos pendentes') && isset($vencimentoData['tipo_transacao'])): ?>
-            <span class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
+            <span
+              class="<?php echo strtolower(trim($vencimentoData['tipo_transacao'])) === 'receita' ? 'categoria--receita' : 'categoria--despesa'; ?>">
               <?php echo htmlspecialchars($vencimentoData['tipo_transacao']); ?>
             </span>
           <?php endif; ?>
@@ -303,7 +306,7 @@ $conn->close();
       <script src="../../js/conteudos/dashboard/fraseLembrete.js"></script>
       <script>
         // Chama a função após a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
           alternarFraseLembrete();
         });
       </script>
@@ -321,6 +324,15 @@ $conn->close();
         <?php if ($mostrarModalConfirmacao): ?>
           exibirModalConfirmacao();
         <?php endif; ?>
+      </script>
+      
+      <script>
+        function iniciarTutorial() {
+  console.log("Iniciando tutorial..."); // Adicione esta linha
+  introJs().start();
+}
+
+
       </script>
 </body>
 
