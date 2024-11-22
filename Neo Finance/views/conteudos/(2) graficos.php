@@ -19,53 +19,58 @@ $interval = isset($_GET['interval']) && $_GET['interval'] === 'diario' ? 'diario
 // Consultar receitas e despesas de acordo com o intervalo selecionado
 if ($interval === 'diario') {
     $queryReceitas = "
-        SELECT DATE(data) AS dia, DAYNAME(data) AS dia_semana, SUM(valor) AS totalReceitas 
-        FROM transacoes 
-        WHERE tipo = 'receita' AND usuario_id = $userId AND DATE(data) = CURDATE() 
-        GROUP BY dia 
-        ORDER BY dia";
-
+    SELECT DAY(data) AS dia, SUM(valor) AS totalReceitas
+    FROM transacoes 
+    WHERE tipo = 'receita' AND usuario_id = $userId 
+    AND MONTH(data) = MONTH(CURDATE()) AND YEAR(data) = YEAR(CURDATE())
+    GROUP BY dia
+    ORDER BY dia
+    ";
     $queryDespesas = "
-        SELECT DATE(data) AS dia, DAYNAME(data) AS dia_semana, SUM(valor) AS totalDespesas 
-        FROM transacoes 
-        WHERE tipo = 'despesa' AND usuario_id = $userId AND DATE(data) = CURDATE() 
-        GROUP BY dia 
-        ORDER BY dia";
+    SELECT DAY(data) AS dia, SUM(valor) AS totalDespesas
+    FROM transacoes 
+    WHERE tipo = 'despesa' AND usuario_id = $userId 
+    AND MONTH(data) = MONTH(CURDATE()) AND YEAR(data) = YEAR(CURDATE())
+    GROUP BY dia
+    ORDER BY dia
+    ";
 } else {
     if ($selectedMonth) {
         // Se um mês específico for selecionado
         $queryReceitas = "
-            SELECT DAY(data) AS dia, SUM(valor) AS totalReceitas 
+            SELECT DAY(data) AS dia, SUM(valor) AS totalReceitas
             FROM transacoes 
             WHERE tipo = 'receita' AND usuario_id = $userId 
-            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
-            GROUP BY dia 
-            ORDER BY dia";
-
+            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE())
+            GROUP BY dia
+            ORDER BY dia
+        ";
         $queryDespesas = "
-            SELECT DAY(data) AS dia, SUM(valor) AS totalDespesas 
+            SELECT DAY(data) AS dia, SUM(valor) AS totalDespesas
             FROM transacoes 
             WHERE tipo = 'despesa' AND usuario_id = $userId 
-            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE()) 
-            GROUP BY dia 
-            ORDER BY dia";
+            AND MONTH(data) = $selectedMonth AND YEAR(data) = YEAR(CURDATE())
+            GROUP BY dia
+            ORDER BY dia
+        ";
     } else {
         // Se todos os meses forem selecionados
         $queryReceitas = "
-            SELECT MONTH(data) AS mes, SUM(valor) AS totalReceitas 
+            SELECT MONTH(data) AS mes, SUM(valor) AS totalReceitas
             FROM transacoes 
             WHERE tipo = 'receita' AND usuario_id = $userId 
-            AND YEAR(data) = YEAR(CURDATE()) 
-            GROUP BY mes 
-            ORDER BY mes";
-
+            AND YEAR(data) = YEAR(CURDATE())
+            GROUP BY mes
+            ORDER BY mes
+        ";
         $queryDespesas = "
-            SELECT MONTH(data) AS mes, SUM(valor) AS totalDespesas 
+            SELECT MONTH(data) AS mes, SUM(valor) AS totalDespesas
             FROM transacoes 
             WHERE tipo = 'despesa' AND usuario_id = $userId 
-            AND YEAR(data) = YEAR(CURDATE()) 
-            GROUP BY mes 
-            ORDER BY mes";
+            AND YEAR(data) = YEAR(CURDATE())
+            GROUP BY mes
+            ORDER BY mes
+        ";
     }
 }
 
@@ -74,50 +79,55 @@ $resultDespesas = mysqli_query($conn, $queryDespesas);
 
 // Extrair valores
 if ($interval === 'diario') {
-    // Inicializa os arrays para 30 dias
-    $receitas = array_fill(0, 30, 0);
-    $despesas = array_fill(0, 30, 0);
+    // Inicializa os arrays para 31 dias (alguns meses tem 31 dias)
+    $receitas = array_fill(0, 31, 0);
+    $despesas = array_fill(0, 31, 0);
 
+    // Preenche as receitas diárias
     while ($row = mysqli_fetch_assoc($resultReceitas)) {
-        $dia = intval(date('j', strtotime($row['dia']))); // Pega o dia do mês
-        $receitas[$dia - 1] = $row['totalReceitas']; // -1 para índice de array
+        $dia = intval($row['dia']); // Pega o dia do mês
+        $receitas[$dia - 1] = $row['totalReceitas']; // Preenche o valor correto no array
     }
+
+    // Preenche as despesas diárias
     while ($row = mysqli_fetch_assoc($resultDespesas)) {
-        $dia = intval(date('j', strtotime($row['dia']))); // Pega o dia do mês
-        $despesas[$dia - 1] = $row['totalDespesas']; // -1 para índice de array
+        $dia = intval($row['dia']); // Pega o dia do mês
+        $despesas[$dia - 1] = $row['totalDespesas']; // Preenche o valor correto no array
     }
 } else {
-    // Inicializa arrays para os dados mensais
+    // Inicializa os arrays para os dados mensais
     $receitas = array_fill(0, 12, 0);
     $despesas = array_fill(0, 12, 0);
 
+    // Preenche as receitas mensais
     while ($row = mysqli_fetch_assoc($resultReceitas)) {
-        $mes = intval($row['mes']) - 1; // Mês começa em 1, ajuste para índice de array
-        $receitas[$mes] = $row['totalReceitas'];
+        $mes = intval($row['mes']) - 1; // Ajusta o índice do mês
+        $receitas[$mes] = $row['totalReceitas']; // Preenche o valor correto no array
     }
+
+    // Preenche as despesas mensais
     while ($row = mysqli_fetch_assoc($resultDespesas)) {
-        $mes = intval($row['mes']) - 1; // Mês começa em 1, ajuste para índice de array
-        $despesas[$mes] = $row['totalDespesas'];
+        $mes = intval($row['mes']) - 1; // Ajusta o índice do mês
+        $despesas[$mes] = $row['totalDespesas']; // Preenche o valor correto no array
     }
 }
 
 // Consultar as despesas por categoria
 $queryDespesasPorCategoria = "
-    SELECT c.nome AS categoria, SUM(t.valor) AS total 
-    FROM transacoes t
-    JOIN categorias c ON t.categoria_id = c.id
-    WHERE t.tipo = 'despesa' AND t.usuario_id = $userId 
-    GROUP BY c.nome 
-    ORDER BY total DESC";
-
+    SELECT c.nome AS categoria, SUM(t.valor) AS total
+    FROM transacoes t 
+    JOIN categorias c ON t.categoria_id = c.id 
+    WHERE t.tipo = 'despesa' AND t.usuario_id = $userId
+    GROUP BY c.nome
+    ORDER BY total DESC
+";
 $resultDespesasPorCategoria = mysqli_query($conn, $queryDespesasPorCategoria);
+
 $categoriasDespesas = [];
 $categoriaMaiorGasto = '';
 $valorMaiorGasto = 0;
-
 while ($row = mysqli_fetch_assoc($resultDespesasPorCategoria)) {
     $categoriasDespesas[] = $row;
-
     // Verifica a categoria com o maior gasto
     if ($row['total'] > $valorMaiorGasto) {
         $valorMaiorGasto = $row['total'];
@@ -125,6 +135,18 @@ while ($row = mysqli_fetch_assoc($resultDespesasPorCategoria)) {
     }
 }
 
+// Calcular variação das receitas e despesas
+$variacaoReceitas = [];
+$variacaoDespesas = [];
+
+for ($i = 1; $i < count($receitas); $i++) {
+    $variacaoReceitas[] = $receitas[$i] - $receitas[$i - 1]; // Diferença das receitas
+    $variacaoDespesas[] = $despesas[$i] - $despesas[$i - 1]; // Diferença das despesas
+}
+
+// Verificar tendências
+$descricaoTendenciaReceitas = (end($variacaoReceitas) > 0) ? 'Tendência crescente' : 'Tendência decrescente';
+$descricaoTendenciaDespesas = (end($variacaoDespesas) > 0) ? 'Tendência crescente' : 'Tendência decrescente';
 // Fecha a conexão
 $conn->close();
 ?>
@@ -162,68 +184,87 @@ $conn->close();
                 <a href="?interval=mensal&month=<?= $selectedMonth ?>" class="button">Mensal</a>
                 <a href="?interval=diario" class="button">Diário</a>
             </div>
-
             <div id="chart"></div>
         </div>
 
         <div class="card options-card">
             <h2 class="card-title">Análise dos Dados</h2>
-            <p style="color: rgb(46, 204, 113);">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></p>
-            <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></p>
-            <p style="color: orange;">Balanço Total: R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?></p>
-            <p style="color: white">Se você precisar de ajuda, clique na imagem abaixo para conversar com o chatbot da Neo:</p>
+            <p style="color: rgb(46, 204, 113);">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?>
+            <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?>
+            <p style="color: orange;">Balanço Total: R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?>
+            <p style="color: white">Se você precisar de ajuda, clique na imagem abaixo para conversar com o chatbot da Neo:
             <a href="./(5) chatbot.php" class="chatbot-link">
-            <img src="../../assets/img/fin.png" alt="Chatbot Neo" class="chatbot-image">
+                <img src="../../assets/img/fin.png" alt="Chatbot Neo" class="chatbot-image">
             </a>
         </div>
-        <script>
+
+        <!-- Novo Card de Dicas (posicionado embaixo) -->
+        <div class="card dicas-card">
+            <strong>Saldo Total:</strong> R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?>
+            <strong>Despesas Aumentaram?</strong> <?= (array_sum($despesas) > array_sum($receitas)) ? 'Sim, é importante revisar seus gastos.' : 'Não, continue controlando suas finanças.' ?>
+            <strong>Categoria com Maior Gasto:</strong> <?= $categoriaMaiorGasto ?> (R$<?= number_format($valorMaiorGasto, 2, ',', '.') ?>)
+        </div>
+    </div>
+
+    <script>
     const receitaColor = '#3498db';  // Azul
     const despesaColor = '#e74c3c';  // Vermelho
 
     var options = {
-        chart: {
-            type: 'area',
-            toolbar: {
-                show: false // Remove a toolbar
-            }
-        },
-        series: [{
-            name: 'Receitas',
-            data: <?= json_encode($receitas) ?>,
-            color: receitaColor  // Define a cor para a série de Receitas
-        }, {
-            name: 'Despesas',
-            data: <?= json_encode($despesas) ?>,
-            color: despesaColor  // Define a cor para a série de Despesas
-        }],
-        xaxis: {
-            categories: <?= json_encode($interval === 'diario'
-                ? array_map(function ($i) {
-                    return "Dia " . ($i + 1);
-                }, range(0, 29))
-                : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
-            ?>,
-            labels: {
-                style: {
-                    colors: '#FFFFFF', // Cor branca para os rótulos do eixo X
-                    fontSize: '14px'   // Tamanho da fonte
-                }
-            }
-        },
-        legend: {
-            labels: {
-                colors: '#FFFFFF',  // Cor branca para as legendas (nomes de 'Receitas' e 'Despesas')
-                fontSize: '14px'     // Tamanho da fonte
+    chart: {
+        type: 'area',
+        toolbar: {
+            show: false
+        }
+    },
+    series: [{
+        name: 'Receitas',
+        data: <?= json_encode($receitas) ?>,
+        color: receitaColor
+    }, {
+        name: 'Despesas',
+        data: <?= json_encode($despesas) ?>,
+        color: despesaColor
+    }],
+    xaxis: {
+        categories: <?= json_encode($interval === 'diario'
+            ? array_map(function ($i) {
+                return "Dia " . ($i + 1);
+            }, range(0, 29))
+            : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
+        ?>,
+        labels: {
+            style: {
+                colors: '#FFFFFF',
+                fontSize: '14px'
             }
         }
-    };
+    },
+    annotations: {
+        yaxis: [{
+            y: <?= $valorMaiorGasto ?>,
+            borderColor: '#e74c3c',
+            label: {
+                borderColor: '#e74c3c',
+                style: {
+                    color: '#fff',
+                    background: '#e74c3c',
+                },
+                text: 'Maior Gasto'
+            }
+        }]
+    },
+    legend: {
+        labels: {
+            colors: '#FFFFFF',
+            fontSize: '14px'
+        }
+    }
+};
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 </script>
 
-
-    </div>
 </body>
-
 </html>

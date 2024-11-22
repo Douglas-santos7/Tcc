@@ -1,5 +1,4 @@
-/* IMPORT DO ROOT CSS */
-@import url("../../root.css");
+@import url(../../root.css);
 
 /* =====================================
    Estilos do corpo 
@@ -10,6 +9,9 @@ body {
     margin: 0; 
     padding: 20px; 
     overflow: hidden;
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo em uma coluna */
+    min-height: 100vh; /* Garante que a página ocupe toda a altura da tela */
 }
 
 /* =====================================
@@ -19,6 +21,10 @@ body {
     width: 80%; 
     max-width: 1200px; 
     margin: auto; 
+    display: flex;
+    flex-direction: column; /* Organiza os cards em uma coluna */
+    flex: 1; /* Garante que o conteúdo ocupe o espaço restante */
+    margin-bottom: 20px; /* Espaçamento adicional para garantir que o card de dicas não se sobreponha */
 }
 
 /* =====================================
@@ -34,7 +40,7 @@ body {
     background-color: var(--cor--destaque-verde);
     color: var(--fonte-branco-100);
     text-align: center;
-    padding: 8px 12px;  /* Diminuído */
+    padding: 8px 12px;
     border: none;
     border-radius: 5px;
     text-decoration: none;
@@ -43,23 +49,25 @@ body {
 }
 
 /* =====================================
-   Estilos do cartão 
+   Estilos dos cards principais 
 ===================================== */
 .card {
     background: var(--card-categorias); 
     border: 1px solid #ddd; 
     border-radius: 8px; 
-    padding: 15px;  /* Diminuído */
-    margin: -5px 0; 
+    padding: 15px;
+    margin: 0 0 10px 0; /* Ajuste para reduzir o espaçamento entre os cards */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
 }
 
 /* =====================================
    Estilo do título do cartão 
 ===================================== */
 .card-title {
-    font-size: 20px;  /* Diminuído */
-    
+    font-size: 20px;
     color: var(--fonte-cards); 
 }
 
@@ -78,7 +86,10 @@ body {
 .chart-card {
     flex: 2; 
     margin-right: 20px;
-    height: 80vh; 
+    height: 60vh;  /* Diminuído para 60% da altura da tela */
+    width: 100%;
+    background-color: var(--card-categorias);  
+    border-radius: 8px;
 }
 
 /* =====================================
@@ -86,23 +97,8 @@ body {
 ===================================== */
 .options-card {
     flex: 1;
-    text-align: center;  /* Centraliza o conteúdo dentro do contêiner */
+    text-align: center;
     padding: 20px;
-}
-
-/* =====================================
-   Estilos dos botões 
-===================================== */
-.button {
-    background-color: var(--cor--destaque-verde); 
-    color: var(--fonte-branco-100); 
-    text-align: center; 
-    padding: 10px; 
-    border: none; 
-    border-radius: 5px; 
-    text-decoration: none; 
-    margin-bottom: 10px; 
-    transition: background-color 0.3s; 
 }
 
 /* =====================================
@@ -119,19 +115,19 @@ h3 {
 /* =====================================
    Estilo do cartão "cricri" 
 ===================================== */
-
 .chatbot-image {
-    width: 150px; /* Defina o tamanho da imagem */
+    width: 150px;
     cursor: pointer;
-    margin-top: 20px; /* Espaço acima da imagem, se necessário */
+    margin-top: 20px;
 }
 
 /* =====================================
    Estilos para o gráfico 
 ===================================== */
 #chart {
-    border-radius: 8px; 
-    overflow: hidden; 
+    width: 80%; 
+    height: 300px; 
+    margin: 0 auto; 
 }
 
 /* =====================================
@@ -187,3 +183,43 @@ h3 {
     width: 30px; 
     height: auto; 
 }
+
+/* =====================================
+   Estilos para o card de dicas (fixo na parte inferior)
+===================================== */
+/* =====================================
+   Estilos para o card de dicas (fixo na parte inferior)
+===================================== */
+.dicas-card {
+    background-color: var(--card-categorias); /* Deixe esse fundo em um tom mais claro ou suave */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: auto; /* Faz com que o card de dicas vá para o final da página */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%; /* Garante que o card ocupe toda a largura disponível */
+   /* Cor de fundo escura para o card */
+    color: #ecf0f1; /* Texto claro para contraste */
+}
+
+.dicas-card strong {
+    color: var(--cor--destaque-verde); /* Cor verde para destacar as tags 'strong' */
+}
+
+.dicas-card .valor {
+    color: #27ae60; /* Um verde mais vibrante para os valores em destaque */
+}
+
+.dicas-card p {
+    color: #ecf0f1; /* Cor clara para o texto normal dentro do card */
+}
+
+/* Estilo para o valor destacado */
+.dicas-card .valor {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+ 
