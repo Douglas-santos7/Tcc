@@ -1,6 +1,4 @@
 <?php
-
-
 // Verifica se o usuário está logado, caso contrário, redireciona para a página de login
 include '../../config/conteudos/login/verifica_login.php';
 

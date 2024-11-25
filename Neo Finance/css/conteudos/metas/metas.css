@@ -297,21 +297,29 @@ body {
   background-color: var(--hover);
   transform: scale(1.05);
 }
+/* Estilo do container dos formulários */
+.container-formularios {
+  display: flex; 
+  gap: 15px; 
+  justify-content: space-between;
+  align-items: stretch; 
+  width: 100%;
+  padding: 10px; 
+}
 
-/* Estilo para os formulários de resgatar e depositar */
+/* Estilo para os formulários */
 .form-resgatar,
 .form-depositar {
   background-color: var(--verde--vidro);
-  padding: 15px 75px;
+  padding: 15px;
   border-radius: 12px;
-  margin-bottom: 15px;
+  margin: 0; 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   font-family: var(--fonte-principal);
   border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  max-width: 300px;
-  width: 100%;
-  position: relative;
+  flex-grow: 1; 
+  width: auto; 
   animation: formFadeIn 0.5s ease-in-out;
 }
 
@@ -348,8 +356,9 @@ body {
 }
 
 /* Estilo para os botões de envio */
-.form-resgatar button,
-.form-depositar button {
+/* Botões de depositar e resgatar */
+.btn--depositar,
+.btn--resgatar {
   background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
@@ -363,69 +372,99 @@ body {
   transition: background-color 0.3s ease, transform 0.2s;
 }
 
+/* Botão de voltar (<) */
+.back-btn {
+  background-color: var(--cor-terciaria);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 50px; 
+  height: 50px; 
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+  transition: all 0.3s ease; 
+}
+
+.back-btn:hover {
+  background-color: var(--cor-hover, #388E3C); 
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2); 
+  transform: scale(1.1); 
+}
+
+.back-btn:active {
+  transform: scale(1); 
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15); /
+}
+
+
 /* Hover nos botões de envio */
 .form-resgatar button:hover,
 .form-depositar button:hover {
   background-color: var(--hover);
   transform: scale(1.05);
 }
-
-/* Estilo para a seção de histórico */
+/* Ajuste para a seção de histórico */
 .historico-transacoes {
   background-color: var(--cor-terciaria);
-  padding: 15px;
+  padding: 20px; /* Aumenta o padding para mais espaço interno */
   border-radius: 12px;
   margin-bottom: 15px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   font-family: var(--fonte-principal);
   border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  max-width: 400px;
-  width: 100%;
-  position: relative;
+  flex-grow: 1; /* Faz o histórico ocupar o mesmo espaço que os formulários */
+  width: auto; /* Permite ajuste automático no layout flex */
   animation: formFadeIn 0.5s ease-in-out;
 }
 
-/* Estilo para o título do histórico */
+/* Ajuste para o título do histórico */
 .historico-transacoes h3 {
   color: var(--fonte-branco-100);
   margin-bottom: 15px;
-  font-size: 20px;
+  font-size: 22px; /* Título maior */
   font-weight: 600;
+  text-align: center; /* Centraliza o título */
 }
 
-/* Estilo para a tabela do histórico */
+/* Ajuste para a tabela do histórico */
 .historico-transacoes table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px; /* Tamanho do texto da tabela */
 }
 
-/* Estilo para os cabeçalhos da tabela */
+/* Ajuste para os cabeçalhos da tabela */
 .historico-transacoes th {
   background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  padding: 10px;
+  padding: 12px; /* Aumenta o padding */
   text-align: left;
-  font-size: 14px;
+  font-size: 16px; /* Texto maior nos cabeçalhos */
   font-weight: 600;
 }
 
-/* Estilo para as células da tabela */
+/* Ajuste para as células da tabela */
 .historico-transacoes td {
   background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  padding: 10px;
+  padding: 12px; /* Padding maior */
   text-align: left;
-  font-size: 12px;
-  border-bottom: 0.5px solid var(--cor--destaque-verde);
+  font-size: 14px; /* Texto maior nas células */
+  border-bottom: 1px solid var(--cor--destaque-verde);
 }
 
-/* Estilo para as linhas pares da tabela */
+/* Ajuste para as linhas pares da tabela */
 .historico-transacoes tr:nth-child(even) td {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo para as linhas ímpares da tabela */
+/* Ajuste para as linhas ímpares da tabela */
 .historico-transacoes tr:nth-child(odd) td {
   background-color: rgba(0, 0, 0, 0.2);
 }

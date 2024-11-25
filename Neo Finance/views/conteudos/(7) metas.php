@@ -186,13 +186,14 @@ include('../../config/conteudos/metas/logica_metas.php');
                 src="../../assets/icons/icon--historico--metas.svg" alt=""></button>
           </div>
 
-          <!-- Formulário de resgatar -->
+          <div class="container-formularios">
+              <!-- Formulário de resgatar -->
           <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar" style="display:none;">
             <button type="button" class="back-btn">&lt;</button>
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="withdraw_value">Valor a Resgatar:</label>
             <input type="number" id="withdraw_value" name="withdraw_value" required>
-            <button type="submit" name="resgatar">Resgatar</button>
+            <button type="submit" name="resgatar" class="btn--resgatar">Resgatar</button>
           </form>
 
           <!-- Formulário de depósito -->
@@ -201,7 +202,7 @@ include('../../config/conteudos/metas/logica_metas.php');
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="deposit_value">Valor a Depositar:</label>
             <input type="number" id="deposit_value" name="deposit_value" required>
-            <button type="submit" name="depositar">Depositar</button>
+            <button type="submit" name="depositar" class="btn--depositar">Depositar</button>
           </form>
 
           <!-- Exibição do histórico -->
@@ -232,7 +233,8 @@ include('../../config/conteudos/metas/logica_metas.php');
               <?php endwhile; ?>
             </table>
           </div>
-
+          </div>
+          
           <!-- Botão para finalizar meta -->
           <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
