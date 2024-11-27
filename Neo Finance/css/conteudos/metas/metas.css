@@ -7,34 +7,81 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   height: 100vh;
 }
 
+/* Container Principal */
 .container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
   max-width: 1200px;
   padding: 20px;
-  margin-bottom: 20px;
 }
 
-.titulo-metas {
-  display: grid;
-  grid-template-columns: 1fr 8fr;
-  padding: 10px 20px;
-  gap: 20px;
+.titulo-metas h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo-metas h1 img {
+  height: 24px;
+  width: auto;
+}
+
+/* Botão Adicionar */
+.container--add--metas {
+  position: fixed;
+  left: 20px;
+  top: 55%;
+  transform: translateY(-50%);
+  height: 90%;
+  display: flex;
+  align-items: center;
+}
+
+.adicionar--btn {
+  background-color: var(--card-categorias);
+  border: 2px solid var(--cor--destaque-verde);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  width: 100px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.adicionar--btn:hover {
+  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
+    0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde);
+  scale: 1.01;
+}
+
+.adicionar--btn img {
+  border-radius: 16px;
+  transition: all 0.1s ease-in-out;
+}
+
+.adicionar--btn:hover img {
+  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde),
+    0 0 30px var(--cor--destaque-verde), 0 0 40px var(--cor--destaque-verde);
+  scale: 1.1;
 }
 
 /* Container dos Cards */
 .container-cards {
+  margin-left: 140px;
   display: flex;
-  gap: 20px; /* Ajustado para reduzir o espaçamento entre os cards */
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
   width: 100%;
   margin-bottom: 20px;
   margin-top: 40px;
@@ -81,7 +128,7 @@ body {
 
 .icone-lixeira:hover {
   transform: scale(1.2);
-  color: darkred; /* Altera a cor ao passar o mouse */
+  color: darkred;
 }
 
 /* Barra de Progresso */
@@ -98,8 +145,7 @@ body {
   background-color: #e0e0e0;
   border-radius: 10px;
   overflow: hidden;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 .barra-progresso-preenchida {
@@ -150,42 +196,6 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/*==== ========== =======
-  CSS DOS POPUPS METAS
- ===== ========= ========*/
-
-/* Botão de Adicionar */
-.adicionar--btn {
-  background-color: var(--card-categorias);
-  border: 2px solid var(--cor--destaque-verde);
-  padding: 20px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 90%;
-  width: 100px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.adicionar--btn:hover {
-  box-shadow: 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde), 0 0 5px var(--cor--destaque-verde),
-    0 0 5px var(--cor--destaque-verde);
-  scale: 1.01;
-}
-
-.adicionar--btn:hover img {
-  box-shadow: 0 0 10px var(--cor--destaque-verde), 0 0 20px var(--cor--destaque-verde), 0 0 30px var(--cor--destaque-verde),
-    0 0 40px var(--cor--destaque-verde);
-  scale: 1.1;
-}
-
-.adicionar--btn img {
-  border-radius: 16px;
-  transition: all 0.1s ease-in-out;
-}
-
 /* Estilo para o container do formulário */
 .menu-criar-meta {
   position: fixed;
@@ -196,9 +206,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro com opacidade */
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: 9999;
-  display: none; /* Inicialmente oculto */
+  display: none;
 }
 
 /* Estilo para o formulário */
@@ -214,7 +224,7 @@ body {
   color: var(--fonte-branco-100);
   max-height: 90vh;
   overflow-y: auto;
-  position: relative; /* Adicionado para posicionar o botão de fechar */
+  position: relative;
 }
 
 /* Estilo para o botão de fechar */
@@ -287,21 +297,29 @@ body {
   background-color: var(--hover);
   transform: scale(1.05);
 }
+/* Estilo do container dos formulários */
+.container-formularios {
+  display: flex; 
+  gap: 15px; 
+  justify-content: space-between;
+  align-items: stretch; 
+  width: 100%;
+  padding: 10px; 
+}
 
-/* Estilo para os formulários de resgatar e depositar */
+/* Estilo para os formulários */
 .form-resgatar,
 .form-depositar {
   background-color: var(--verde--vidro);
-  padding: 15px 75px;
+  padding: 15px;
   border-radius: 12px;
-  margin-bottom: 15px;
+  margin: 0; 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   font-family: var(--fonte-principal);
   border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  max-width: 300px;
-  width: 100%;
-  position: relative;
+  flex-grow: 1; 
+  width: auto; 
   animation: formFadeIn 0.5s ease-in-out;
 }
 
@@ -338,8 +356,9 @@ body {
 }
 
 /* Estilo para os botões de envio */
-.form-resgatar button,
-.form-depositar button {
+/* Botões de depositar e resgatar */
+.btn--depositar,
+.btn--resgatar {
   background-color: var(--cor-terciaria);
   color: var(--fonte-branco-100);
   border: none;
@@ -353,69 +372,99 @@ body {
   transition: background-color 0.3s ease, transform 0.2s;
 }
 
+/* Botão de voltar (<) */
+.back-btn {
+  background-color: var(--cor-terciaria);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 50px; 
+  height: 50px; 
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+  transition: all 0.3s ease; 
+}
+
+.back-btn:hover {
+  background-color: var(--cor-hover, #388E3C); 
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2); 
+  transform: scale(1.1); 
+}
+
+.back-btn:active {
+  transform: scale(1); 
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15); /
+}
+
+
 /* Hover nos botões de envio */
 .form-resgatar button:hover,
 .form-depositar button:hover {
   background-color: var(--hover);
   transform: scale(1.05);
 }
-
-/* Estilo para a seção de histórico */
+/* Ajuste para a seção de histórico */
 .historico-transacoes {
   background-color: var(--cor-terciaria);
-  padding: 15px;
+  padding: 20px; /* Aumenta o padding para mais espaço interno */
   border-radius: 12px;
   margin-bottom: 15px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   font-family: var(--fonte-principal);
   border: 2px solid var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  max-width: 400px;
-  width: 100%;
-  position: relative;
+  flex-grow: 1; /* Faz o histórico ocupar o mesmo espaço que os formulários */
+  width: auto; /* Permite ajuste automático no layout flex */
   animation: formFadeIn 0.5s ease-in-out;
 }
 
-/* Estilo para o título do histórico */
+/* Ajuste para o título do histórico */
 .historico-transacoes h3 {
   color: var(--fonte-branco-100);
   margin-bottom: 15px;
-  font-size: 20px;
+  font-size: 22px; /* Título maior */
   font-weight: 600;
+  text-align: center; /* Centraliza o título */
 }
 
-/* Estilo para a tabela do histórico */
+/* Ajuste para a tabela do histórico */
 .historico-transacoes table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px; /* Tamanho do texto da tabela */
 }
 
-/* Estilo para os cabeçalhos da tabela */
+/* Ajuste para os cabeçalhos da tabela */
 .historico-transacoes th {
   background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  padding: 10px;
+  padding: 12px; /* Aumenta o padding */
   text-align: left;
-  font-size: 14px;
+  font-size: 16px; /* Texto maior nos cabeçalhos */
   font-weight: 600;
 }
 
-/* Estilo para as células da tabela */
+/* Ajuste para as células da tabela */
 .historico-transacoes td {
   background-color: var(--cor--destaque-verde);
   color: var(--fonte-branco-100);
-  padding: 10px;
+  padding: 12px; /* Padding maior */
   text-align: left;
-  font-size: 12px;
-  border-bottom: 0.5px solid var(--cor--destaque-verde);
+  font-size: 14px; /* Texto maior nas células */
+  border-bottom: 1px solid var(--cor--destaque-verde);
 }
 
-/* Estilo para as linhas pares da tabela */
+/* Ajuste para as linhas pares da tabela */
 .historico-transacoes tr:nth-child(even) td {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo para as linhas ímpares da tabela */
+/* Ajuste para as linhas ímpares da tabela */
 .historico-transacoes tr:nth-child(odd) td {
   background-color: rgba(0, 0, 0, 0.2);
 }
@@ -449,7 +498,35 @@ body {
   display: flex;
   gap: 10px;
   animation: fadeIn 0.5s ease-in-out;
+  justify-content: center; /* Centraliza os botões horizontalmente */
 }
+
+.actionButtons button {
+  display: flex; /* Usa flexbox para organizar os elementos internos */
+  flex-direction: column; /* Dispõe os elementos em uma coluna */
+  align-items: center; /* Centraliza os elementos horizontalmente */
+  justify-content: center; /* Centraliza os elementos verticalmente */
+  flex-grow: 1; /* Permite que os botões ocupem o espaço disponível de forma igual */
+  text-align: center; /* Centraliza o texto dentro dos botões */
+  padding: 10px; /* Ajusta o padding para garantir espaço interno */
+  border: none;
+  border-radius: 5px;
+  background-color: var(--cor-terciaria);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.actionButtons button img {
+  margin-top: 10px; /* Adiciona espaço entre o texto e a imagem */
+}
+
+.actionButtons button:hover {
+  background-color: var(--hover);
+  transform: scale(1.05);
+}
+
 
 /* Estilo para o botão de selecionar ação */
 .selectActionBtn {
@@ -491,10 +568,7 @@ body {
   transform: scale(1.05);
 }
 
-/*=======================
-ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
-=========================*/
-
+/* Estilo para a mensagem de parabenização */
 .congratulations-message {
   position: fixed;
   top: 50%;
@@ -509,12 +583,14 @@ ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
   text-align: center;
   font-size: 24px;
 }
+
 .emoji {
   position: fixed;
   font-size: 36px;
   z-index: 1001;
   animation: moveEmoji 8s linear;
 }
+
 @keyframes moveEmoji {
   0% {
     transform: translateY(0);
@@ -528,12 +604,17 @@ ESTILO - MENSAGEM PARABENIZAÇÃO - META CONCLUIDA
   background-color: var(--cor-terciaria);
   color: white;
   border: none;
-  padding: 10px 168px;
+  padding: 10px 0; /* Ajusta o padding para 0 nas laterais */
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s;
+  display: block; /* Garante que o botão ocupe toda a largura disponível */
+  margin: 10px auto 0 auto; /* Centraliza o botão horizontalmente */
+  width: 100%; /* Ocupa toda a largura disponível */
+  text-align: center; /* Centraliza o texto dentro do botão */
 }
+
 .finalizar-meta-btn:hover {
   background-color: #45a049;
 }

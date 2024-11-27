@@ -51,15 +51,10 @@ include('../../config/conteudos/metas/logica_metas.php');
 </head>
 
 <body>
-
-
-  <div class="titulo-metas">
-    <h1>Minhas Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
-  </div>
-
-
   <div class="container">
-
+    <div class="titulo-metas">
+      <h1>Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
+    </div>
 
     <div class="menu-criar-meta" id="menuCriarMeta">
       <!-- Formulário para criação de meta -->
@@ -79,7 +74,7 @@ include('../../config/conteudos/metas/logica_metas.php');
 
       <div class="container--add--metas">
         <!-- Botão de Adicionar -->
-        <div class="adicionar--btn" id="adicionarBtn">
+        <div class="adicionar--btn"  id="adicionarBtn">
           <img src="../../assets/icons/add--icon.svg" alt="add--btn">
         </div>
       </div>
@@ -87,7 +82,7 @@ include('../../config/conteudos/metas/logica_metas.php');
       <?php while ($row = $result->fetch_assoc()):
         $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
         $deadline = date('d/m/Y', strtotime($row['prazo'])); // Formata a data de prazo
-      ?>
+        ?>
         <div class="card-meta">
           <div class="titulo-card">
             <!-- Ícone de exclusão -->
@@ -113,9 +108,9 @@ include('../../config/conteudos/metas/logica_metas.php');
               if (!isset($_SESSION['celebrated_goals']) || !in_array($goalId, $_SESSION['celebrated_goals'])):
                 // Marcar a meta como celebrada
                 $_SESSION['celebrated_goals'][] = $goalId;
-              ?>
+                ?>
                 <script>
-                  document.addEventListener('DOMContentLoaded', function() {
+                  document.addEventListener('DOMContentLoaded', function () {
                     var end = Date.now() + (8 * 1000);
                     var colors = ['#bb0000', '#ffffff'];
                     (function frame() {
@@ -123,17 +118,13 @@ include('../../config/conteudos/metas/logica_metas.php');
                         particleCount: 2,
                         angle: 60,
                         spread: 55,
-                        origin: {
-                          x: 0
-                        }
+                        origin: { x: 0 }
                       });
                       confetti({
                         particleCount: 2,
                         angle: 120,
                         spread: 55,
-                        origin: {
-                          x: 1
-                        }
+                        origin: { x: 1 }
                       });
                       if (Date.now() < end) {
                         requestAnimationFrame(frame);
@@ -146,30 +137,30 @@ include('../../config/conteudos/metas/logica_metas.php');
                     congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
                     document.body.appendChild(congratulationsMessage);
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                       congratulationsMessage.style.display = 'block';
                     }, 1000);
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                       congratulationsMessage.style.display = 'none';
                       document.body.removeChild(congratulationsMessage);
                     }, 8000);
 
                     // Adicionar emojis animados
                     var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
-                    var emojiInterval = setInterval(function() {
+                    var emojiInterval = setInterval(function () {
                       var emoji = document.createElement('div');
                       emoji.className = 'emoji';
                       emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
                       emoji.style.left = Math.random() * 100 + 'vw';
                       document.body.appendChild(emoji);
 
-                      setTimeout(function() {
+                      setTimeout(function () {
                         document.body.removeChild(emoji);
                       }, 8000);
                     }, 500);
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                       clearInterval(emojiInterval);
                     }, 8000);
                   });
@@ -195,13 +186,14 @@ include('../../config/conteudos/metas/logica_metas.php');
                 src="../../assets/icons/icon--historico--metas.svg" alt=""></button>
           </div>
 
-          <!-- Formulário de resgatar -->
+          <div class="container-formularios">
+              <!-- Formulário de resgatar -->
           <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar" style="display:none;">
             <button type="button" class="back-btn">&lt;</button>
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="withdraw_value">Valor a Resgatar:</label>
             <input type="number" id="withdraw_value" name="withdraw_value" required>
-            <button type="submit" name="resgatar">Resgatar</button>
+            <button type="submit" name="resgatar" class="btn--resgatar">Resgatar</button>
           </form>
 
           <!-- Formulário de depósito -->
@@ -210,7 +202,7 @@ include('../../config/conteudos/metas/logica_metas.php');
             <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
             <label for="deposit_value">Valor a Depositar:</label>
             <input type="number" id="deposit_value" name="deposit_value" required>
-            <button type="submit" name="depositar">Depositar</button>
+            <button type="submit" name="depositar" class="btn--depositar">Depositar</button>
           </form>
 
           <!-- Exibição do histórico -->
@@ -232,7 +224,7 @@ include('../../config/conteudos/metas/logica_metas.php');
               $history_result = $stmt_history->get_result();
 
               while ($history = $history_result->fetch_assoc()):
-              ?>
+                ?>
                 <tr>
                   <td><?php echo ucfirst($history['tipo_transacao']); ?></td>
                   <td>R$ <?php echo number_format($history['valor'], 2, ',', '.'); ?></td>
@@ -241,7 +233,8 @@ include('../../config/conteudos/metas/logica_metas.php');
               <?php endwhile; ?>
             </table>
           </div>
-
+          </div>
+          
           <!-- Botão para finalizar meta -->
           <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
@@ -260,7 +253,7 @@ include('../../config/conteudos/metas/logica_metas.php');
   <script src="../../js/conteudos/metas/dataAtual.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Gráfico de progresso das metas
       <?php foreach ($result as $meta) { ?>
         var progresso = Math.min(Math.round((<?php echo ($meta['valor_atual'] / $meta['valor_alvo']) * 100; ?>)), 100); // Limita a 100%
@@ -294,7 +287,7 @@ include('../../config/conteudos/metas/logica_metas.php');
                   fontSize: '14px'
                 },
                 value: {
-                  formatter: function(val) {
+                  formatter: function (val) {
                     return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
                   },
                   color: '#28a745', // Cor do valor
