@@ -73,29 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         '7' => function () use ($conn, $userId) {
             return getAnaliseGastos($conn, $userId);
         },
-        'exportar' => function () use ($conn, $userId) {
-            return exportarRelatorio($conn, $userId);
-        },
-        '8' => function () use ($conn, $userId) {
-            return exportarRelatorio($conn, $userId);
-        },
         'previsão financeira' => function () use ($conn, $userId) {
             return previsaoFinanceira($conn, $userId);
         },
-        '9' => function () use ($conn, $userId) {
+        '8' => function () use ($conn, $userId) {
             return previsaoFinanceira($conn, $userId);
         },
         'comparação' => function () use ($conn, $userId) {
             return comparacaoGastosMensais($conn, $userId);
         },
-        '10' => function () use ($conn, $userId) {
+        '9' => function () use ($conn, $userId) {
             return comparacaoGastosMensais($conn, $userId);
-        },
-        'desafio' => function () use ($conn, $userId) {
-            return obterDesafioFinanceiroAleatorio($conn, $userId);
-        },
-        '11' => function () use ($conn, $userId) {
-            return obterDesafioFinanceiroAleatorio($conn, $userId);
         },
         'obrigado' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'valeu' => 'De nada! Se precisar de mais ajuda, estou aqui.',
@@ -136,10 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "5. Resumo Diário\n" .
             "6. Histórico de Transações\n" .
             "7. Análise de Gastos\n" .
-            "8. Exportar Relatório\n" .
-            "9. Previsão Financeira com Base no Histórico\n" .
-            "10. Comparação de Gastos Mensais\n" .
-            "11. Desafios\n";
+            "8. Previsão Financeira com Base no Histórico\n" .
+            "9. Comparação de Gastos Mensais\n" ;
+            
     }
 
     // Adicionando sinônimos para as respostas
@@ -436,6 +423,7 @@ function exportarRelatorio($conn, $userId)
 
 function previsaoFinanceira($conn, $userId, $meses = 3)
 {
+    // Prepara a consulta para calcular a média de receitas e despesas
     $stmt = $conn->prepare("
         SELECT tipo, AVG(valor) AS media 
         FROM transacoes 
@@ -446,16 +434,19 @@ function previsaoFinanceira($conn, $userId, $meses = 3)
     $stmt->execute();
     $stmt->bind_result($tipo, $media);
 
+    // Armazena as médias calculadas em um array
     $previsao = [];
     while ($stmt->fetch()) {
         $previsao[$tipo] = $media;
     }
     $stmt->close();
 
-    $gastosEstimados = isset($previsao['despesa']) ? $previsao['despesa'] * $meses : 0;
-    $receitasEstimadas = isset($previsao['receita']) ? $previsao['receita'] * $meses : 0;
+    // Calcula os gastos e receitas estimados para os próximos meses
+    $gastosEstimados = isset($previsao['Despesa']) ? $previsao['Despesa'] * $meses : 0;
+    $receitasEstimadas = isset($previsao['Receita']) ? $previsao['Receita'] * $meses : 0;
     $saldoEstimado = $receitasEstimadas - $gastosEstimados;
 
+    // Retorna a previsão formatada
     return
         "Previsão para os próximos $meses meses:\n" .
         "Receitas: R$ " . number_format($receitasEstimadas, 2, ',', '.') . "\n" .
@@ -495,7 +486,6 @@ function comparacaoGastosMensais($conn, $userId)
         "{$gastos[1]['mes']}: R$ " . number_format($gastos[1]['total'], 2, ',', '.') . "\n" .
         "Diferença: R$ " . number_format(abs($diferenca), 2, ',', '.') . " ($resultado).";
 }
-
 function obterDesafioFinanceiroAleatorio($conn, $userId)
 {
     $desafios = [
@@ -515,7 +505,15 @@ function obterDesafioFinanceiroAleatorio($conn, $userId)
         "Evite compras por impulso, e faça uma lista antes de ir ao mercado",
         "Participe de um workshop de finanças pessoais online",
         "Faça um dia sem gastar nada por uma semana e anote suas reflexões",
-        "Estabeleça um desafio de poupança com um amigo e compare resultados"
+        "Estabeleça um desafio de poupança com um amigo e compare resultados",
+        "Venda itens que você não usa mais e economize o dinheiro",
+        "Planeje suas refeições para a semana e evite desperdícios",
+        "Revise suas contas mensais e veja onde pode cortar custos",
+        "Defina uma meta de poupança para o ano e comece a economizar",
+        "Use cupons de desconto para economizar em compras",
+        "Faça um diário de gastos para entender melhor suas despesas",
+        "Experimente um mês sem compras de roupas",
+        "Desafie-se a aumentar sua contribuição para a aposentadoria em 1%"
     ];
 
     $desafioAleatorio = $desafios[array_rand($desafios)];
