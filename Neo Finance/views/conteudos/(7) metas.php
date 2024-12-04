@@ -318,7 +318,7 @@ include('../../config/conteudos/metas/logica_metas.php');
                 },
                 value: {
                   formatter: function (val) {
-                    return Math.min(Math.round(val), 100); // Arredonda e limita o valor a 100%
+                    return Math.min(Math.round(val), 100) + '%'; // Arredonda e limita o valor a 100%
                   },
                   color: '#28a745', // Cor do valor
                   fontSize: '22px',
