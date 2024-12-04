@@ -84,9 +84,7 @@ $categorias = buscarCategorias($usuario_id, $conn);
           <img src="../../assets/icons/icon--calendario.svg" alt="calendario--icon" />
           <h1 id="bloquear-selecao">Calendário</h1>
         </div>
-        <div class="notificacao--usuario">
-          <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" id="bloquear-selecao" />
-        </div>
+
       </header>
     </div>
     <!-- Fim Header -->

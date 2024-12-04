@@ -1,6 +1,5 @@
 <?php
 
-
 // Verifica se o usuário está logado, caso contrário, redireciona para a página de login
 include '../../config/conteudos/login/verifica_login.php';
 
@@ -65,14 +64,11 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
     <link rel="stylesheet" href="../../css/conteudos/historico/historico.css">
 </head>
 <body>
-    <div class="containter">
+    <div class="container">
         <div class="container--header">
             <header class="banner">
                 <div class="titulo--banner">
                     <h1 id="bloquear-selecao">Histórico</h1>
-                </div>
-                <div class="notificacao--usuario">
-                    <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
                 </div>
             </header>
         </div>
@@ -101,7 +97,8 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                         // Verifica se é um novo mês e, se for, fecha a div do mês anterior e abre uma nova
                         if ($month !== $currentMonth) {
                             if ($currentMonth !== '') {
-                                echo '</div>'; // Fecha a div do mês anterior, se houver
+                                echo '</div>'; // Fecha a div do grupo de cards do mês anterior
+                                echo '</div>'; // Fecha a div do mês anterior
                             }
 
                             echo '<div class="month--historico">';
@@ -136,7 +133,6 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                         echo '            <span>R$ ' . number_format($row['valor'], 2, ',', '.') . '</span>';
                         echo '        </div>';
                         echo '    </div>';
-                        echo '</div>';
                         echo '</div>';
 
                         $currentMonth = $month;

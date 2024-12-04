@@ -169,9 +169,7 @@ $conn->close();
                 <img src="../../assets/icons/home--sidebar/graficos--icon.svg" alt="calendario--icon" />
                 <h1>Gráficos</h1>
             </div>
-            <div class="notificacao--usuario">
-                <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
-            </div>
+     
         </header>
     </div>
 

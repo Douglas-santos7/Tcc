@@ -68,9 +68,6 @@ $conn->close();
                 <span id="bloquear-selecao"><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
                 <h1 id="bloquear-selecao">Olá, <?php echo $saudacao . ' ' . $_SESSION['username']; ?>!</h1>
             </div>
-            <div class="notificacao--usuario">
-                <img src="../../assets/icons/sino--icon.svg" alt="icon-notificacao" />
-            </div>
         </header>
     </div>
     <!-- Fim Header -->
