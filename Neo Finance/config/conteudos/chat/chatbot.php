@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->fetch();
     $stmt->close();
 
-
+    $username = ucfirst(strtolower($username));
 
 
     $responses = [
@@ -27,8 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'saldo' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
         '1' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
         'economizar' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
+        '2' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
+        
         'investimento' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
+        '3' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
         'resumo mensal' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
+        '4' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
         'resumo diário' => function () use ($conn, $userId) { return getResumoDiario($conn, $userId); },
         'historico' => function () use ($conn, $userId) { return getHistoricoTransacoes($conn, $userId); },
         'análise' => function () use ($conn, $userId) { return getAnaliseGastos($conn, $userId); },
@@ -141,18 +145,17 @@ return $mensagem . "Escolha uma das opções abaixo:<br>" .
     // Lista de tópicos permitidos
     $allowedTopics = [
         "1. Saldo<br>" .
-    "2. Categorias<br>" .
-    "3. Dicas de Economia<br>" .
-    "4. Dicas de Investimento<br>" .
-    "5. Resumo Mensal<br>" .
-    "6. Resumo Diário<br>" .
-    "7. Histórico de Transações<br>" .
-    "8. Análise de Gastos<br>" .
-    "9. Exportar Relatório<br>" .
-    "10. Previsão Financeira com Base no Histórico<br>" .
-    "11. Comparação de Gastos Mensais<br>" .
-    "12. Desafios<br>" .
-    "13. Planejamento Mensal<br>"
+    "2. Dicas de Economia<br>" .
+    "3. Dicas de Investimento<br>" .
+    "4. Resumo Mensal<br>" .
+    "5. Resumo Diário<br>" .
+    "6. Histórico de Transações<br>" .
+    "7. Análise de Gastos<br>" .
+    "8. Exportar Relatório<br>" .
+    "9. Previsão Financeira com Base no Histórico<br>" .
+    "10. Comparação de Gastos Mensais<br>" .
+    "11. Desafios<br>" .
+    "12. Planejamento Mensal<br>"
     ];
 
 
