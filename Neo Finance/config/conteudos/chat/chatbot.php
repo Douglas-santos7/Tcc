@@ -27,27 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'saldo' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
         '1' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
         'economizar' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
-        '2' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
         'investimento' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
-        '3' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
         'resumo mensal' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
-        '4' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
         'resumo diário' => function () use ($conn, $userId) { return getResumoDiario($conn, $userId); },
-        '5' => function () use ($conn, $userId) { return getResumoDiario($conn, $userId); },
         'historico' => function () use ($conn, $userId) { return getHistoricoTransacoes($conn, $userId); },
-        '6' => function () use ($conn, $userId) { return getHistoricoTransacoes($conn, $userId); },
         'análise' => function () use ($conn, $userId) { return getAnaliseGastos($conn, $userId); },
-        '7' => function () use ($conn, $userId) { return getAnaliseGastos($conn, $userId); },
         'exportar' => function () use ($conn, $userId) { return exportarRelatorio($conn, $userId); },
-        '8' => function () use ($conn, $userId) { return exportarRelatorio($conn, $userId); },
         'previsão financeira' => function () use ($conn, $userId) { return previsaoFinanceira($conn, $userId); },
-        '9' => function () use ($conn, $userId) { return previsaoFinanceira($conn, $userId); },
         'comparação' => function () use ($conn, $userId) { return comparacaoGastosMensais($conn, $userId); },
-        '10' => function () use ($conn, $userId) { return comparacaoGastosMensais($conn, $userId); },
         'desafio' => function () use ($conn, $userId) { return obterDesafioFinanceiroAleatorio($conn, $userId); },
-        '11' => function () use ($conn, $userId) { return obterDesafioFinanceiroAleatorio($conn, $userId); }, 
         'planejamento mensal' => function () use ($conn, $userId) { return planejamentoMensal($conn, $userId); },
-        '12' => function () use ($conn, $userId) { return planejamentoMensal($conn, $userId); },
         'obrigado' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'valeu' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'ajuda' => 'Claro! Estou aqui para ajudar com questões financeiras. O que você gostaria de saber?',
@@ -80,19 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Retorna as opções de ajuda
-        return $mensagem . "Escolha uma das opções abaixo:\n" .
-            "1. Saldo\n" .
-            "2. Dicas de Economia\n" .
-            "3. Dicas de Investimento\n" .
-            "4. Resumo Mensal\n" .
-            "5. Resumo Diário\n" .
-            "6. Histórico de Transações\n" .
-            "7. Análise de Gastos\n" .
-            "8. Exportar Relatório\n" .
-            "9. Previsão Financeira com Base no Histórico\n" .
-            "10. Comparação de Gastos Mensais\n" .
-            "11. Desafios\n" .
-            "12. Planejamento Mensal\n";
+return $mensagem . "Escolha uma das opções abaixo:<br>" .
+"1. Saldo<br>" .
+"2. Dicas de Economia<br>" .
+"3. Dicas de Investimento<br>" .
+"4. Resumo Mensal<br>" .
+"5. Resumo Diário<br>" .
+"6. Histórico de Transações<br>" .
+"7. Análise de Gastos<br>" .
+"8. Exportar Relatório<br>" .
+"9. Previsão Financeira com Base no Histórico<br>" .
+"10. Comparação de Gastos Mensais<br>" .
+"11. Desafios<br>" .
+"12. Planejamento Mensal<br>";
+
+
     }
 
 
@@ -149,19 +140,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Lista de tópicos permitidos
     $allowedTopics = [
-        'Saldo',
-        'Categorias',
-        'Dicas de Economia',
-        'Dicas de Investimento',
-        'Resumo Mensal',
-        'Resumo Diário',
-        'Histórico de Transações',
-        'Análise de Gastos',
-        'Exportar Relatório',
-        'Previsão Financeira com Base no Histórico',
-        'Comparação de Gastos Mensais',
-        'Desafios',
-        'Planejamento Mensal'
+        "1. Saldo<br>" .
+    "2. Categorias<br>" .
+    "3. Dicas de Economia<br>" .
+    "4. Dicas de Investimento<br>" .
+    "5. Resumo Mensal<br>" .
+    "6. Resumo Diário<br>" .
+    "7. Histórico de Transações<br>" .
+    "8. Análise de Gastos<br>" .
+    "9. Exportar Relatório<br>" .
+    "10. Previsão Financeira com Base no Histórico<br>" .
+    "11. Comparação de Gastos Mensais<br>" .
+    "12. Desafios<br>" .
+    "13. Planejamento Mensal<br>"
     ];
 
 
@@ -198,10 +189,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Resposta padrão caso não tenha encontrado uma correspondência
-    if (!$responseFound) {
-        // Concatena os tópicos na resposta padrão
-        $responseMessage = 'Desculpe, não entendi. Podemos falar sobre os seguintes assuntos: ' . $topics . '.';
+if (!$responseFound) {
+    // Concatena os tópicos na resposta padrão com <br> para quebra de linha
+    $responseMessage = 'Desculpe, não entendi. Podemos falar sobre os seguintes assuntos:<br>';
+   
+    // Adiciona os tópicos com uma quebra de linha HTML entre cada um
+    foreach ($allowedTopics as $topic) {
+        $responseMessage .= $topic . '<br>';
     }
+}
 
 
     // Armazena a mensagem e resposta no histórico
@@ -698,5 +694,7 @@ function planejamentoMensal($conn, $userId)
             $mensagem .= "- " . $vencimento['descricao'] . " em " . date("d/m/Y", strtotime($vencimento['data_vencimento'])) . ": R$ " . number_format($vencimento['valor'], 2, ',', '.') . "<br>";
         }
     }
+
+
     return $mensagem;
 }

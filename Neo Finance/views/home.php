@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Finance - Home</title>
-    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/home/home.css" />
     <script src="../js/home/sidebar.js" defer></script>
     <script src="../js/home/iframe.js" defer></script>
     <link rel="stylesheet" href="../css/home/modal--bemvindo.css" />
@@ -127,8 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Conteúdo Principal -->
     <div class="conteudo" id="conteudo">
         <iframe id="mainIframe" src="" width="100%" height="100%"></iframe>
-        <button class="toggle-button">></button>
-
         <!-- Modal de Boas-Vindas -->
         <div id="welcomeModal" class="welcome-modal">
             <div class="welcome-modal-content">

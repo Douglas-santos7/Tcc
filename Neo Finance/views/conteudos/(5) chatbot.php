@@ -354,6 +354,8 @@
                 chat.scrollTop = chat.scrollHeight; // Rolar para baixo no chat
             });
         }, 2000); // 2000 ms = 2 segundos de atraso
+        const buttons = document.getElementById('predefined-buttons');
+        buttons.style.display = 'none';
     }
 
 
