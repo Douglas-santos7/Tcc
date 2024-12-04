@@ -8,7 +8,6 @@ include("../../config/conteudos/dashboard/logica_calendario.php");
 include("../../config/conteudos/dashboard/seleciona_categorias.php");
 include("../../config/conteudos/dashboard/envio_dados.php");
 include("../../config/conteudos/dashboard/consulta_historico.php");
-include("../../config/conteudos/dashboard/logica_saudacao.php");
 include("../../config/conteudos/calendario/funcoes.php");
 
 // ID do usuário logado
@@ -41,8 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_PO
 // Consultar histórico
 $historicoItems = consultarHistorico($conn, $userId);
 
-// Obter saudação
-$saudacao = obterSaudacao();
 
 // Fecha a conexão com o banco de dados
 $conn->close();
@@ -66,7 +63,7 @@ $conn->close();
         <header class="perfil">
             <div class="usuario">
                 <span id="bloquear-selecao"><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
-                <h1 id="bloquear-selecao">Olá, <?php echo $saudacao . ' ' . $_SESSION['username']; ?>!</h1>
+                <h1 id="bloquear-selecao">Olá, <?php echo ucfirst($_SESSION['username']); ?>!</h1>
             </div>
         </header>
     </div>
