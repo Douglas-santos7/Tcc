@@ -145,7 +145,7 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                     }
                 } else {
                     // Exibe uma mensagem caso não haja transações encontradas
-                    echo "<div>Nenhum lançamento encontrado.</div>";
+                    echo '<div class="nenhum--lancamento">Nenhum lançamento encontrado</div>';
                 }
                 ?>
             </div>
