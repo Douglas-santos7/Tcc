@@ -48,7 +48,7 @@ body {
   background: var(--background--cards);
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px; /* Diminuído */
+  padding: 10px 20px; /* Diminuído */
   margin: -5px 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -57,7 +57,7 @@ body {
    Estilo do título do cartão 
 ===================================== */
 .card-title {
-  font-size: 20px; /* Diminuído */
+  font-size: 1.3rem; /* Diminuído */
   margin-bottom: 5px; /* Diminuído */
   color: var(--fonte-cards);
 }
@@ -132,10 +132,12 @@ ul {
 ===================================== */
 ul li {
   font-family: var(--fonte-principal);
-  background: var(--card);
+  background: var(--cor--destaque-verde);
   padding: 15px;
   margin: 10px 0;
   border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: 600;
   transition: background-color 0.3s, transform 0.2s;
 }
 .card-verde ul li {
@@ -183,6 +185,54 @@ ul li::before {
   max-width: 80%;
   height: auto;
   margin-top: 10px;
+}
+
+.valores {
+  border: 2px solid var(--cor--destaque-verde);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 20px 0px;
+}
+
+.chat--neo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 1.5rem;
+  border: 2px solid var(--cor--destaque-verde);
+  border-radius: 8px;
+  transition: all 0.1s ease-in-out;
+  color: black;
+  text-decoration: none;
+}
+a {
+  text-decoration: none;
+}
+
+.chat--neo:hover {
+  cursor: pointer;
+}
+
+.chat--neo:hover {
+  background-color: var(--cor--destaque-verde);
+  color: white;
+}
+.chat--neo:hover img {
+  border: 2px solid white;
+  color: white;
+}
+
+.chat--neo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 15px;
+  background-color: var(--cor--destaque-verde);
 }
 
 /* =====================================

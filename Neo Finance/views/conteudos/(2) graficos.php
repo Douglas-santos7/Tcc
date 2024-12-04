@@ -190,9 +190,28 @@ $conn->close();
 
         <div class="card options-card">
             <h2 class="card-title">Análise dos Dados</h2>
-            <p style="color: green;">Receitas: R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></p>
-            <p style="color: red;">Despesas: R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></p>
-            <p style="color: orange;">Balanço Total: R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?></p>
+            <div class="valores">
+                <p>
+                    <span>Receitas</span>
+                    <span style="color: green;">R$<?= number_format(array_sum($receitas), 2, ',', '.') ?></span>
+                </p>
+                <p>
+                    <span>Despesas</span>
+                    <span style="color: red;">R$<?= number_format(array_sum($despesas), 2, ',', '.') ?></span>
+                </p>
+                <p>
+                    <span>Balanço Total</span>
+                    <span style="color: orange;">R$<?= number_format(array_sum($receitas) - array_sum($despesas), 2, ',', '.') ?></span>
+                </p>
+            </div>
+
+            <a href="./(5) chatbot.php" id="chatbotLink">
+                <div class="chat--neo" id="chatbotDiv">
+                    <img src="../../assets/icons/home--sidebar/chatbot--icon.svg" alt="chat--icon" />
+                    <p>Mais dúvidas? Fale com Neo</p>
+                </div>
+            </a>
+
 
             <h3>Dicas:</h3>
             <ul>
@@ -223,12 +242,12 @@ $conn->close();
             <li>Considere estabelecer um limite mensal para despesas variáveis.</li>
             <?php if ($totalDespesas > $limiteBaixoDespesas): ?>
             <?php endif; ?>
-            <li>⚠️ A categoria onde você mais gasta é <span style="color: darkred;"><?= $categoriaMaiorGasto ?></span> com um total de R$<?= number_format($valorMaiorGasto, 2, ',', '.') ?>.</li>
+            <li>⚠️ A categoria onde você mais gasta é <span style="color: red; background: white; padding: 5px 10px; border-radius:24px;"><?= $categoriaMaiorGasto ?></span> com um total de R$<?= number_format($valorMaiorGasto, 2, ',', '.') ?>.</li>
             </ul>
         <?php
                 // Condição se receitas e despesas estão equilibradas
                 else: ?>
-            <ul style="color: orange;">
+            <ul style="color: white;">
                 <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
                 <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
                 <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
@@ -263,12 +282,12 @@ $conn->close();
                                     : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
                                 ?>
                 },
-                colors: ['#00E396','#FF4560'],
-                fill:{
-                    colors: ['#00E396','#FF4560'],
+                colors: ['#00E396', '#FF4560'],
+                fill: {
+                    colors: ['#00E396', '#FF4560'],
                     opacity: 0.5
                 }
-                
+
             };
 
             var chart = new ApexCharts(document.querySelector("#chart"), options);

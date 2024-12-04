@@ -1,84 +1,91 @@
-// Aguarde o DOM ser totalmente carregado
 document.addEventListener("DOMContentLoaded", function () {
-  // Obtenha referências para o iframe e os itens da barra lateral
   const iframe = document.getElementById("mainIframe");
   const dashboardItem = document.querySelector('.sidebar ul li[data-src="./conteudos/(1) dashboard.php"]');
   const graficoItem = document.querySelector('.sidebar ul li[data-src="./conteudos/(2) graficos.php"]');
   const historicoItem = document.querySelector('.sidebar ul li[data-src="./conteudos/(3) historico.php"]');
+  const chatbotItem = document.querySelector('.sidebar ul li[data-src="./conteudos/(5) chatbot.php"]');
+
+  // Função para remover a classe "clicado" de todos os itens da barra lateral
+  function removerClasseClicado() {
+    document.querySelectorAll(".sidebar ul li").forEach(function (item) {
+      item.classList.remove("clicado");
+    });
+  }
 
   // Função para marcar o item do Painel de Controle como clicado
   function marcarDashboardClicado() {
-    // Remova a classe "clicado" de todos os itens da barra lateral
-    document.querySelectorAll(".sidebar ul li").forEach(function (item) {
-      item.classList.remove("clicado");
-    });
-
-    // Adicione a classe "clicado" ao item do Painel de Controle
+    removerClasseClicado();
     dashboardItem.classList.add("clicado");
   }
 
-  // Função para carregar o Painel de Controle no iframe e marcar o item do Painel de Controle como clicado
+  // Função para carregar o Painel de Controle no iframe e atualizar o título
   function carregarDashboard() {
-    iframe.src = "./conteudos/(1) dashboard.php"; // Carregue o Painel de Controle no iframe
-    document.title = "Neo Finance - Painel de Controle"; // Atualize o título da página
-    marcarDashboardClicado(); // Marque o item do Painel de Controle como clicado
+    iframe.src = "./conteudos/(1) dashboard.php";
+    document.title = "Neo Finance - Painel de Controle";
+    marcarDashboardClicado();
   }
 
-  // Função para atualizar o iframe com o conteúdo do Gráficos
+  // Função para carregar o Gráfico no iframe e atualizar o título
   function verTudoGráficos() {
-    iframe.src = "./conteudos/(2) graficos.php"; // Carregue o Gráficos no iframe
-    document.title = "Neo Finance - Gráfico"; // Atualize o título da página
-
-    // Remova a classe "clicado" de todos os itens da barra lateral
-    document.querySelectorAll(".sidebar ul li").forEach(function (item) {
-      item.classList.remove("clicado");
-    });
-
-    // Adicione a classe "clicado" ao item do Gráficos
+    iframe.src = "./conteudos/(2) graficos.php";
+    document.title = "Neo Finance - Gráfico";
+    removerClasseClicado();
     graficoItem.classList.add("clicado");
   }
 
-  // Função para atualizar o iframe com o conteúdo do Histórico
+  // Função para carregar o Histórico no iframe e atualizar o título
   function verTudoHistorico() {
-    iframe.src = "./conteudos/(3) historico.php"; // Carregue o Histórico no iframe
-    document.title = "Neo Finance - Histórico"; // Atualize o título da página
-
-    // Remova a classe "clicado" de todos os itens da barra lateral
-    document.querySelectorAll(".sidebar ul li").forEach(function (item) {
-      item.classList.remove("clicado");
-    });
-
-    // Adicione a classe "clicado" ao item do Histórico
+    iframe.src = "./conteudos/(3) historico.php";
+    document.title = "Neo Finance - Histórico";
+    removerClasseClicado();
     historicoItem.classList.add("clicado");
   }
 
-  // Adicione ouvintes de eventos aos itens da barra lateral
+  // Função para carregar o Chatbot no iframe e atualizar o título
+  function verTudoChatBot() {
+    iframe.src = "./conteudos/(5) chatbot.php";
+    document.title = "Neo Finance - ChatBot";
+    removerClasseClicado();
+    chatbotItem.classList.add("clicado");
+  }
+
+  // Adiciona ouvintes de eventos aos itens da barra lateral
   dashboardItem.addEventListener("click", carregarDashboard);
   graficoItem.addEventListener("click", verTudoGráficos);
   historicoItem.addEventListener("click", verTudoHistorico);
+  chatbotItem.addEventListener("click", verTudoChatBot);
 
-  // Carregue o Painel de Controle quando home.php for carregado
+  // Carrega o Painel de Controle inicialmente
   carregarDashboard();
 
-  // Adicione ouvintes de eventos para o botão "Ver tudo" e o cartão "Receitas e Despesas" dentro do iframe
+  // Evento para o carregamento do conteúdo dentro do iframe
   iframe.addEventListener("load", function () {
     const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
     const verTudoBtn = iframeDocument.getElementById("ver-tudo-btn");
     const cardReceitasDespesas = iframeDocument.getElementById("cardReceitasDespesas");
+    const chatBotLink = iframeDocument.getElementById("chatbotLink");
 
-    // Se o botão "Ver tudo" for encontrado, adicione um ouvinte de eventos de clique para atualizar o iframe com o conteúdo do Histórico
+    // Se o botão "Ver tudo" for encontrado, adiciona evento para carregar o Histórico
     if (verTudoBtn) {
       verTudoBtn.addEventListener("click", function (event) {
-        event.preventDefault(); // Impedir o comportamento padrão do botão
-        verTudoHistorico(); // Atualize o iframe com o conteúdo do Histórico
+        event.preventDefault();
+        verTudoHistorico();
       });
     }
 
-    // Se o cartão "Receitas e Despesas" for encontrado, adicione um ouvinte de eventos de clique para atualizar o iframe com o conteúdo do Gráficos
+    // Se o link do Chatbot for encontrado, adiciona evento para carregar o Chatbot
+    if (chatBotLink) {
+      chatBotLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        verTudoChatBot();
+      });
+    }
+
+    // Se o cartão "Receitas e Despesas" for encontrado, adiciona evento para carregar os Gráficos
     if (cardReceitasDespesas) {
       cardReceitasDespesas.addEventListener("click", function (event) {
-        event.preventDefault(); // Impedir o comportamento padrão do botão
-        verTudoGráficos(); // Atualize o iframe com o conteúdo do Gráficos
+        event.preventDefault();
+        verTudoGráficos();
       });
     }
   });
