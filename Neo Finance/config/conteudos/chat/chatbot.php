@@ -19,28 +19,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $responses = [
-        'oi' => function () use ($username) { return gerarRespostaSaudacao($username, 'oi'); },
-        'ola' => function () use ($username) { return gerarRespostaSaudacao($username, 'ola'); },
-        'bom dia' => function () use ($username) { return gerarRespostaSaudacao($username, 'bom dia'); },
-        'boa tarde' => function () use ($username) { return gerarRespostaSaudacao($username, 'boa tarde'); },
-        'boa noite' => function () use ($username) { return gerarRespostaSaudacao($username, 'boa noite'); },
-        'saldo' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
-        '1' => function () use ($conn, $userId) { return getSaldo($conn, $userId); },
-        'economizar' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
-        '2' => function () use ($conn, $userId) { return implode("\n", getDicasEconomizar($conn, $userId)); },
-        
-        'investimento' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
-        '3' => function () use ($conn, $userId) { return implode("\n", getDicasInvestir($conn, $userId)); },
-        'resumo mensal' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
-        '4' => function () use ($conn, $userId) { return getResumoMensal($conn, $userId); },
-        'resumo diário' => function () use ($conn, $userId) { return getResumoDiario($conn, $userId); },
-        'historico' => function () use ($conn, $userId) { return getHistoricoTransacoes($conn, $userId); },
-        'análise' => function () use ($conn, $userId) { return getAnaliseGastos($conn, $userId); },
-        'exportar' => function () use ($conn, $userId) { return exportarRelatorio($conn, $userId); },
-        'previsão financeira' => function () use ($conn, $userId) { return previsaoFinanceira($conn, $userId); },
-        'comparação' => function () use ($conn, $userId) { return comparacaoGastosMensais($conn, $userId); },
-        'desafio' => function () use ($conn, $userId) { return obterDesafioFinanceiroAleatorio($conn, $userId); },
-        'planejamento mensal' => function () use ($conn, $userId) { return planejamentoMensal($conn, $userId); },
+        'oi' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'oi');
+        },
+        'ola' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'ola');
+        },
+        'bom dia' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'bom dia');
+        },
+        'boa tarde' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'boa tarde');
+        },
+        'boa noite' => function () use ($username) {
+            return gerarRespostaSaudacao($username, 'boa noite');
+        },
+        'saldo' => function () use ($conn, $userId) {
+            return getSaldo($conn, $userId);
+        },
+        '1' => function () use ($conn, $userId) {
+            return getSaldo($conn, $userId);
+        },
+        'economizar' => function () use ($conn, $userId) {
+            return implode("\n", getDicasEconomizar($conn, $userId));
+        },
+        '2' => function () use ($conn, $userId) {
+            return implode("\n", getDicasEconomizar($conn, $userId));
+        },
+
+        'investimento' => function () use ($conn, $userId) {
+            return implode("\n", getDicasInvestir($conn, $userId));
+        },
+        '3' => function () use ($conn, $userId) {
+            return implode("\n", getDicasInvestir($conn, $userId));
+        },
+        'resumo mensal' => function () use ($conn, $userId) {
+            return getResumoMensal($conn, $userId);
+        },
+        '4' => function () use ($conn, $userId) {
+            return getResumoMensal($conn, $userId);
+        },
+        'resumo diário' => function () use ($conn, $userId) {
+            return getResumoDiario($conn, $userId);
+        },
+        '5' => function () use ($conn, $userId) {
+            return getResumoDiario($conn, $userId);
+        },
+        'historico' => function () use ($conn, $userId) {
+            return getHistoricoTransacoes($conn, $userId);
+        },
+        '6' => function () use ($conn, $userId) {
+            return getHistoricoTransacoes($conn, $userId);
+        },
+        'análise' => function () use ($conn, $userId) {
+            return getAnaliseGastos($conn, $userId);
+        },
+        '7' => function () use ($conn, $userId) {
+            return getAnaliseGastos($conn, $userId);
+        },
+        'exportar' => function () use ($conn, $userId) {
+            return exportarRelatorio($conn, $userId);
+        },
+        '8' => function () use ($conn, $userId) {
+            return exportarRelatorio($conn, $userId);
+        },
+        'previsão financeira' => function () use ($conn, $userId) {
+            return previsaoFinanceira($conn, $userId);
+        },
+        '9' => function () use ($conn, $userId) {
+            return previsaoFinanceira($conn, $userId);
+        },
+        'comparação' => function () use ($conn, $userId) {
+            return comparacaoGastosMensais($conn, $userId);
+        },
+        '10' => function () use ($conn, $userId) {
+            return comparacaoGastosMensais($conn, $userId);
+        },
+        'desafio' => function () use ($conn, $userId) {
+            return obterDesafioFinanceiroAleatorio($conn, $userId);
+        },
+        '11' => function () use ($conn, $userId) {
+            return obterDesafioFinanceiroAleatorio($conn, $userId);
+        },
+        'planejamento mensal' => function () use ($conn, $userId) {
+            return planejamentoMensal($conn, $userId);
+        },
+        '12' => function () use ($conn, $userId) {
+            return planejamentoMensal($conn, $userId);
+        },
         'obrigado' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'valeu' => 'De nada! Se precisar de mais ajuda, estou aqui.',
         'ajuda' => 'Claro! Estou aqui para ajudar com questões financeiras. O que você gostaria de saber?',
@@ -73,70 +139,140 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Retorna as opções de ajuda
-return $mensagem . "Escolha uma das opções abaixo:<br>" .
-"1. Saldo<br>" .
-"2. Dicas de Economia<br>" .
-"3. Dicas de Investimento<br>" .
-"4. Resumo Mensal<br>" .
-"5. Resumo Diário<br>" .
-"6. Histórico de Transações<br>" .
-"7. Análise de Gastos<br>" .
-"8. Exportar Relatório<br>" .
-"9. Previsão Financeira com Base no Histórico<br>" .
-"10. Comparação de Gastos Mensais<br>" .
-"11. Desafios<br>" .
-"12. Planejamento Mensal<br>";
-
-
+        return $mensagem . "Escolha uma das opções abaixo:<br>" .
+            "1. Saldo<br>" .
+            "2. Dicas de Economia<br>" .
+            "3. Dicas de Investimento<br>" .
+            "4. Resumo Mensal<br>" .
+            "5. Resumo Diário<br>" .
+            "6. Histórico de Transações<br>" .
+            "7. Análise de Gastos<br>" .
+            "8. Exportar Relatório<br>" .
+            "9. Previsão Financeira com Base no Histórico<br>" .
+            "10. Comparação de Gastos Mensais<br>" .
+            "11. Desafios<br>" .
+            "12. Planejamento Mensal<br>";
     }
 
 
     // Mapeamento de sinônimos para palavras-chave
     $synonyms = [
-      'saldo' => [
-    'quanto tenho', 'meu saldo', 'saldo atual', 'quanto há na conta',
-    'valor disponível', 'dinheiro disponível', 'quanto posso gastar',
-    'saldo da conta', 'quanto resta', 'quantos reais tenho',
-    'saldo bancário', 'meu dinheiro'
-],
-'economizar' => [
-    'dicas de economia', 'como economizar', 'formas de poupar', 'como poupar',
-    'dicas para gastar menos', 'reduzir despesas', 'guardar dinheiro',
-    'melhorar finanças', 'cortar gastos', 'dicas financeiras',
-    'economizar dinheiro', 'gastar menos', 'dicas para poupar'
-],
-'investimento' => [
-    'dicas de investimento', 'como investir', 'onde investir',
-    'investir dinheiro', 'boas práticas de investimento', 'o que é um bom investimento',
-    'melhores investimentos', 'dicas para crescer dinheiro', 'aplicações financeiras',
-    'investir com segurança', 'investimentos fáceis', 'como aplicar dinheiro'
-],
-'resumo mensal' => [
-    'meu resumo mensal', 'resumo do mês', 'desempenho mensal', 'dados do mês',
-    'balanço mensal', 'relatório mensal', 'análise do mês', 'fechamento do mês',
-    'gastos mensais', 'lucros e despesas do mês', 'resumo financeiro do mês'
-],
-'resumo diário' => [
-    'meu resumo diário', 'resumo de hoje', 'balanço de hoje', 'dados do dia',
-    'relatório diário', 'movimentações do dia', 'resumo financeiro diário',
-    'o que gastei hoje', 'gastos do dia', 'ganhos de hoje', 'atividade do dia'
-],
-'ajuda' => [
-    'preciso de ajuda', 'me ajuda', 'como faço isso', 'dúvida', 'não sei usar',
-    'socorro', 'me explique isso', 'tenho uma dúvida', 'ajude-me',
-    'o que fazer', 'preciso de suporte', 'não entendi', 'me oriente'
-],
-'como funciona' => [
-    'como isso funciona', 'me explique', 'como utilizar', 'como operar',
-    'modo de uso', 'me mostra como', 'para que serve', 'o que isso faz',
-    'como usar', 'explica o funcionamento', 'detalhes sobre isso',
-    'como funciona o sistema'
-],
-'oi' => [
-    'oi', 'olá', 'olá tudo bem', 'bom dia', 'boa tarde', 'boa noite',
-    'e aí', 'alô', 'tudo bem', 'como vai', 'opa', 'oi tudo certo',
-    'saudações', 'hey', 'oii', 'fala ai'
-],
+        'saldo' => [
+            'quanto tenho',
+            'meu saldo',
+            'saldo atual',
+            'quanto há na conta',
+            'valor disponível',
+            'dinheiro disponível',
+            'quanto posso gastar',
+            'saldo da conta',
+            'quanto resta',
+            'quantos reais tenho',
+            'saldo bancário',
+            'meu dinheiro'
+        ],
+        'economizar' => [
+            'dicas de economia',
+            'como economizar',
+            'formas de poupar',
+            'como poupar',
+            'dicas para gastar menos',
+            'reduzir despesas',
+            'guardar dinheiro',
+            'melhorar finanças',
+            'cortar gastos',
+            'dicas financeiras',
+            'economizar dinheiro',
+            'gastar menos',
+            'dicas para poupar'
+        ],
+        'investimento' => [
+            'dicas de investimento',
+            'como investir',
+            'onde investir',
+            'investir dinheiro',
+            'boas práticas de investimento',
+            'o que é um bom investimento',
+            'melhores investimentos',
+            'dicas para crescer dinheiro',
+            'aplicações financeiras',
+            'investir com segurança',
+            'investimentos fáceis',
+            'como aplicar dinheiro'
+        ],
+        'resumo mensal' => [
+            'meu resumo mensal',
+            'resumo do mês',
+            'desempenho mensal',
+            'dados do mês',
+            'balanço mensal',
+            'relatório mensal',
+            'análise do mês',
+            'fechamento do mês',
+            'gastos mensais',
+            'lucros e despesas do mês',
+            'resumo financeiro do mês'
+        ],
+        'resumo diário' => [
+            'meu resumo diário',
+            'resumo de hoje',
+            'balanço de hoje',
+            'dados do dia',
+            'relatório diário',
+            'movimentações do dia',
+            'resumo financeiro diário',
+            'o que gastei hoje',
+            'gastos do dia',
+            'ganhos de hoje',
+            'atividade do dia'
+        ],
+        'ajuda' => [
+            'preciso de ajuda',
+            'me ajuda',
+            'como faço isso',
+            'dúvida',
+            'não sei usar',
+            'socorro',
+            'me explique isso',
+            'tenho uma dúvida',
+            'ajude-me',
+            'o que fazer',
+            'preciso de suporte',
+            'não entendi',
+            'me oriente'
+        ],
+        'como funciona' => [
+            'como isso funciona',
+            'me explique',
+            'como utilizar',
+            'como operar',
+            'modo de uso',
+            'me mostra como',
+            'para que serve',
+            'o que isso faz',
+            'como usar',
+            'explica o funcionamento',
+            'detalhes sobre isso',
+            'como funciona o sistema'
+        ],
+        'oi' => [
+            'oi',
+            'olá',
+            'olá tudo bem',
+            'bom dia',
+            'boa tarde',
+            'boa noite',
+            'e aí',
+            'alô',
+            'tudo bem',
+            'como vai',
+            'opa',
+            'oi tudo certo',
+            'saudações',
+            'hey',
+            'oii',
+            'fala ai'
+        ],
 
 
     ];
@@ -145,17 +281,17 @@ return $mensagem . "Escolha uma das opções abaixo:<br>" .
     // Lista de tópicos permitidos
     $allowedTopics = [
         "1. Saldo<br>" .
-    "2. Dicas de Economia<br>" .
-    "3. Dicas de Investimento<br>" .
-    "4. Resumo Mensal<br>" .
-    "5. Resumo Diário<br>" .
-    "6. Histórico de Transações<br>" .
-    "7. Análise de Gastos<br>" .
-    "8. Exportar Relatório<br>" .
-    "9. Previsão Financeira com Base no Histórico<br>" .
-    "10. Comparação de Gastos Mensais<br>" .
-    "11. Desafios<br>" .
-    "12. Planejamento Mensal<br>"
+            "2. Dicas de Economia<br>" .
+            "3. Dicas de Investimento<br>" .
+            "4. Resumo Mensal<br>" .
+            "5. Resumo Diário<br>" .
+            "6. Histórico de Transações<br>" .
+            "7. Análise de Gastos<br>" .
+            "8. Exportar Relatório<br>" .
+            "9. Previsão Financeira com Base no Histórico<br>" .
+            "10. Comparação de Gastos Mensais<br>" .
+            "11. Desafios<br>" .
+            "12. Planejamento Mensal<br>"
     ];
 
 
@@ -192,15 +328,15 @@ return $mensagem . "Escolha uma das opções abaixo:<br>" .
 
 
     // Resposta padrão caso não tenha encontrado uma correspondência
-if (!$responseFound) {
-    // Concatena os tópicos na resposta padrão com <br> para quebra de linha
-    $responseMessage = 'Desculpe, não entendi. Podemos falar sobre os seguintes assuntos:<br>';
-   
-    // Adiciona os tópicos com uma quebra de linha HTML entre cada um
-    foreach ($allowedTopics as $topic) {
-        $responseMessage .= $topic . '<br>';
+    if (!$responseFound) {
+        // Concatena os tópicos na resposta padrão com <br> para quebra de linha
+        $responseMessage = 'Desculpe, não entendi. Podemos falar sobre os seguintes assuntos:<br>';
+
+        // Adiciona os tópicos com uma quebra de linha HTML entre cada um
+        foreach ($allowedTopics as $topic) {
+            $responseMessage .= $topic . '<br>';
+        }
     }
-}
 
 
     // Armazena a mensagem e resposta no histórico
@@ -689,7 +825,7 @@ function planejamentoMensal($conn, $userId)
         "Média de gastos diários até agora: R$ " . $mediaGastoDiarioFormatado . "<br>" .
         "Gasto diário sugerido: R$ " . $gastoDiarioFormatado . "<br>" .
         "Saldo estimado ao final do mês: R$ " . $saldoFinalEstimadoFormatado . "<br>";
-       
+
     // Exibe os vencimentos nos próximos 7 dias
     if (!empty($vencimentosProximos)) {
         $mensagem .= "Vencimentos nos próximos 7 dias:<br>";
