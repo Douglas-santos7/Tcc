@@ -245,7 +245,7 @@ $conn->close();
         <?php
                 // Condição se receitas e despesas estão equilibradas
                 else: ?>
-            <ul style="color: white;">
+            <ul>
                 <li>Suas receitas e despesas estão equilibradas, o que é um sinal positivo de controle financeiro!</li>
                 <li>Continue monitorando suas despesas e considere criar um fundo de emergência para lidar com imprevistos.</li>
                 <li>Pense em formas de aumentar suas receitas sem aumentar suas despesas.</li>
