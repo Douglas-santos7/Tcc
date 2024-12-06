@@ -33,6 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $subject = htmlspecialchars(trim($_POST['subject']));
     $message = htmlspecialchars(trim($_POST['message']));
+    switch($subject){
+        case'reclamação':
+            $priority = 'Alta';
+            break;
+            case'Dúvida':
+                $priority = 'Baixa';
+            break;
+            default:
+            $priority = 'Média';
+            break;
+    }
 
     $mail = new PHPMailer(true);
 
@@ -54,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->Subject = "Novo Ticket de Suporte de $name";
 
         // Formata a mensagem 
-        $mail->Body = "Nome: $name\nE-mail: $email\nTipo de Suporte: $subject\n\nMensagem: $message";
+        $mail->Body = "Nome: $name\nE-mail: $email\nTipo de Suporte: $subject\nPrioridade:$priority\n\nMensagem: $message";
 
         // Verifica se há arquivos anexados 
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
