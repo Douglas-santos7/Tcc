@@ -16,19 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['depositar'])) {
 
     if ($stmt->execute()) {
       // Registrar a transação no histórico
-      $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, 'deposito', ?)";
+      $tipoTransacao = 'deposito'; // Valor exato conforme definido no ENUM
+      $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, ?, ?)";
       $stmt_history = $conn->prepare($sql_history);
-      $stmt_history->bind_param("iid", $goalId, $userId, $depositValue);
+      $stmt_history->bind_param("iisd", $goalId, $userId, $tipoTransacao, $depositValue);
       $stmt_history->execute();
 
       header("Location: " . $_SERVER['PHP_SELF']);
       exit();
     } else {
-      echo "Erro: " . $stmt->error;
+      echo "<div class='error-message'>Erro: " . $stmt->error . "</div>";
     }
     $stmt->close();
   } else {
-    echo "Erro: O valor do depósito não pode ser negativo.";
+    echo "<div class='error-message'>Erro: O valor do depósito não pode ser negativo.</div>";
   }
 }
 
@@ -59,22 +60,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resgatar'])) {
 
       if ($stmt->execute()) {
         // Registrar a transação no histórico
-        $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, 'resgato', ?)";
+        $tipoTransacao = 'resgate'; // Valor exato conforme definido no ENUM
+        $sql_history = "INSERT INTO historico_transacoes (id_meta, id_usuario, tipo_transacao, valor) VALUES (?, ?, ?, ?)";
         $stmt_history = $conn->prepare($sql_history);
-        $stmt_history->bind_param("iid", $goalId, $userId, $withdrawValue);
+        $stmt_history->bind_param("iisd", $goalId, $userId, $tipoTransacao, $withdrawValue);
         $stmt_history->execute();
 
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
       } else {
-        echo "Erro: " . $stmt->error;
+        echo "<div class='error-message'>Erro: " . $stmt->error . "</div>";
       }
       $stmt->close();
     } else {
-      echo "Erro: O valor a ser resgatado não pode ser maior que o valor atual da meta.";
+      echo "<div class='error-message'>Erro: O valor a ser resgatado não pode ser maior que o valor atual da meta.</div>";
     }
   } else {
-    echo "Erro: O valor do resgate não pode ser negativo.";
+    echo "<div class='error-message'>Erro: O valor do resgate não pode ser negativo.</div>";
   }
 }
 
@@ -94,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_goal_id'])) {
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
   } else {
-    echo "Erro ao excluir a meta: " . $stmt_delete->error;
+    echo "<div class='error-message'>Erro ao excluir a meta: " . $stmt_delete->error . "</div>";
   }
   $stmt_delete->close();
 }
@@ -105,3 +107,30 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
+
+?>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metas do Usuário</title>
+    <style>
+        .error-message {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Conteúdo da página -->
+</body>
+</html>
