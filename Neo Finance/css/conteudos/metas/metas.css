@@ -662,22 +662,18 @@ body {
   animation: cardTransition 0.5s ease-in-out;
   
 }
-
 .card-meta.active {
   display: block;
   width: 140%; /* Aumenta o tamanho do card */
   max-width: 1200px; /* Define um tamanho máximo para o card */
   margin: 20px auto; /* Centraliza o card horizontalmente */
 }
-
-<<<<<<< HEAD
 /* Estilo para o gráfico */
 .grafico {
   width: 100%;
   height: 300px; /* Aumenta a altura do gráfico */
   margin: 20px auto; /* Centraliza o gráfico horizontalmente */
 }
-=======
 .grafico{
   margin-top: 100px;
 }
@@ -688,4 +684,3 @@ body {
   left: 50%;               /* Coloca a esquerda do elemento 50% da largura da tela */
   transform: translate(-50%, -50%); /* Ajusta o posicionamento para centralizar perfeitamente */
 }
->>>>>>> ae7919f7987f46be0679473504867f64b8389d1e
