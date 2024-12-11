@@ -136,4 +136,10 @@ $result = $stmt->get_result();
         }
     </style>
 </head>
+<<<<<<< HEAD
+=======
+<body>
+    <!-- Conteúdo da página -->
+</body>
+>>>>>>> ae7919f7987f46be0679473504867f64b8389d1e
 </html>
