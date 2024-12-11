@@ -1,42 +1,56 @@
-function formatarMoeda(valor) {
-    // Remove todos os caracteres que não são dígitos
+document.addEventListener("DOMContentLoaded", function () {
+  function formatarMoeda(valor) {
     valor = valor.replace(/\D/g, "");
-  
-    // Limita o valor a 8 dígitos antes da vírgula (999.999,99)
+
     if (valor.length > 8) {
-      valor = valor.slice(0, 8); // Limita a 8 caracteres (6 dígitos inteiros + 2 decimais)
+      valor = valor.slice(0, 8);
     }
-  
-    // Formata para moeda
+
     let valorFormatado = (valor / 100)
-      .toFixed(2) // Converte para decimal e fixa em 2 casas decimais
-      .replace(".", ",") // Substitui o ponto decimal pela vírgula
-      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Adiciona pontos para os milhares
-  
+      .toFixed(2)
+      .replace(".", ",")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
     return valorFormatado;
   }
-  
-  // Formata valor da meta
-  document.getElementById("valor_meta").addEventListener("input", function () {
-    let valorAtual = this.value;
-  
-    // Remove formatação e formata novamente
-    this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
-  });
-  
-  // Formata valor resgatado
-  document.getElementById("valor_resgatar").addEventListener("input", function () {
-    let valorAtual = this.value;
-  
-    // Remove formatação e formata novamente
-    this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
-  });
-  
-  // Formata Valor Deposito
-  document.getElementById("valor_deposito").addEventListener("input", function () {
-    let valorAtual = this.value;
-  
-    // Remove formatação e formata novamente
-    this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
-  });
-  
+
+  // Função para adicionar o listener ao campo de valor
+  function adicionarListener(inputId) {
+    const inputValor = document.getElementById(inputId);
+
+    if (inputValor) {
+      // Verifica se o elemento existe
+      inputValor.addEventListener("input", function () {
+        let valorAtual = this.value;
+        this.value = formatarMoeda(valorAtual.replace(/\D/g, ""));
+      });
+    } else {
+      console.warn(`Elemento com ID '${inputId}' não encontrado. O listener não será adicionado.`);
+    }
+  }
+
+  // Chame a função para adicionar o listener aos campos de entrada
+  adicionarListener("target_amount");
+  adicionarListener("withdraw_value");
+  adicionarListener("deposit_value");
+
+  // Se o pop-up for aberto, adicione o listener novamente (se necessário)
+  const btnOpenPopup = document.getElementById("btn-open-popup");
+  const popupContainer = document.getElementById("popup-container");
+
+  if (btnOpenPopup) {
+    btnOpenPopup.addEventListener("click", function () {
+      popupContainer.style.display = "block";
+      adicionarListener("target_amount"); // Adiciona o listener novamente ao abrir o pop-up
+      adicionarListener("withdraw_value"); // Adiciona o listener novamente ao abrir o pop-up
+      adicionarListener("deposit_value"); // Adiciona o listener novamente ao abrir o pop-up
+    });
+  }
+
+  const closeBtn = document.getElementById("close-btn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function () {
+      popupContainer.style.display = "none";
+    });
+  }
+});

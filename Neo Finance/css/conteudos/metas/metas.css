@@ -499,6 +499,7 @@ body {
   gap: 10px;
   animation: fadeIn 0.5s ease-in-out;
   justify-content: center; /* Centraliza os botões horizontalmente */
+  margin-top: 20px; /* Adiciona margem superior para evitar sobreposição com o gráfico */
 }
 
 .actionButtons button {
@@ -526,7 +527,6 @@ body {
   background-color: var(--hover);
   transform: scale(1.05);
 }
-
 
 /* Estilo para o botão de selecionar ação */
 .selectActionBtn {
@@ -617,4 +617,62 @@ body {
 
 .finalizar-meta-btn:hover {
   background-color: #45a049;
+}
+
+/* Estilo para os botões de navegação */
+.navigation-buttons {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.navigation-buttons button {
+  background-color: var(--cor-terciaria);
+  color: var(--fonte-branco-100);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.navigation-buttons button:hover {
+  background-color: var(--hover);
+  transform: scale(1.05);
+}
+
+/* Animação de transição entre os cards */
+@keyframes cardTransition {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.card-meta {
+  display: none;
+  animation: cardTransition 0.5s ease-in-out;
+  
+}
+
+.card-meta.active {
+  display: block;
+  width: 140%; /* Aumenta o tamanho do card */
+  max-width: 1200px; /* Define um tamanho máximo para o card */
+  margin: 20px auto; /* Centraliza o card horizontalmente */
+}
+
+/* Estilo para o gráfico */
+.grafico {
+  width: 100%;
+  height: 300px; /* Aumenta a altura do gráfico */
+  margin: 20px auto; /* Centraliza o gráfico horizontalmente */
 }
