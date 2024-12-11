@@ -125,13 +125,23 @@ if (isset($_SESSION['error'])) {
             </div>
             <div class="signup-form">
                 <div class="title">Redefinir Senha</div>
+
+                <!-- Mover a mensagem de erro para aqui, logo abaixo do título -->
+                <div class="message-container">
+                    <?php
+                    // Apenas exibe a mensagem de erro, sem a mensagem sobre o código
+                    if (!empty($errorMessage)) {
+                        echo '<div class="message error">' . htmlspecialchars($errorMessage) . '</div>';
+                    }
+                    ?>
+                </div>
+
                 <form method="POST" action="./reset_senha.php">
                     <div class="field">
                         <input type="password" id="new-password" name="new-password" required placeholder=" " autocomplete="on" oninput="checkPasswordStrength()">
                         <label for="new-password">Nova Senha</label>
                         <i class="fa fa-lock"></i>
                         <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('new-password', this)"></i>
-
                     </div>
                     <div class="forca--senha">
                         <span id="password-strength"></span>
@@ -145,19 +155,6 @@ if (isset($_SESSION['error'])) {
 
                     <button type="submit" class="login-btn">Redefinir Senha</button>
                 </form>
-
-                <div class="message-container">
-                    <?php
-                    if (isset($_SESSION['login_message'])) {
-                        echo '<div class="message error">' . htmlspecialchars($_SESSION['login_message']) . '</div>';
-                        unset($_SESSION['login_message']);
-                    }
-                    if (isset($_SESSION['reset_message'])) {
-                        echo '<div class="message error">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
-                        unset($_SESSION['reset_message']);
-                    }
-                    ?>
-                </div>
 
                 <div class="bottom">
                     <span>Já possui uma conta?&nbsp;<a href="./login.php">Login</a></span>

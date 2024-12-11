@@ -352,9 +352,24 @@ section a:hover {
   border: 1px solid #f5c6cb;
 }
 
-.success {
-  color: green;
-  font-weight: bold;
+.message-container {
+  margin-bottom: 40px;
+}
+
+
+.message-container {
+  margin: 20px 0; /* Espaço acima e abaixo da mensagem */
+}
+
+.message {
+  padding: 10px 15px; /* Espaço interno */
+  border-radius: 5px; /* Bordas arredondadas */
+  font-size: 16px; /* Tamanho da fonte */
+  color: #fff; /* Cor do texto */
+}
+
+.error {
+  background-color: #e74c3c; /* Cor de fundo vermelha */
 }
 
 /* Estilo para o pop-up de agradecimento */

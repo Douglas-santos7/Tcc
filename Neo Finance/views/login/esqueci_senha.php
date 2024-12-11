@@ -121,6 +121,19 @@ $conn->close();
             </div>
             <div class="signup-form">
                 <div class="title">Recuperar Senha</div>
+                <div class="message-container">
+                <?php
+        if (isset($_SESSION['reset_message'])) {
+            echo '<div class="message success">' . htmlspecialchars($_SESSION['reset_message']) . '</div>';
+            unset($_SESSION['reset_message']);
+        }
+
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="message error">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+            unset($_SESSION['error_message']);
+        }
+        ?>
+    </div>
                 <form id="forgot-password-form" method="post" action="./esqueci_senha.php">
                     <div class="field">
                         <input type="email" id="forgot-email" name="forgot-email" placeholder=" " required autocomplete="off">
@@ -129,25 +142,11 @@ $conn->close();
                     </div>
                     <button type="submit" class="login-btn">Enviar código de redefinição</button>
                 </form>
+                
                 <div class="back-to-login">
                     <p><a href="login.php">Voltar para Login</a></p>
                 </div>
             </div>
-            <?php
-            if (isset($_SESSION['reset_message'])) {
-                echo '<div class="messages show">
-            <p class="success">' . htmlspecialchars($_SESSION['reset_message']) . '</p>
-          </div>';
-                unset($_SESSION['reset_message']);
-            }
-
-            if (isset($_SESSION['error_message'])) {
-                echo '<div class="messages show">
-            <p class="error">' . htmlspecialchars($_SESSION['error_message']) . '</p>
-          </div>';
-                unset($_SESSION['error_message']);
-            }
-            ?>
         </div>
     </div>
 
