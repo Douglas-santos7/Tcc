@@ -29,8 +29,8 @@ $data_vencimento = $vencimentoData['data_vencimento'];
 $valor = $vencimentoData['valor'];
 $categoria = $vencimentoData['categoria'];
 
-// Obter categorias
-$categorias = obterCategorias($conn);
+// Obter categorias do usuário logado
+$categorias = obterCategorias($conn, $userId);
 
 // Verificar se o formulário de adição de item foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_POST['valor']) && isset($_POST['categoria']) && isset($_POST['tipo'])) {
@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome']) && isset($_PO
 
 // Consultar histórico
 $historicoItems = consultarHistorico($conn, $userId);
-
 
 // Fecha a conexão com o banco de dados
 $conn->close();

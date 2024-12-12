@@ -93,8 +93,7 @@ CREATE TABLE historico_conversas (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Tabela para armazenar metas dos usuários
-CREATE TABLE IF NOT EXISTS metas_usuario (
+CREATE TABLE metas_usuario (
     id_meta INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     nome_meta VARCHAR(255) NOT NULL,
@@ -105,8 +104,7 @@ CREATE TABLE IF NOT EXISTS metas_usuario (
     FOREIGN KEY (id_usuario) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Tabela historico_transacoes
-CREATE TABLE IF NOT EXISTS historico_transacoes (
+CREATE TABLE historico_transacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_meta INT NOT NULL,
     id_usuario INT NOT NULL,
@@ -124,27 +122,30 @@ CREATE TRIGGER after_user_insert
 AFTER INSERT ON users 
 FOR EACH ROW 
 BEGIN
-    INSERT INTO categorias (usuario_id, nome, icone)
-    VALUES
-        (NEW.id, 'Moradia', 'fi-sr-home'),
-        (NEW.id, 'Beleza', 'fi-br-scissors'),
-        (NEW.id, 'Telefone', 'fi-br-smartphone'),
-        (NEW.id, 'Fatura', 'fi-sr-file-invoice-dollar'),
-        (NEW.id, 'Transferência', 'fi-br-money-coin-transfer'),
-        (NEW.id, 'Viagem Aérea', 'fi-ss-plane-alt'),
-        (NEW.id, 'Viagem de Ônibus', 'fi-ss-bus-alt'),
-        (NEW.id, 'Ferramenta', 'fi-ss-wrench-alt'),
-        (NEW.id, 'Mecânica', 'fi-ss-car-mechanic'),
-        (NEW.id, 'Supermercado', 'fi-sr-shopping-cart'),
-        (NEW.id, 'Carteira', 'fi-sr-wallet'),
-        (NEW.id, 'Videogame', 'fi-sr-gamepad'),
-        (NEW.id, 'Fast Food', 'fi-ss-hotdog'),
-        (NEW.id, 'Médico', 'fi-sr-user-md'),
-        (NEW.id, 'Animal - Cão', 'fi-sr-dog-leashed'),
-        (NEW.id, 'Animal - Brinquedos', 'fi-sr-bone'),
-        (NEW.id, 'Animal - Gato', 'fi-sr-cat'),
-        (NEW.id, 'Computador', 'fi-sr-devices'),
-        (NEW.id, 'Livro', 'fi-ss-book-alt');
+    -- Inserir categorias somente se ainda não existirem para o usuário
+    IF NOT EXISTS (SELECT 1 FROM categorias WHERE usuario_id = NEW.id) THEN
+        INSERT INTO categorias (usuario_id, nome, icone)
+        VALUES
+            (NEW.id, 'Moradia', 'fi-sr-home'),
+            (NEW.id, 'Beleza', 'fi-br-scissors'),
+            (NEW.id, 'Telefone', 'fi-br-smartphone'),
+            (NEW.id, 'Fatura', 'fi-sr-file-invoice-dollar'),
+            (NEW.id, 'Transferência', 'fi-br-money-coin-transfer'),
+            (NEW.id, 'Viagem Aérea', 'fi-ss-plane-alt'),
+            (NEW.id, 'Viagem de Ônibus', 'fi-ss-bus-alt'),
+            (NEW.id, 'Ferramenta', 'fi-ss-wrench-alt'),
+            (NEW.id, 'Mecânica', 'fi-ss-car-mechanic'),
+            (NEW.id, 'Supermercado', 'fi-sr-shopping-cart'),
+            (NEW.id, 'Carteira', 'fi-sr-wallet'),
+            (NEW.id, 'Videogame', 'fi-sr-gamepad'),
+            (NEW.id, 'Fast Food', 'fi-ss-hotdog'),
+            (NEW.id, 'Médico', 'fi-sr-user-md'),
+            (NEW.id, 'Animal - Cão', 'fi-sr-dog-leashed'),
+            (NEW.id, 'Animal - Brinquedos', 'fi-sr-bone'),
+            (NEW.id, 'Animal - Gato', 'fi-sr-cat'),
+            (NEW.id, 'Computador', 'fi-sr-devices'),
+            (NEW.id, 'Livro', 'fi-ss-book-alt');
+    END IF;
 END$$
 
 DELIMITER ;
