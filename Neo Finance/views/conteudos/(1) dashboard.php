@@ -56,33 +56,150 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/introjs.min.css">
     <script src="../../js/conteudos/dashboard/atualizarGrafico.js"></script>
     <style>
-        /* Estilos personalizados para o intro.js */
-        .introjs-tooltip {
-            background-color: #4CAF50; /* Cor de fundo verde */
-            color: #fff; /* Cor do texto branco */
-        }
-        .introjs-tooltipbuttons {
-            background-color: #4CAF50; /* Cor de fundo verde */
-        }
-        .introjs-button {
-            background-color: #4CAF50; /* Cor de fundo verde */
-            border: 1px solid #4CAF50; /* Borda verde */
-            color: #fff; /* Cor do texto branco */
-        }
-        .introjs-button:hover {
-            background-color: #45a049; /* Cor de fundo verde escuro ao passar o mouse */
-        }
-        .introjs-helperLayer {
-            background-color: rgba(76, 175, 80, 0.5); /* Cor de fundo verde transparente */
-        }
-        .introjs-skipbutton {
-            background-color: #4CAF50; /* Cor de fundo verde */
-            border: 1px solid #4CAF50; /* Borda verde */
-            color: #fff; /* Cor do texto branco */
-        }
-        .introjs-skipbutton:hover {
-            background-color: #45a049; /* Cor de fundo verde escuro ao passar o mouse */
-        }
+ /*================================================================
+Estilização do 'Primeros Passos'
+=================================================================*/
+.interrogacao {
+  position: fixed; /* Para que o botão permaneça visível durante o scroll */
+  top: 30px; /* Ajuste a posição do topo conforme necessário */
+  right: 30px; /* Ajuste a posição da direita conforme necessário */
+  z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+}
+
+/* Estilizando o botão */
+#startTutorial {
+  background-color: var(--verde--datas); /* Cor de fundo do botão */
+  color: white; /* Cor do texto do botão */
+  font-size: 16px; /* Tamanho da fonte */
+  padding: 12px 20px; /* Padding (espaçamento interno) */
+  border-radius: 8px; /* Bordas arredondadas */
+  border: none; /* Remove a borda padrão */
+  cursor: pointer; /* Altera o cursor para indicar interatividade */
+  display: flex; /* Utilizamos flexbox para alinhar o texto e a imagem */
+  align-items: center; /* Alinha o texto e a imagem verticalmente */
+  transition: all 0.3s ease; /* Transição suave para o efeito de hover */
+}
+
+/* Estilo para a imagem dentro do botão */
+#startTutorial img {
+  width: 20px; /* Ajuste o tamanho da imagem */
+  height: auto; /* Mantém a proporção original da imagem */
+  margin-left: 10px; /* Espaço entre o texto e a imagem */
+}
+
+/* Estilo para o hover no botão */
+#startTutorial:hover {
+  background-color: var(--cor-secundaria); /* Cor de fundo ao passar o mouse (mais escuro) */
+  transform: translateY(-3px); /* Eleva o botão um pouco */
+}
+
+/* Estilo para os botões de navegação do tutorial (Próximo e Anterior) */
+.introjs-tooltipButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Estilo geral dos botões com fundo branco */
+.introjs-button {
+  background-color: white; /* Cor de fundo branca */
+  color: var(--cor-secundaria); /* Cor do texto verde escuro */
+  border: 2px solid var(--cor-secundaria); /* Borda verde escura */
+  border-radius: 30px; /* Bordas arredondadas */
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease; /* Transição suave para hover e focus */
+  box-shadow: 0 4px 8px rgba(0, 54, 23, 0.3); /* Sombra suave */
+}
+
+/* Adicionando ícones de seta nos botões */
+.introjs-button:before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-image: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2');
+  background-size: contain;
+  margin-right: 10px;
+}
+
+/* Estilo do botão "Próximo" */
+.introjs-nextbutton:before {
+  content: '→'; /* Ícone de seta para a direita */
+  font-size: 20px;
+}
+
+/* Estilo do botão "Anterior" */
+.introjs-prevbutton:before {
+  content: '←'; /* Ícone de seta para a esquerda */
+  font-size: 20px;
+}
+
+/* Efeito de hover nos botões */
+.introjs-button:hover {
+  transform: translateY(-3px); /* Levanta o botão ao passar o mouse */
+  box-shadow: 0 6px 12px rgba(0, 54, 23, 0.5); /* Aumenta a sombra para efeito de profundidade */
+  background-color: var(--cor-secundaria); /* Altera o fundo para o verde escuro no hover */
+  color: white; /* Muda a cor do texto para branco */
+}
+
+/* Efeito de foco nos botões */
+.introjs-button:focus {
+  outline: none;
+  box-shadow: 0 0 12px rgba(0, 54, 23, 0.6); /* Sombra mais forte no foco */
+}
+
+/* Estilos para os botões de "Concluir" */
+.introjs-donebutton {
+  background-color: #dc3545; /* Cor vermelha */
+  color: white;
+  font-weight: bold;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+/* Estilos para o botão "Pular" */
+.introjs-skipbutton {
+  color: black;
+  font-weight: bold;
+  padding: 8px 16px; /* Diminuindo o padding para deixar o botão menor */
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px; /* Diminuindo o tamanho da fonte */
+  transition: all 0.3s ease;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  /* Ajuste no tamanho dos botões */
+  .introjs-button {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .introjs-button:before {
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
+  }
+
+  /* Ajuste para o botão de "Pular" e "Concluir" */
+  .introjs-skipbutton, .introjs-donebutton {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+}
+
     </style>
 </head>
 
@@ -93,7 +210,7 @@ $conn->close();
             <div class="usuario">
                 <span id="bloquear-selecao"><?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?></span>
                 <h1 id="bloquear-selecao">Olá, <?php echo ucfirst($_SESSION['username']); ?>!</h1>
-                <button id="startTutorial">Iniciar Tutorial</button>
+                <div class="interrogacao"><button id="startTutorial">Primeiros passos<img src="../../assets/icons/play.png" alt=""></button></div> 
             </div>
         </header>
     </div>
@@ -347,65 +464,7 @@ $conn->close();
                     exibirModalConfirmacao();
                 <?php endif; ?>
             </script>
-            <script>
-                // Configuração do tutorial
-                const startTutorialBtn = document.getElementById('startTutorial');
-                startTutorialBtn.addEventListener('click', function () {
-                    introJs().setOptions({
-                        steps: [
-                            {
-                                intro: "Bem-vindo ao tutorial de como usar o dashboard!"
-                            },
-                            {
-                                element: document.querySelector('.perfil'),
-                                intro: "Aqui você vê seu perfil e pode iniciar o tutorial novamente.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('.card--balanco'),
-                                intro: "Este é o card de balanço total. Aqui você pode ver seu saldo, gastos e adicionar novos itens.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('.card--historico-recente'),
-                                intro: "Aqui está o histórico recente de suas transações.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('.card--receitasXdespesas'),
-                                intro: "Este gráfico mostra a proporção de receitas e despesas.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('.card--vencimentos'),
-                                intro: "Aqui você pode ver os próximos vencimentos.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('.card--lembretes'),
-                                intro: "Este card mostra lembretes importantes.",
-                                position: 'bottom'
-                            },
-                            {
-                                element: document.querySelector('#btn--abrir--popup'),
-                                intro: "Clique aqui para adicionar um novo item.",
-                                position: 'right'
-                            }
-                        ],
-                        showStepNumbers: true,
-                        showBullets: false,
-                        exitOnEsc: true,
-                        exitOnOverlayClick: false,
-                        nextLabel: 'Próximo',
-                        prevLabel: 'Anterior',
-                        skipLabel: 'Pular',
-                        doneLabel: 'Concluir',
-                        tooltipClass: 'customTooltip',
-                        highlightClass: 'customHighlight',
-                        showProgress: true
-                    }).start();
-                });
-            </script>
+            <script src="../../js/conteudos/dashboard/tutorial.js"></script>
 </body>
 
 </html>
