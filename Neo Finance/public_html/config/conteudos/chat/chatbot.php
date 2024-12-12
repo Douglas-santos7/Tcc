@@ -1,20 +1,30 @@
 <?php
+session_start(); // Inicie a sessão para acessar as variáveis de sessão
+
 include("../../database/conexao.php"); // Inclui a conexão com o banco de dados
 
-
+// Verifique se o ID do usuário está armazenado na sessão
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim(strtolower($_POST['message'])); // Normaliza a mensagem para minúsculas
-    $userId = 1; // Defina aqui o ID do usuário atual, isso pode ser passado pela sessão ou autenticação
-
+    
+    // Verifique se o ID do usuário está armazenado na sessão
+    if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id']; // Pega o ID do usuário logado da sessão
+    } else {
+        // Caso o ID do usuário não esteja na sessão, redirecione para a página de login
+        echo "Você precisa estar logado para enviar mensagens.";
+        exit; // Encerra o script, prevenindo que o restante do código seja executado
+    }
 
     // Obtendo o nome do usuário
     $stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
-    $stmt->bind_param("i", $userId);
+    $stmt->bind_param("i", $userId); // Passa o ID do usuário dinamicamente
     $stmt->execute();
     $stmt->bind_result($username);
     $stmt->fetch();
     $stmt->close();
 
+    // Capitaliza o nome do usuário
     $username = ucfirst(strtolower($username));
 
 
@@ -273,7 +283,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'oii',
             'fala ai'
         ],
-
+        'planejamento mensal' => [
+           'planejar'
+        ],
 
     ];
 
@@ -350,7 +362,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo $responseMessage;
 }
 
-
 // Função para obter saldo do usuário
 function getSaldo($conn, $userId)
 {
@@ -362,7 +373,6 @@ function getSaldo($conn, $userId)
     $stmtReceitas->fetch();
     $stmtReceitas->close();
 
-
     // Somar despesas
     $stmtDespesas = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'despesa'");
     $stmtDespesas->bind_param("i", $userId);
@@ -371,20 +381,16 @@ function getSaldo($conn, $userId)
     $stmtDespesas->fetch();
     $stmtDespesas->close();
 
-
     // Calcular saldo
     $saldo = ($totalReceitas ?? 0) - ($totalDespesas ?? 0);
-
 
     // Verificando se o saldo é 0
     if ($saldo == 0) {
         return "Parece que você não tem saldo registrado. Que tal adicionar uma receita?";
     }
 
-
     return "Seu saldo atual é R$ " . number_format($saldo, 2, ',', '.');
 }
-
 
 // Função para obter dicas de economia com base no saldo do usuário
 function getDicasEconomizar($conn, $userId)
@@ -397,28 +403,27 @@ function getDicasEconomizar($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
-
     // Retornar dicas com base no saldo
     if ($saldo < 100) {
         return [
-            "Tente reduzir gastos supérfluos, como refeições em restaurantes ou lanches. Que tal cozinhar mais em casa?",
-            "Considere fazer compras com uma lista. Isso pode ajudar a evitar compras por impulso, especialmente em produtos que você não precisa.",
-            "Pesquise sobre ofertas e cupons antes de fazer compras. Existem muitos sites e aplicativos que podem ajudar.",
-            "Avalie a possibilidade de vender itens que você não usa mais. Isso pode gerar uma renda extra e liberar espaço em casa."
+            "Cozinhe em casa ao invés de pedir delivery. Receitas econômicas podem ser encontradas em sites como TudoGostoso ou Panelinha.",
+            "Faça compras no supermercado usando aplicativos como **Meu Carrinho** ou **Zoom** para comparar preços e evitar gastos por impulso.",
+            "Busque cupons de desconto em sites como **Cuponomia** ou **Méliuz** antes de realizar compras online.",
+            "Venda itens usados que não utiliza mais em plataformas como **OLX** ou **Enjoei** para gerar uma renda extra."
         ];
     } elseif ($saldo < 500) {
         return [
-            "Você pode usar aplicativos de comparação de preços para economizar nas compras. Isso pode fazer uma grande diferença no final do mês.",
-            "Avalie suas despesas mensais e veja onde pode cortar custos. Por exemplo, você pode cancelar assinaturas que não usa com frequência.",
-            "Tente negociar melhores tarifas com provedores de serviços, como internet e telefone. Muitas vezes, é possível conseguir um desconto.",
-            "Considere realizar um orçamento mensal. Isso pode ajudá-lo a ter uma visão clara de onde seu dinheiro está sendo gasto."
+            "Use o aplicativo **Buscapé** para comparar preços de produtos eletrônicos e evitar pagar mais caro.",
+            "Revise assinaturas desnecessárias no **Google Subscriptions** ou no painel de controle do **iTunes**.",
+            "Entre em contato com provedores de serviços, como **Vivo** ou **Claro**, para negociar tarifas melhores de internet ou celular.",
+            "Crie um orçamento mensal com ferramentas como **Guiabolso** ou **Mobills** para identificar gastos desnecessários e cortá-los."
         ];
     } else {
         return [
-            "Parabéns! Com esse saldo, você pode começar a pensar em investir uma parte do seu dinheiro. Você já considerou investir em ações ou fundos de investimento?",
-            "Tente reservar uma parte do seu saldo para uma poupança de emergência. Isso pode ajudá-lo a se sentir mais seguro financeiramente no futuro.",
-            "Considere diversificar seus investimentos para minimizar riscos. Pense em alocar uma parte em renda fixa e outra em renda variável.",
-            "Pesquise sobre opções de investimentos com rendimentos a longo prazo, como previdência privada ou imóveis, para garantir um futuro mais seguro."
+            "Comece a investir usando aplicativos como **XP Investimentos** ou **Rico** para explorar opções de renda fixa ou variável.",
+            "Reserve uma parte do saldo para poupança de emergência utilizando contas digitais como **Nubank** ou **C6 Bank**, que oferecem rendimentos melhores do que a poupança tradicional.",
+            "Invista em CDBs, LCIs ou Fundos de Investimento em plataformas como **Easynvest** ou **BTG Pactual Digital**.",
+            "Pesquise sobre investimentos de longo prazo, como previdência privada, usando simuladores em sites como o do **Banco do Brasil** ou **Itaú**."
         ];
     }
 }
@@ -435,86 +440,96 @@ function getDicasInvestir($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
-
     // Dicas com base no saldo do usuário
     if ($saldo < 1000) {
         return [
-            "Considere investir em uma conta de poupança com rendimento.",
-            "Pesquise sobre tesouro direto, que é uma forma segura de investimento.",
-            "Considere iniciar com fundos de investimento de baixo custo.",
-            "Avalie a possibilidade de participar de programas de fidelidade que oferecem benefícios em suas compras.",
-            "Busque cursos gratuitos ou de baixo custo sobre finanças pessoais e investimentos para aumentar seu conhecimento."
+            "Abra uma conta no **Nubank** ou **C6 Bank** para começar a investir em contas com rendimento automático acima da poupança.",
+            "Utilize plataformas como **Tesouro Direto** ou **Easynvest** para iniciar com aplicações seguras no Tesouro Selic.",
+            "Explore fundos de investimento acessíveis em corretoras como **XP Investimentos** ou **Rico**.",
+            "Participe de programas de cashback como o **Méliuz**, economizando enquanto investe.",
+            "Aprenda sobre investimentos com cursos gratuitos em plataformas como **Fundação Bradesco** ou vídeos no **YouTube** (ex.: canal **Primo Rico**)."
         ];
     } elseif ($saldo < 5000) {
         return [
-            "Diversifique seus investimentos em ações e títulos.",
-            "Pesquise sobre ETFs, que podem oferecer uma boa diversificação.",
-            "Considere um fundo de investimento que se alinhe aos seus objetivos.",
-            "Explore a possibilidade de abrir uma conta em uma corretora que oferece isenção de taxas para novos clientes.",
-            "Acompanhe regularmente o desempenho de seus investimentos e faça ajustes quando necessário."
+            "Diversifique sua carteira investindo em **ETFs** disponíveis no **BTG Pactual Digital** ou **Clear Corretora**.",
+            "Invista em fundos multimercados ou de renda fixa em plataformas como **Órama** ou **ModalMais**.",
+            "Considere abrir conta em corretoras como **Inter Invest** que oferecem taxas competitivas e funcionalidades intuitivas.",
+            "Use aplicativos como **Kinvo** ou **Trademap** para monitorar o desempenho da sua carteira de investimentos.",
+            "Acompanhe relatórios de análise gratuitos oferecidos por corretoras como **Toro Investimentos** para tomar decisões informadas."
         ];
     } else {
         return [
-            "Considere investir em ações de empresas sólidas.",
-            "Pesquise sobre imóveis para investimento.",
-            "Explore investimentos em startups ou crowdfunding.",
-            "Avalie a criação de uma carteira de investimentos que inclua ativos de diferentes setores.",
-            "Considere consultar um assessor financeiro para otimizar sua estratégia de investimentos e garantir que esteja alinhada aos seus objetivos.",
-            "Compare as taxas e rendimentos de diferentes tipos de investimentos antes de decidir onde aplicar seu dinheiro." // Dica adicional para comparação de investimentos alternativos.
+            "Invista em ações de empresas sólidas usando plataformas como **BTG+**, **NuInvest** ou **Rico**.",
+            "Explore fundos imobiliários (FIIs) disponíveis em corretoras como **Easynvest** ou **XP Investimentos**.",
+            "Participe de crowdfunding de startups em plataformas como **Kria** ou **EqSeed**.",
+            "Monte uma carteira diversificada com ativos de diferentes setores utilizando o **Trademap** para balancear os riscos.",
+            "Consulte um assessor financeiro em corretoras como **Genial Investimentos** ou **Guide** para alinhar sua estratégia com seus objetivos de longo prazo.",
+            "Compare taxas de administração e performance antes de investir em produtos como previdência privada ou fundos exclusivos."
         ];
     }
 }
-
-
-
 
 // Função para obter resumo mensal
 function getResumoMensal($conn, $userId)
 {
-    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND MONTH(data) = MONTH(CURRENT_DATE())");
+    // Obter receita mensal
+    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'receita' AND MONTH(data) = MONTH(CURRENT_DATE())");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
-    $stmt->bind_result($totalMensal);
+    $stmt->bind_result($totalReceitaMensal);
     $stmt->fetch();
     $stmt->close();
+    $totalReceitaMensal = $totalReceitaMensal ?? 0;
 
+    // Obter despesa mensal
+    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'despesa' AND MONTH(data) = MONTH(CURRENT_DATE())");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($totalDespesaMensal);
+    $stmt->fetch();
+    $stmt->close();
+    $totalDespesaMensal = $totalDespesaMensal ?? 0;
 
-    return "Seu resumo mensal total é R$ " . number_format($totalMensal, 2, ',', '.');
+    // Formatar os valores para exibição
+    $receitaFormatada = number_format($totalReceitaMensal, 2, ',', '.');
+    $despesaFormatada = number_format($totalDespesaMensal, 2, ',', '.');
+
+    // Retornar o resumo mensal
+    return "Resumo mensal:<br>" .
+           "Receita total: R$ " . $receitaFormatada . "<br>" .
+           "Despesa total: R$ " . $despesaFormatada;
 }
-
 
 // Função para obter resumo diário
 function getResumoDiario($conn, $userId)
 {
-    // Prepara a consulta SQL para somar os valores das transações do usuário no dia atual
-    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND DATE(data) = CURDATE()");
+    // Obter receita diária
+    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'receita' AND DATE(data) = CURDATE()");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
-    $stmt->bind_result($totalDiario);
+    $stmt->bind_result($totalReceitaDiaria);
     $stmt->fetch();
     $stmt->close();
+    $totalReceitaDiaria = $totalReceitaDiaria ?? 0;
 
+    // Obter despesa diária
+    $stmt = $conn->prepare("SELECT SUM(valor) FROM transacoes WHERE usuario_id = ? AND tipo = 'despesa' AND DATE(data) = CURDATE()");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($totalDespesaDiaria);
+    $stmt->fetch();
+    $stmt->close();
+    $totalDespesaDiaria = $totalDespesaDiaria ?? 0;
 
-    // Verifica se o total diário é NULL (não houve transações no dia)
-    if ($totalDiario === null) {
-        $totalDiario = 0; // Define como 0 caso não haja transações no dia
-    }
+    // Formatar os valores para exibição
+    $receitaFormatada = number_format($totalReceitaDiaria, 2, ',', '.');
+    $despesaFormatada = number_format($totalDespesaDiaria, 2, ',', '.');
 
-
-    // Formata o total diário, incluindo a possibilidade de ser negativo
-    $totalFormatado = number_format($totalDiario, 2, ',', '.');
-
-
-    // Se o valor for negativo, adicionar o sinal de negativo na frente
-    if ($totalDiario < 0) {
-        $totalFormatado = "-" . $totalFormatado;
-    }
-
-
-    // Retorna o resumo diário
-    return "Seu resumo diário total é R$ " . $totalFormatado;
+    // Retornar o resumo diário
+    return "Resumo diário:<br>" .
+           "Receita total: R$ " . $receitaFormatada . "<br>" .
+           "Despesa total: R$ " . $despesaFormatada;
 }
-
 
 
 
@@ -525,20 +540,17 @@ function getHistoricoTransacoes($conn, $userId)
     $stmt->execute();
     $stmt->bind_result($tipo, $valor, $data);
 
-
     $historico = [];
     while ($stmt->fetch()) {
         $historico[] = "$data - $tipo: R$ " . number_format($valor, 2, ',', '.');
     }
     $stmt->close();
 
-
     if (empty($historico)) {
         return "Você não tem transações registradas.";
     }
     return implode("\n", $historico);
 }
-
 
 function getAnaliseGastos($conn, $userId)
 {
@@ -547,20 +559,17 @@ function getAnaliseGastos($conn, $userId)
     $stmt->execute();
     $stmt->bind_result($categoria, $total);
 
-
     $analise = [];
     while ($stmt->fetch()) {
         $analise[] = "$categoria: R$ " . number_format($total, 2, ',', '.');
     }
     $stmt->close();
 
-
     if (empty($analise)) {
         return "Nenhum gasto registrado.";
     }
     return implode("\n", $analise);
 }
-
 
 function exportarRelatorio($conn, $userId)
 {
@@ -571,83 +580,81 @@ function exportarRelatorio($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
-
     // Obter histórico de transações
     $historico = getHistoricoTransacoes($conn, $userId);
-
 
     // Verifica se o histórico não está vazio
     if (empty($historico)) {
         return "Nenhum dado disponível para exportar.";
     }
 
-
     // Cria um arquivo temporário em memória
     $tempFile = tempnam(sys_get_temp_dir(), 'relatorio_') . ".txt";
     file_put_contents($tempFile, $historico);
 
-
     // Montar a URL completa para download
     $urlArquivo = "http://localhost/chat/" . basename($tempFile);
 
-
     // Criar um link para o download
     $html = "Relatório gerado. Você pode <a href='$urlArquivo' download>baixar aqui</a>.";
-
 
     return $html;
 }
 
 
 
-
-
-
 function previsaoFinanceira($conn, $userId, $meses = 3)
 {
+    // Consulta SQL para calcular a média de receitas e despesas
     $stmt = $conn->prepare("
-        SELECT tipo, AVG(valor) AS media
-        FROM transacoes
-        WHERE usuario_id = ?
+        SELECT tipo, AVG(valor) AS media 
+        FROM transacoes 
+        WHERE usuario_id = ? 
         GROUP BY tipo
     ");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $stmt->bind_result($tipo, $media);
 
-
+    // Array para armazenar as médias de receitas e despesas
     $previsao = [];
     while ($stmt->fetch()) {
-        $previsao[$tipo] = $media;
+        $previsao[$tipo] = $media; // Armazena a média de 'receita' ou 'despesa'
     }
     $stmt->close();
 
-
+    // Verificar se as médias de receitas e despesas foram encontradas
     $gastosEstimados = isset($previsao['despesa']) ? $previsao['despesa'] * $meses : 0;
     $receitasEstimadas = isset($previsao['receita']) ? $previsao['receita'] * $meses : 0;
+
+    // Se não houver receita nem despesa registrada
+    if ($gastosEstimados == 0 && $receitasEstimadas == 0) {
+        return "Não há dados suficientes de transações para calcular a previsão financeira.";
+    }
+
+    // Calcular o saldo estimado (receitas - despesas)
     $saldoEstimado = $receitasEstimadas - $gastosEstimados;
 
-
-    return
-        "Previsão para os próximos $meses meses:\n" .
-        "Receitas: R$ " . number_format($receitasEstimadas, 2, ',', '.') . "\n" .
-        "Gastos: R$ " . number_format($gastosEstimados, 2, ',', '.') . "\n" .
-        "Saldo Estimado: R$ " . number_format($saldoEstimado, 2, ',', '.');
+    // Retornar a previsão financeira formatada
+    return "Previsão para os próximos $meses meses:\n" . 
+           "Receitas: R$ " . number_format($receitasEstimadas, 2, ',', '.') . "\n" . 
+           "Gastos: R$ " . number_format($gastosEstimados, 2, ',', '.') . "\n" . 
+           "Saldo Estimado: R$ " . number_format($saldoEstimado, 2, ',', '.');
 }
+
 function comparacaoGastosMensais($conn, $userId)
 {
     $stmt = $conn->prepare("
-    SELECT DATE_FORMAT(data, '%M de %Y') AS mes, SUM(valor) AS total
-    FROM transacoes
-    WHERE usuario_id = ? AND tipo = 'despesa'
-    GROUP BY YEAR(data), MONTH(data)
-    ORDER BY data DESC
+    SELECT DATE_FORMAT(data, '%M de %Y') AS mes, SUM(valor) AS total 
+    FROM transacoes 
+    WHERE usuario_id = ? AND tipo = 'despesa' 
+    GROUP BY YEAR(data), MONTH(data) 
+    ORDER BY data DESC 
     LIMIT 2
 ");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $stmt->bind_result($mes, $total);
-
 
     $gastos = [];
     while ($stmt->fetch()) {
@@ -655,15 +662,12 @@ function comparacaoGastosMensais($conn, $userId)
     }
     $stmt->close();
 
-
     if (count($gastos) < 2) {
         return "Dados insuficientes para comparação.";
     }
 
-
     $diferenca = $gastos[0]['total'] - $gastos[1]['total'];
     $resultado = $diferenca >= 0 ? "aumento" : "redução";
-
 
     return
         "Comparação de Gastos:\n" .
@@ -671,7 +675,6 @@ function comparacaoGastosMensais($conn, $userId)
         "{$gastos[1]['mes']}: R$ " . number_format($gastos[1]['total'], 2, ',', '.') . "\n" .
         "Diferença: R$ " . number_format(abs($diferenca), 2, ',', '.') . " ($resultado).";
 }
-
 
 function obterDesafioFinanceiroAleatorio($conn, $userId)
 {
@@ -695,11 +698,9 @@ function obterDesafioFinanceiroAleatorio($conn, $userId)
         "Estabeleça um desafio de poupança com um amigo e compare resultados"
     ];
 
-
     $desafioAleatorio = $desafios[array_rand($desafios)];
     return $desafioAleatorio;
 }
-
 
 function planejamentoMensal($conn, $userId)
 {
@@ -711,15 +712,13 @@ function planejamentoMensal($conn, $userId)
     $stmt->fetch();
     $stmt->close();
 
-
     if ($saldoAtual === null) {
         return "Não foi possível obter o saldo atual.";
     }
 
-
     // Obtém a receita total do mês atual
     $stmt = $conn->prepare("
-        SELECT SUM(valor) FROM transacoes
+        SELECT SUM(valor) FROM transacoes 
         WHERE usuario_id = ? AND tipo = 'receita' AND MONTH(data) = MONTH(CURDATE()) AND YEAR(data) = YEAR(CURDATE())
     ");
     $stmt->bind_param("i", $userId);
@@ -729,10 +728,9 @@ function planejamentoMensal($conn, $userId)
     $stmt->close();
     $receitaMensal = $receitaMensal ?? 0;
 
-
     // Obtém a despesa total do mês atual
     $stmt = $conn->prepare("
-        SELECT SUM(valor) FROM transacoes
+        SELECT SUM(valor) FROM transacoes 
         WHERE usuario_id = ? AND tipo = 'despesa' AND MONTH(data) = MONTH(CURDATE()) AND YEAR(data) = YEAR(CURDATE())
     ");
     $stmt->bind_param("i", $userId);
@@ -742,11 +740,10 @@ function planejamentoMensal($conn, $userId)
     $stmt->close();
     $despesaMensal = $despesaMensal ?? 0;
 
-
     // Verifica vencimentos próximos (nos próximos 7 dias)
     $stmt = $conn->prepare("
-        SELECT descricao, data_vencimento, valor
-        FROM vencimentos
+        SELECT descricao, data_vencimento, valor 
+        FROM vencimentos 
         WHERE usuario_id = ? AND data_vencimento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
         ORDER BY data_vencimento ASC
     ");
@@ -759,22 +756,18 @@ function planejamentoMensal($conn, $userId)
     }
     $stmt->close();
 
-
     // Calcula o saldo disponível para o restante do mês
     $diasNoMes = date("t");
     $diaAtual = date("j");
     $diasRestantes = $diasNoMes - $diaAtual;
     $saldoDisponivel = $saldoAtual + $receitaMensal - $despesaMensal;
 
-
     // Média de gastos diários até agora
     $mediaGastoDiarioAtual = $diaAtual > 0 ? $despesaMensal / $diaAtual : 0;
-
 
     // Planejamento sugerido
     $gastoDiarioSugerido = $diasRestantes > 0 ? $saldoDisponivel / $diasRestantes : $saldoDisponivel;
     $saldoEstimadoFinalMes = $saldoDisponivel - ($gastoDiarioSugerido * $diasRestantes);
-
 
     // Formata os valores para exibição
     $saldoFormatado = number_format($saldoDisponivel, 2, ',', '.');
@@ -783,7 +776,6 @@ function planejamentoMensal($conn, $userId)
     $saldoFinalEstimadoFormatado = number_format($saldoEstimadoFinalMes, 2, ',', '.');
     $receitaFormatada = number_format($receitaMensal, 2, ',', '.');
     $despesaFormatada = number_format($despesaMensal, 2, ',', '.');
-
 
     // Consulta as metas financeiras do usuário
     $stmt = $conn->prepare("SELECT nome_meta, valor_alvo, valor_atual, prazo FROM metas_usuario WHERE id_usuario = ?");
@@ -795,7 +787,6 @@ function planejamentoMensal($conn, $userId)
         $metas[] = $row;
     }
     $stmt->close();
-
 
     // Calcula o progresso de cada meta
     $metasComProgresso = [];
@@ -814,18 +805,17 @@ function planejamentoMensal($conn, $userId)
         ];
     }
 
-
     // Monta a mensagem do planejamento em formato HTML
-    $mensagem =
-        "Planejamento Mensal:<br>" .
-        "Saldo disponível para o mês: R$ " . $saldoFormatado . "<br>" .
-        "Receita total do mês: R$ " . $receitaFormatada . "<br>" .
-        "Despesa total do mês: R$ " . $despesaFormatada . "<br>" .
-        "Dias restantes no mês: " . $diasRestantes . " dias<br>" .
-        "Média de gastos diários até agora: R$ " . $mediaGastoDiarioFormatado . "<br>" .
-        "Gasto diário sugerido: R$ " . $gastoDiarioFormatado . "<br>" .
+    $mensagem = 
+        "Planejamento Mensal:<br>" . 
+        "Saldo disponível para o mês: R$ " . $saldoFormatado . "<br>" . 
+        "Receita total do mês: R$ " . $receitaFormatada . "<br>" . 
+        "Despesa total do mês: R$ " . $despesaFormatada . "<br>" . 
+        "Dias restantes no mês: " . $diasRestantes . " dias<br>" . 
+        "Média de gastos diários até agora: R$ " . $mediaGastoDiarioFormatado . "<br>" . 
+        "Gasto diário sugerido: R$ " . $gastoDiarioFormatado . "<br>" . 
         "Saldo estimado ao final do mês: R$ " . $saldoFinalEstimadoFormatado . "<br>";
-
+        
     // Exibe os vencimentos nos próximos 7 dias
     if (!empty($vencimentosProximos)) {
         $mensagem .= "Vencimentos nos próximos 7 dias:<br>";
@@ -833,7 +823,6 @@ function planejamentoMensal($conn, $userId)
             $mensagem .= "- " . $vencimento['descricao'] . " em " . date("d/m/Y", strtotime($vencimento['data_vencimento'])) . ": R$ " . number_format($vencimento['valor'], 2, ',', '.') . "<br>";
         }
     }
-
 
     return $mensagem;
 }
