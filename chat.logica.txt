@@ -1,20 +1,30 @@
 <?php
+session_start(); // Inicie a sessão para acessar as variáveis de sessão
+
 include("../../database/conexao.php"); // Inclui a conexão com o banco de dados
 
-
+// Verifique se o ID do usuário está armazenado na sessão
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim(strtolower($_POST['message'])); // Normaliza a mensagem para minúsculas
-    $userId = 1; // Defina aqui o ID do usuário atual, isso pode ser passado pela sessão ou autenticação
-
+    
+    // Verifique se o ID do usuário está armazenado na sessão
+    if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id']; // Pega o ID do usuário logado da sessão
+    } else {
+        // Caso o ID do usuário não esteja na sessão, redirecione para a página de login
+        echo "Você precisa estar logado para enviar mensagens.";
+        exit; // Encerra o script, prevenindo que o restante do código seja executado
+    }
 
     // Obtendo o nome do usuário
     $stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
-    $stmt->bind_param("i", $userId);
+    $stmt->bind_param("i", $userId); // Passa o ID do usuário dinamicamente
     $stmt->execute();
     $stmt->bind_result($username);
     $stmt->fetch();
     $stmt->close();
 
+    // Capitaliza o nome do usuário
     $username = ucfirst(strtolower($username));
 
 
