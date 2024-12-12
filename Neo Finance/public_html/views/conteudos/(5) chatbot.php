@@ -34,12 +34,13 @@
         <div class="send-area">
             <input type="text" id="message" placeholder="Digite sua mensagem..." />
             <!-- Imagem de enviar -->
-            <img src="" alt="Enviar" onclick="sendMessage()" />
+            <button class="send-btn" onclick="sendMessage()">Enviar</button>
         </div>
     </div>
 
     <script>
         let topicoAtual = null;
+        let isFirstMessageSent = false; // Variável para verificar se a primeira mensagem já foi enviada
 
         // Função para enviar a mensagem
         function sendMessage() {
@@ -81,31 +82,61 @@
 
             // Simular atraso de 2 segundos antes de enviar a resposta do bot
             setTimeout(() => {
-                fetch('../../config/conteudos/chat/chatbot.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'message=' + encodeURIComponent(message)
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        // Remover o indicador de carregamento
-                        loadingDiv.remove();
+                // Remover o indicador de carregamento assim que a resposta for recebida
+                loadingDiv.remove();
 
-                        // Exibir a resposta do bot
-                        chat.innerHTML += `
-                            <div class="message bot">
-                                 <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
-                                <div class="message-text">${data}</div>
-                            </div>
-                        `;
-                        topicoAtual.mensagens.push(`<div class="bot">${data}</div>`);
+                // Se a primeira mensagem ainda não foi enviada, exibe a lista de opções
+                if (!isFirstMessageSent) {
+                    const firstMessage = `Olá! Como posso ajudá-lo hoje?<br>
+                        1. Saldo<br>
+                        2. Dicas de Economia<br>
+                        3. Dicas de Investimento<br>
+                        4. Resumo Mensal<br>
+                        5. Resumo Diário<br>
+                        6. Histórico de Transações<br>
+                        7. Análise de Gastos<br>
+                        8. Exportar Relatório<br>
+                        9. Previsão Financeira com Base no Histórico<br>
+                        10. Comparação de Gastos Mensais<br>
+                        11. Desafios<br>
+                        12. Planejamento Mensal<br>`;
 
-                        saveToLocalStorage(topicoAtual); // Salvar o tópico no Local Storage
-                        messageInput.value = '';
-                        chat.scrollTop = chat.scrollHeight; // Rolar para baixo no chat
-                    });
+                    chat.innerHTML += `
+                        <div class="message bot">
+                            <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
+                            <div class="message-text">${firstMessage}</div>
+                        </div>
+                    `;
+                    topicoAtual.mensagens.push(`<div class="bot">${firstMessage}</div>`);
+
+                    // Atualizar o estado de que a primeira mensagem foi enviada
+                    isFirstMessageSent = true;
+                } else {
+                    // Caso contrário, chama o chatbot para processar a mensagem
+                    fetch('../../config/conteudos/chat/chatbot.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'message=' + encodeURIComponent(message)
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            // Exibir a resposta do bot
+                            chat.innerHTML += `
+                                <div class="message bot">
+                                    <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
+                                    <div class="message-text">${data}</div>
+                                </div>
+                            `;
+                            topicoAtual.mensagens.push(`<div class="bot">${data}</div>`);
+
+                            saveToLocalStorage(topicoAtual); // Salvar o tópico no Local Storage
+                            messageInput.value = ''; // Limpar o campo de entrada
+                            chat.scrollTop = chat.scrollHeight; // Rolar para baixo no chat
+                        });
+                }
+
             }, 2000); // 2000 ms = 2 segundos de atraso
             const buttons = document.getElementById('predefined-buttons');
             buttons.style.display = 'none';
@@ -136,55 +167,60 @@
 
         // Função para enviar a primeira mensagem ao carregar a página
         window.onload = function() {
-            const firstMessage = `Olá! Como posso ajudá-lo hoje?<br>
-                1. Saldo<br>
-                2. Dicas de Economia<br>
-                3. Dicas de Investimento<br>
-                4. Resumo Mensal<br>
-                5. Resumo Diário<br>
-                6. Histórico de Transações<br>
-                7. Análise de Gastos<br>
-                8. Exportar Relatório<br>
-                9. Previsão Financeira com Base no Histórico<br>
-                10. Comparação de Gastos Mensais<br>
-                11. Desafios<br>
-                12. Planejamento Mensal<br>`; // Primeira mensagem do bot com lista
-            
-            const chat = document.getElementById('chat');
-            
-            // Exibir a mensagem inicial do bot
-            const loadingDiv = document.createElement("div");
-            loadingDiv.classList.add("message", "bot");
-            loadingDiv.innerHTML = `
-                <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
-                <div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-            `;
-            chat.appendChild(loadingDiv);
+            if (!isFirstMessageSent) {
+                const firstMessage = `Olá! Como posso ajudá-lo hoje?<br>
+                    1. Saldo<br>
+                    2. Dicas de Economia<br>
+                    3. Dicas de Investimento<br>
+                    4. Resumo Mensal<br>
+                    5. Resumo Diário<br>
+                    6. Histórico de Transações<br>
+                    7. Análise de Gastos<br>
+                    8. Exportar Relatório<br>
+                    9. Previsão Financeira com Base no Histórico<br>
+                    10. Comparação de Gastos Mensais<br>
+                    11. Desafios<br>
+                    12. Planejamento Mensal<br>`; // Primeira mensagem do bot com lista
 
-            // Simula a resposta do bot após 2 segundos
-            setTimeout(() => {
-                // Remover o indicador de carregamento
-                loadingDiv.remove();
+                const chat = document.getElementById('chat');
 
                 // Exibir a mensagem inicial do bot
-                chat.innerHTML += `
-                    <div class="message bot">
-                         <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
-                        <div class="message-text">${firstMessage}</div>
-                    </div>
+                const loadingDiv = document.createElement("div");
+                loadingDiv.classList.add("message", "bot");
+                loadingDiv.innerHTML = `
+                    <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
+                    <div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
                 `;
+                chat.appendChild(loadingDiv);
 
-                // Adicionar a mensagem ao histórico
-                if (!topicoAtual) {
-                    const now = new Date();
-                    const timestamp = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                    topicoAtual = {
-                        nome: `Tópico - ${timestamp}`,
-                        mensagens: []
-                    };
-                }
-                topicoAtual.mensagens.push(`<div class="bot">${firstMessage}</div>`);
-            }, 2000); // 2000 ms = 2 segundos de atraso
+                // Simula a resposta do bot após 2 segundos
+                setTimeout(() => {
+                    // Remover o indicador de carregamento
+                    loadingDiv.remove();
+
+                    // Exibir a mensagem inicial do bot
+                    chat.innerHTML += `
+                        <div class="message bot">
+                             <img src="../../assets/img/neo.png" alt="Bot" class="message-icon" />
+                            <div class="message-text">${firstMessage}</div>
+                        </div>
+                    `;
+                    
+                    // Atualizar o estado de que a primeira mensagem foi enviada
+                    isFirstMessageSent = true;
+
+                    // Adicionar a mensagem ao histórico
+                    if (!topicoAtual) {
+                        const now = new Date();
+                        const timestamp = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                        topicoAtual = {
+                            nome: `Tópico - ${timestamp}`,
+                            mensagens: []
+                        };
+                    }
+                    topicoAtual.mensagens.push(`<div class="bot">${firstMessage}</div>`);
+                }, 2000); // 2000 ms = 2 segundos de atraso
+            }
         };
     </script>
 
