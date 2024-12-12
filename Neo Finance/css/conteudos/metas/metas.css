@@ -334,8 +334,8 @@ body {
 }
 
 /* Estilo para os inputs de número */
-.form-resgatar input[type="number"],
-.form-depositar input[type="number"] {
+.form-resgatar input[type="text"],
+.form-depositar input[type="text"] {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
@@ -662,12 +662,14 @@ body {
   animation: cardTransition 0.5s ease-in-out;
   
 }
+
 .card-meta.active {
   display: block;
   width: 140%; /* Aumenta o tamanho do card */
   max-width: 1200px; /* Define um tamanho máximo para o card */
   margin: 20px auto; /* Centraliza o card horizontalmente */
 }
+
 /* Estilo para o gráfico */
 .grafico {
   width: 100%;
