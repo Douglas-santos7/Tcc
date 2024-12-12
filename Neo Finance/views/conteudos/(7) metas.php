@@ -52,15 +52,44 @@ include('../../config/conteudos/metas/logica_metas.php');
   <link rel="stylesheet" href="../../css/conteudos/metas/metas.css">
   <link rel="stylesheet" href="../../css/conteudos/metas/popUpMetas.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/introjs.min.css">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="../../js/conteudos/metas/formatar.js"></script> <!-- Adicione esta linha para carregar o script formatar.js -->
+  <style>
+    .no-goals-message {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 24px;
+      color: #333;
+    }
+    /* Estilos personalizados para o intro.js */
+    .introjs-tooltip {
+      background-color: #4CAF50; /* Cor de fundo verde */
+      color: #fff; /* Cor do texto branco */
+    }
+    .introjs-tooltipbuttons {
+      background-color: #4CAF50; /* Cor de fundo verde */
+    }
+    .introjs-button {
+      background-color: #4CAF50; /* Cor de fundo verde */
+      border: 1px solid #4CAF50; /* Borda verde */
+      color: #fff; /* Cor do texto branco */
+    }
+    .introjs-button:hover {
+      background-color: #45a049; /* Cor de fundo verde escuro ao passar o mouse */
+    }
+    .introjs-helperLayer {
+      background-color: rgba(76, 175, 80, 0.5); /* Cor de fundo verde transparente */
+    }
+  </style>
 </head>
 
 <body>
   <div class="container">
     <div class="titulo-metas">
       <h1>Metas<img src="../../assets/icons/home--sidebar/metas--icon.svg" alt=""></h1>
+      <button id="startTutorial">Iniciar Tutorial</button>
     </div>
 
     <div class="menu-criar-meta" id="menuCriarMeta">
@@ -91,177 +120,182 @@ include('../../config/conteudos/metas/logica_metas.php');
       </div>
 
       <div class="card-container">
-        <?php while ($row = $result->fetch_assoc()):
-          $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
-          $deadline = date('d/m/Y', strtotime($row['prazo'])); // Formata a data de prazo
-          ?>
-          <div class="card-meta" data-id="<?php echo $goalId; ?>">
-            <div class="titulo-card">
-              <!-- Ícone de exclusão -->
-              <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
-                <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
-                <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">
-                  <i class="fas fa-trash"></i> Excluir
-                </button>
-              </form>
-              <span><?php echo $row['nome_meta']; ?></span>
-            </div>
-            <div class="progresso-meta">
-              <span>Progresso:</span>
-              <div class="barra-progresso">
-                <div class="barra-progresso-preenchida"
-                  style="width: <?php echo ($row['valor_atual'] / $row['valor_alvo']) * 100; ?>%;"></div>
+        <?php if ($result->num_rows == 0): ?>
+          <div class="no-goals-message">Não há metas criadas</div>
+        <?php else: ?>
+          <?php while ($row = $result->fetch_assoc()):
+            $goalId = $row['id_meta'];  // Defina o ID da meta para o histórico
+            $deadline = date('d/m/Y', strtotime($row['prazo'])); // Formata a data de prazo
+            ?>
+            <div class="card-meta" data-id="<?php echo $goalId; ?>">
+              <div class="titulo-card">
+                <!-- Ícone de exclusão -->
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
+                  <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
+                  <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">
+                    <i class="fas fa-trash"></i> Excluir
+                  </button>
+                </form>
+                <span><?php echo $row['nome_meta']; ?></span>
               </div>
-              <span>R$ <?php echo $row['valor_atual']; ?> de R$ <?php echo $row['valor_alvo']; ?></span>
-              <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
-                <div class="mensagem-meta-alcancada">Meta Alcançada!</div>
-                <?php
-                // Verificar se a meta já foi celebrada
-                if (!isset($_SESSION['celebrated_goals']) || !in_array($goalId, $_SESSION['celebrated_goals'])):
-                  // Marcar a meta como celebrada
-                  $_SESSION['celebrated_goals'][] = $goalId;
-                  ?>
-                  <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                      var end = Date.now() + (8 * 1000);
-                      var colors = ['#bb0000', '#ffffff'];
-                      (function frame() {
-                        confetti({
-                          particleCount: 2,
-                          angle: 60,
-                          spread: 55,
-                          origin: { x: 0 }
-                        });
-                        confetti({
-                          particleCount: 2,
-                          angle: 120,
-                          spread: 55,
-                          origin: { x: 1 }
-                        });
-                        if (Date.now() < end) {
-                          requestAnimationFrame(frame);
-                        }
-                      }());
+              <div class="progresso-meta">
+                <span>Progresso:</span>
+                <div class="barra-progresso">
+                  <div class="barra-progresso-preenchida"
+                    style="width: <?php echo ($row['valor_atual'] / $row['valor_alvo']) * 100; ?>%;"></div>
+                </div>
+                <span>R$ <?php echo $row['valor_atual']; ?> de R$ <?php echo $row['valor_alvo']; ?></span>
+                <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
+                  <div class="mensagem-meta-alcancada">Meta Alcançada!</div>
+                  <?php
+                  // Verificar se a meta já foi celebrada
+                  if (!isset($_SESSION['celebrated_goals']) || !in_array($goalId, $_SESSION['celebrated_goals'])):
+                    // Marcar a meta como celebrada
+                    $_SESSION['celebrated_goals'][] = $goalId;
+                    ?>
+                    <script>
+                      document.addEventListener('DOMContentLoaded', function () {
+                        var end = Date.now() + (8 * 1000);
+                        var colors = ['#bb0000', '#ffffff'];
+                        (function frame() {
+                          confetti({
+                            particleCount: 2,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 }
+                          });
+                          confetti({
+                            particleCount: 2,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 }
+                          });
+                          if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                          }
+                        }());
 
-                      // Exibir mensagem de parabéns
-                      var congratulationsMessage = document.createElement('div');
-                      congratulationsMessage.className = 'congratulations-message';
-                      congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
-                      document.body.appendChild(congratulationsMessage);
-
-                      setTimeout(function () {
-                        congratulationsMessage.style.display = 'block';
-                      }, 1000);
-
-                      setTimeout(function () {
-                        congratulationsMessage.style.display = 'none';
-                        document.body.removeChild(congratulationsMessage);
-                      }, 8000);
-
-                      // Adicionar emojis animados
-                      var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
-                      var emojiInterval = setInterval(function () {
-                        var emoji = document.createElement('div');
-                        emoji.className = 'emoji';
-                        emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                        emoji.style.left = Math.random() * 100 + 'vw';
-                        document.body.appendChild(emoji);
+                        // Exibir mensagem de parabéns
+                        var congratulationsMessage = document.createElement('div');
+                        congratulationsMessage.className = 'congratulations-message';
+                        congratulationsMessage.innerHTML = 'Parabéns! Você alcançou sua meta de <?php echo $row['nome_meta']; ?>!';
+                        document.body.appendChild(congratulationsMessage);
 
                         setTimeout(function () {
-                          document.body.removeChild(emoji);
+                          congratulationsMessage.style.display = 'block';
+                        }, 1000);
+
+                        setTimeout(function () {
+                          congratulationsMessage.style.display = 'none';
+                          document.body.removeChild(congratulationsMessage);
                         }, 8000);
-                      }, 500);
 
-                      setTimeout(function () {
-                        clearInterval(emojiInterval);
-                      }, 8000);
-                    });
-                  </script>
+                        // Adicionar emojis animados
+                        var emojis = ['🎉', '🎊', '🎈', '🎆', '🎇', '🎂', '🍾', '🥳', '🌟', '💥'];
+                        var emojiInterval = setInterval(function () {
+                          var emoji = document.createElement('div');
+                          emoji.className = 'emoji';
+                          emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                          emoji.style.left = Math.random() * 100 + 'vw';
+                          document.body.appendChild(emoji);
+
+                          setTimeout(function () {
+                            document.body.removeChild(emoji);
+                          }, 8000);
+                        }, 500);
+
+                        setTimeout(function () {
+                          clearInterval(emojiInterval);
+                        }, 8000);
+                      });
+                    </script>
+                  <?php endif; ?>
                 <?php endif; ?>
-              <?php endif; ?>
-              <h2>Até <?php echo $deadline; ?></h2> <!-- Exibe a data de prazo aqui -->
-            </div>
+                <h2>Até <?php echo $deadline; ?></h2> <!-- Exibe a data de prazo aqui -->
+              </div>
 
-            <!-- Elemento para o gráfico -->
-            <div class="grafico" id="chart-<?php echo $goalId; ?>" style="height: 200px; width: 100%;"></div>
+              <!-- Elemento para o gráfico -->
+              <div class="grafico" id="chart-<?php echo $goalId; ?>" style="height: 200px; width: 100%;"></div>
 
-            <!-- Botão para selecionar ação -->
-            <button class="selectActionBtn">Selecionar Ação</button>
+              <!-- Botão para selecionar ação -->
+              <button class="selectActionBtn">Selecionar Ação</button>
 
-            <!-- Botões de ação -->
-            <div class="actionButtons" style="display:none;">
-              <button class="actionBtn" data-action="depositar">Depositar<img
-                  src="../../assets/icons/icon--depositar--meta.svg" alt=""></button>
-              <button class="actionBtn" data-action="resgatar">Resgatar<img
-                  src="../../assets/icons/icon--resgatar--metas.svg" alt=""></button>
-              <button class="actionBtn" data-action="verHistorico">Ver Histórico<img
-                  src="../../assets/icons/icon--historico--metas.svg" alt=""></button>
-            </div>
+              <!-- Botões de ação -->
+              <div class="actionButtons" style="display:none;">
+                <button class="actionBtn" data-action="depositar">Depositar<img
+                    src="../../assets/icons/icon--depositar--meta.svg" alt=""></button>
+                <button class="actionBtn" data-action="resgatar">Resgatar<img
+                    src="../../assets/icons/icon--resgatar--metas.svg" alt=""></button>
+                <button class="actionBtn" data-action="verHistorico">Ver Histórico<img
+                    src="../../assets/icons/icon--historico--metas.svg" alt=""></button>
+              </div>
 
-            <div class="container-formularios">
-                <!-- Formulário de resgatar -->
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar" style="display:none;">
-              <button type="button" class="back-btn">&lt;</button>
-              <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
-              <label for="withdraw_value">Valor a Resgatar:</label>
-              <input type="text" id="withdraw_value" name="withdraw_value" required>
-              <button type="submit" name="resgatar" class="btn--resgatar">Resgatar</button>
-            </form>
-
-            <!-- Formulário de depósito -->
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-depositar" style="display:none;">
-              <button type="button" class="back-btn">&lt;</button>
-              <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
-              <label for="deposit_value">Valor a Depositar:</label>
-              <input type="text" id="deposit_value" name="deposit_value" required>
-              <button type="submit" name="depositar" class="btn--depositar">Depositar</button>
-            </form>
-
-            <!-- Exibição do histórico -->
-            <div class="historico-transacoes" style="display:none;">
-              <button type="button" class="back-btn">&lt;</button>
-              <h3>Histórico</h3>
-              <table>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Valor</th>
-                  <th>Data</th>
-                </tr>
-                <?php
-                // Consulta de histórico para a meta específica
-                $sql_history = "SELECT tipo_transacao, valor, data_transacao FROM historico_transacoes WHERE id_usuario = ? AND id_meta = ?";
-                $stmt_history = $conn->prepare($sql_history);
-                $stmt_history->bind_param("ii", $userId, $goalId);  // Passando o ID da meta
-                $stmt_history->execute();
-                $history_result = $stmt_history->get_result();
-
-                while ($history = $history_result->fetch_assoc()):
-                  ?>
-                  <tr>
-                    <td><?php echo ucfirst($history['tipo_transacao']); ?></td>
-                    <td>R$ <?php echo number_format($history['valor'], 2, ',', '.'); ?></td>
-                    <td><?php echo date('d/m/Y H:i', strtotime($history['data_transacao'])); ?></td>
-                  </tr>
-                <?php endwhile; ?>
-              </table>
-            </div>
-            </div>
-
-            <!-- Botão para finalizar meta -->
-            <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
-              <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
-                <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
-                <button type="submit" class="finalizar-meta-btn">
-                  <i class="fas fa-check"></i> Finalizar Meta
-                </button>
+              <div class="container-formularios">
+                  <!-- Formulário de resgatar -->
+              <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-resgatar" style="display:none;">
+                <button type="button" class="back-btn">&lt;</button>
+                <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
+                <label for="withdraw_value">Valor a Resgatar:</label>
+                <input type="text" id="withdraw_value" name="withdraw_value" required>
+                <button type="submit" name="resgatar" class="btn--resgatar">Resgatar</button>
               </form>
-            <?php endif; ?>
-          </div>
-        <?php endwhile; ?>
+
+              <!-- Formulário de depósito -->
+              <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-depositar" style="display:none;">
+                <button type="button" class="back-btn">&lt;</button>
+                <input type="hidden" name="goal_id" value="<?php echo $goalId; ?>">
+                <label for="deposit_value">Valor a Depositar:</label>
+                <input type="text" id="deposit_value" name="deposit_value" required>
+                <button type="submit" name="depositar" class="btn--depositar">Depositar</button>
+              </form>
+
+              <!-- Exibição do histórico -->
+              <div class="historico-transacoes" style="display:none;">
+                <button type="button" class="back-btn">&lt;</button>
+                <h3>Histórico</h3>
+                <table>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                  </tr>
+                  <?php
+                  // Consulta de histórico para a meta específica
+                  $sql_history = "SELECT tipo_transacao, valor, data_transacao FROM historico_transacoes WHERE id_usuario = ? AND id_meta = ?";
+                  $stmt_history = $conn->prepare($sql_history);
+                  $stmt_history->bind_param("ii", $userId, $goalId);  // Passando o ID da meta
+                  $stmt_history->execute();
+                  $history_result = $stmt_history->get_result();
+
+                  while ($history = $history_result->fetch_assoc()):
+                    ?>
+                    <tr>
+                      <td><?php echo ucfirst($history['tipo_transacao']); ?></td>
+                      <td>R$ <?php echo number_format($history['valor'], 2, ',', '.'); ?></td>
+                      <td><?php echo date('d/m/Y H:i', strtotime($history['data_transacao'])); ?></td>
+                    </tr>
+                  <?php endwhile; ?>
+                </table>
+              </div>
+              </div>
+
+              <!-- Botão para finalizar meta -->
+              <?php if ($row['valor_atual'] >= $row['valor_alvo']): ?>
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
+                  <input type="hidden" name="delete_goal_id" value="<?php echo $goalId; ?>">
+                  <button type="submit" class="finalizar-meta-btn">
+                    <i class="fas fa-check"></i> Finalizar Meta
+                  </button>
+                </form>
+              <?php endif; ?>
+            </div>
+          <?php endwhile; ?>
+        <?php endif; ?>
       </div>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/intro.min.js"></script>
   <script src="../../js/conteudos/metas/abrirModais.js"></script>
   <script src="../../js/conteudos/metas/dataAtual.js"></script>
   <script src="../../js/conteudos/metas/formataValor.js"></script>
@@ -347,5 +381,45 @@ include('../../config/conteudos/metas/logica_metas.php');
         var chart<?php echo $meta['id_meta']; ?> = new ApexCharts(document.querySelector("#chart-<?php echo $meta['id_meta']; ?>"), chartOptions<?php echo $meta['id_meta']; ?>);
         chart<?php echo $meta['id_meta']; ?>.render();
       <?php } ?>
+
+      // Configuração do tutorial
+      const startTutorialBtn = document.getElementById('startTutorial');
+      startTutorialBtn.addEventListener('click', function () {
+        introJs().setOptions({
+          steps: [
+            {
+              intro: "Bem-vindo ao tutorial de como usar o sistema de metas!"
+            },
+            {
+              element: document.querySelector('.titulo-metas'),
+              intro: "Este é o título da seção de metas.",
+              position: 'bottom'
+            },
+            {
+              element: document.querySelector('#adicionarBtn'),
+              intro: "Clique aqui para adicionar uma nova meta.",
+              position: 'right'
+            },
+            {
+              element: document.querySelector('.card-meta'),
+              intro: "Aqui estão as metas criadas. Você pode navegar entre elas usando os botões de navegação.",
+              position: 'bottom'
+            },
+            {
+              element: document.querySelector('.selectActionBtn'),
+              intro: "Clique aqui para selecionar uma ação para a meta, como depositar, resgatar ou ver o histórico.",
+              position: 'left'
+            },
+            {
+              element: document.querySelector('.finalizar-meta-btn'),
+              intro: "Clique aqui para finalizar a meta quando o valor alvo for alcançado.",
+              position: 'bottom'
+            }
+          ]
+        }).start();
+      });
     });
   </script>
+</body>
+
+</html>
