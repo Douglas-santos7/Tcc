@@ -42,7 +42,7 @@ if ($startDate && $endDate) {
 }
 
 // Adiciona a ordenação para do mais recente para o mais antigo
-$query .= " ORDER BY t.id ASC";
+$query .= " ORDER BY t.id DESC";
 
 // Prepara e executa a consulta
 $stmt = $conn->prepare($query);
@@ -83,7 +83,6 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                 <button type="submit">Filtrar</button>
             </form>
         </div>
-        <div class="conteudo--scroll">
             <div class="container--conteudo">
                 <?php
                 // Verifica se há resultados da consulta
@@ -150,6 +149,5 @@ $formEndDate = isset($endDate) ? htmlspecialchars($endDate) : '';
                 ?>
             </div>
         </div>
-    </div>
 </body>
 </html>
