@@ -237,6 +237,7 @@ $conn->close();
                         <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
                         <input type="hidden" name="categoria" id="categoria-id" required>
+                        <span id="categoria-error" >Por favor, selecione uma categoria.</span>
 
                         <div class="radio-group">
                             <label class="radio-label">
@@ -270,11 +271,11 @@ $conn->close();
                             foreach ($categorias as $categoria) {
                                 $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
                                 echo '<li>
-                                    <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
-                                        <i class="' . $iconeCategoria . ' categoria-icon"></i>
-                                        <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
-                                    </button>
-                                </li>';
+                            <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
+                                <i class="' . $iconeCategoria . ' categoria-icon"></i>
+                                <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
+                            </button>
+                        </li>';
                             }
                         } else {
                             echo '<li>Nenhuma categoria disponível.</li>';
@@ -314,6 +315,30 @@ $conn->close();
                 <?php if ($mostrarModalConfirmacao): ?>
                     exibirModalConfirmacao();
                 <?php endif; ?>
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const form = document.querySelector("form");
+                    const categoriaIdInput = document.getElementById("categoria-id");
+                    const categoriaError = document.getElementById("categoria-error");
+
+                    form.addEventListener("submit", function(event) {
+                        if (!categoriaIdInput.value) {
+                            event.preventDefault(); // Impede o envio do formulário
+                            categoriaError.style.display = "block"; // Exibe o erro
+                        } else {
+                            categoriaError.style.display = "none"; // Oculta o erro
+                        }
+                    });
+
+                    // Esconde o erro quando uma categoria é selecionada
+                    document.querySelectorAll(".categoria-item-unico").forEach((button) => {
+                        button.addEventListener("click", function() {
+                            categoriaIdInput.value = this.dataset.id; // Atualiza o valor do input escondido
+                            categoriaError.style.display = "none"; // Oculta o erro
+                        });
+                    });
+                });
             </script>
 </body>
 
