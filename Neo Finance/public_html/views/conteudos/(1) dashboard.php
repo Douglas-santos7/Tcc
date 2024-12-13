@@ -1,6 +1,7 @@
 <?php
 // Inclui os arquivos necessários para a conexão com o banco de dados e outras funcionalidades
 include("../../config/database/conexao.php");
+include("../../config/conteudos/login/verifica_login.php");
 include("../../config/conteudos/dashboard/funcoes_balanco.php");
 include("../../config/conteudos/dashboard/logica_vencimentos.php");
 include("../../config/conteudos/dashboard/logica_calendario.php");
@@ -236,7 +237,6 @@ $conn->close();
                         <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
                         <input type="hidden" name="categoria" id="categoria-id" required>
-                        <span id="categoria-error">Por favor, selecione uma categoria.</span>
 
                         <div class="radio-group">
                             <label class="radio-label">
@@ -260,17 +260,21 @@ $conn->close();
                     <span class="popup-categorias-close-btn" id="btn-fechar-popup-categorias">&times;</span>
                     <h2 class="categoria-titulo">Selecionar uma categoria</h2>
 
+                    <button id="botao-filtro-categorias" class="btn-filtro-categorias">
+                        A-Z
+                    </button>
+
                     <ul id="lista-categorias" class="lista-categorias">
                         <?php
                         if (!empty($categorias)) {
                             foreach ($categorias as $categoria) {
                                 $iconeCategoria = isset($categoria['icone']) ? htmlspecialchars($categoria['icone']) : 'caminho/para/imagem/padrao.png';
                                 echo '<li>
-                            <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
-                                <i class="' . $iconeCategoria . ' categoria-icon"></i>
-                                <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
-                            </button>
-                        </li>';
+                                    <button type="button" class="categoria-item-unico" data-id="' . htmlspecialchars($categoria['id']) . '">
+                                        <i class="' . $iconeCategoria . ' categoria-icon"></i>
+                                        <span class="categoria-nome">' . htmlspecialchars($categoria['nome']) . '</span>
+                                    </button>
+                                </li>';
                             }
                         } else {
                             echo '<li>Nenhuma categoria disponível.</li>';
@@ -310,30 +314,6 @@ $conn->close();
                 <?php if ($mostrarModalConfirmacao): ?>
                     exibirModalConfirmacao();
                 <?php endif; ?>
-            </script>
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    const form = document.querySelector("form");
-                    const categoriaIdInput = document.getElementById("categoria-id");
-                    const categoriaError = document.getElementById("categoria-error");
-
-                    form.addEventListener("submit", function(event) {
-                        if (!categoriaIdInput.value) {
-                            event.preventDefault(); // Impede o envio do formulário
-                            categoriaError.style.display = "block"; // Exibe o erro
-                        } else {
-                            categoriaError.style.display = "none"; // Oculta o erro
-                        }
-                    });
-
-                    // Esconde o erro quando uma categoria é selecionada
-                    document.querySelectorAll(".categoria-item-unico").forEach((button) => {
-                        button.addEventListener("click", function() {
-                            categoriaIdInput.value = this.dataset.id; // Atualiza o valor do input escondido
-                            categoriaError.style.display = "none"; // Oculta o erro
-                        });
-                    });
-                });
             </script>
 </body>
 
