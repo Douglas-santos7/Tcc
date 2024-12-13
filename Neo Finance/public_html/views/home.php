@@ -1,6 +1,7 @@
 <?php
 session_start(); // Inicia a sessão
 include("../config/database/conexao.php");
+include("../config/conteudos/login/verifica_login.php");
 
 
 
