@@ -237,7 +237,9 @@ $conn->close();
                         <button type="button" id="btn-selecionar-categoria">Selecionar Categoria</button>
 
                         <input type="hidden" name="categoria" id="categoria-id" required>
-                        <span id="categoria-error" >Por favor, selecione uma categoria.</span>
+                        <span id="categoria-error" style="display: none; align-items: center; justify-content: center; text-align: center; background: white; color: red; font-weight: 600; border-radius: 8px; padding: 5px; margin-top: 10px;">
+                            Por favor, selecione uma categoria.
+                        </span>
 
                         <div class="radio-group">
                             <label class="radio-label">
