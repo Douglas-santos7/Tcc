@@ -155,40 +155,35 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     position: relative;
     overflow: hidden;
+    animation: slideUp 1s ease;
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .feature:hover {
-    transform: translateY(-15px) rotate(1deg);
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 20px;
+    transform: translateY(-15px) rotate(3deg);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 15px 30px;
     background: linear-gradient(135deg, var(--primary-color), green);
 }
 
-.feature::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
-    opacity: 0.6;
-    transform: rotate(45deg);
-    animation: spin 5s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
 .feature img {
-    width: 100%; /* Ajusta o tamanho da imagem para ocupar todo o contêiner */
+    width: 100%;
     height: auto;
     margin-bottom: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.feature img:hover {
+    transform: scale(1.2) rotate(-5deg);
 }
 
 .feature h3 {
@@ -199,6 +194,62 @@ body {
 
 .feature p {
     color: white;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.feature:hover p {
+    opacity: 1;
+}
+
+/* Sessão video Section */
+/* Animated Text Section */
+.animated-text {
+    position: relative;
+    overflow: hidden;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--white);
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    height: 100vh; /* Altura total da viewport */
+}
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3; /* Opacidade menor para o vídeo */
+    z-index: -1;
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-overlay {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+#animated-text {
+    font-size: 2rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+#animated-text.active {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* Insights Section */
@@ -215,6 +266,7 @@ body {
 }
 
 .insights-content {
+    margin-top: 100px;
     max-width: 600px;
 }
 
@@ -247,6 +299,7 @@ body {
 
 .insights-image img {
     max-width: 100%;
+    animation: float 3s ease-in-out infinite;
     transition: transform 0.3s, filter 0.3s;
 }
 
